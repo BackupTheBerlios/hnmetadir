@@ -1,0 +1,15 @@
+<h3>Ajouter un groupe</h3>
+<div id="zonetravail">
+<form action="admin-groupes.php?action=add" method="POST">
+<b>Nom :</b> <input type="text" maxlenght="50" name="nom">&nbsp;&nbsp;<input type="image" src="templates/images/valide.gif">
+</form>
+</div>
+
+<h3>Liste des groupes</h3>
+<div id="zonetravail">
+<ul>
+  <!-- BEGIN groupes -->
+  <li><a href="admin-groupes-edit.php?id={g_id}">{g_nom}</a></li>
+  <!-- END groupes -->
+</ul>
+</div>

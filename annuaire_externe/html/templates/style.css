@@ -1,0 +1,188 @@
+@charset "iso-8859-1";
+
+FORM {
+margin:3px;
+}
+
+INPUT {
+margin-bottom:3px;
+}
+
+A, A:visited {
+font-weight: bold;
+text-decoration: none;
+color: #505050;
+}
+
+a:hover { 
+color: #c03000; 
+text-decoration: none; 
+}
+
+body,table {
+background-color: #ffffff;
+color: #000000;
+font-family:  Arial, Helvetica, Geneva, Swiss, SunSans-Regular;
+font-size: 11px;
+font-weight: normal;
+line-height: 13px;
+#margin:0px;
+}
+
+img {
+border-style:none;
+}
+
+table {
+border-width: thin;
+border-color: #FFF3F3;
+}
+	
+TD {
+padding-bottom: 2px;
+padding-left: 5px;
+padding-right: 5px;
+padding-top: 2px;
+}
+
+BIG {
+font-weight: bold;
+font-size: 12px;
+line-height: 13px;
+color : #990033;
+}
+
+TH {
+background-color: #990000;
+color:white; 
+font-weight: bold;
+font-size:12px;
+line-height: 13px;
+padding-bottom: 2px;
+padding-left: 5px;
+padding-right: 5px;
+padding-top: 2px;
+}
+
+H2,H3,H4,H5,H6 {
+font-style: normal;
+color : #c03000;
+}
+
+
+H1 {
+color : #900000;
+font-weight: bold;
+font-size: 20px;
+line-height: 22px;
+} 
+
+H2 {
+font-weight: bold;
+font-size: 16px;
+line-height: 18px;
+}
+
+H3 {
+font-weight: bold;
+font-size: 12px;
+line-height: 14px;
+}
+
+H4 {
+font-size: 12px;
+line-height: 14px;
+}
+
+H5 {
+font-size: 11px;
+line-height: 13px;
+}
+
+H6 {
+font-weight: bold;
+font-size: 9px;
+line-height: 10px;
+margin-top:0;
+margin-bottom:0;
+}
+
+small {
+font-size: 9px;
+line-height: 10px;
+margin-top:0;
+margin-bottom:0;
+}
+		
+LI {
+font-size: 13px;
+line-height: 18px;
+color: #605030;
+}
+
+/***************************************************************************************
+****************************************************************************************/
+
+DIV#bandeau {
+margin:0px;
+width:960px;
+height:123px;
+background-image:url(images/bandeau.jpg);
+background-repeat:no-repeat;
+}
+
+DIV#menugris {
+position:absolute;
+top:8px;
+left:120px;
+}
+
+DIV#menu {
+position:absolute;
+top:55px;
+left:500px;
+}
+
+DIV#menu A  {
+font-size: 13px;
+font-weight: bold;
+color: #900000;
+text-decoration: none;
+ont-family:arial;
+}
+
+DIV#menu A:hover { 
+color: #c03000; 
+text-decoration: none; 
+}
+
+DIV#zonetravail {
+border:1px solid black;
+padding:10px;
+width:600px;
+}
+
+DIV#g_arbo {
+float:left;
+width:30%;
+overflow:auto;
+border-right:1px dashed black;
+padding:5px;
+height:100%
+}
+
+DIV#c_entitee {
+float:right;;
+border-bottom:1px dashed black;
+width: 68%;
+right:2%;
+height:50%;
+}
+
+DIV#c_user {
+float:right;
+margin-top:10px;
+width: 68%;
+right:2%;
+height:50%
+}

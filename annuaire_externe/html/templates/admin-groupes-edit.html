@@ -1,0 +1,65 @@
+<script language="javascript">
+function SelectionnerTout(action, selectbox) {
+  var srcList = document.getElementById(selectbox);
+  for(var i=0;i<srcList.length;i++) {
+    srcList.options[i].selected = action;
+  }
+}
+function AddUser() {
+  var destList  = document.getElementById("usersgroup");
+  var srcList  = document.getElementById("users");
+  var len = srcList.options.length;
+  for(var i = (len-1); i >= 0; i--) {
+    if ((srcList.options[i] != null) && (srcList.options[i].selected == true)) {
+      find=false;
+      for(var j=0;j<destList.length;j++) {
+        if(destList.options[j].value == srcList.options[i].value) { find=true; }
+      }
+      if(find==false) {
+        destList.options[destList.options.length] = new Option(srcList.options[i].text, srcList.options[i].value);
+      }
+    }
+  }
+}
+function SupprUser() {
+  var destList = document.getElementById("usersgroup");
+  var len = destList.options.length;
+  for(var i = (len-1); i >= 0; i--) {
+    if ((destList.options[i] != null) && (destList.options[i].selected == true)) {
+      destList.options[i] = null;
+    }
+  }
+}
+</script>
+
+<h3>Edition du groupe {nom}</h3>
+<div id="zonetravail">
+<form action="admin-groupes-edit.php?id={id}" method="POST">
+<b>Nom :</b> <input type="text" name="nom" value="{nom}"  maxlength="50"><br>
+<br>
+<b>Utilisateurs de ce groupe :</b><br>
+<table>
+  <tr>
+    <td valign="middle">
+      <select name="users[]" id="users" size="10" style="width:200px;" multiple="multiple">
+        <!-- BEGIN users -->
+	<option value="{u_id}">{u_nom} {u_prenom}</option>
+	<!-- END users -->
+      </select>
+    </td>
+    <td valign="middle">
+      <input type="button" value=">>" onclick="AddUser();"><br>
+      <input type="button" value="<<" onclick="SupprUser();">
+    </td>
+    <td valign="middle">
+      <select name="usersgroup[]" id="usersgroup" size="10" style="width:200px;" multiple="multiple">
+        <!-- BEGIN usersgroup -->
+        <option value="{ug_id}">{ug_nom} {ug_prenom}</option>
+        <!-- END usersgroup -->
+      </select>
+    </td>
+  </tr>
+</table><br>
+<input type="image" src="templates/images/valide.gif"> <input type="image" src="templates/images/del.gif" onclick="go.back();">
+</form>
+</div>

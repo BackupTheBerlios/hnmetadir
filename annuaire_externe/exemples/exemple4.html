@@ -1,0 +1,76 @@
+<html><head><title>Fiche personne</title>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link href="exemple4_files/styles.css" rel="stylesheet" type="text/css">
+		<link href="exemple4_files/drh.css" rel="stylesheet" type="text/css"></head>	
+	<body>
+	<script>
+function str_replace(a,b,expr) {
+      var i=0
+      while (i!=-1) {
+         i=expr.indexOf(a,i);
+         if (i>=0) {
+            expr=expr.substring(0,i)+b+expr.substring(i+a.length);
+            i+=b.length;
+         }
+      }
+      return expr
+   }</script>
+<script language="Javascript">
+function ConfReset() {
+         if (confirm('Etes vous certain de vouloir remettre toutes les champs à leurs valeurs par défaut ou d\'origine ?')) document.theform.reset();
+}
+
+// Javascript qui met à jour l'Id, le mail et le N° SDL7 en fonction du nom premon
+// appelé qd nouvel enregistrement sur  chgt de prenom ou de nom
+
+var NEWP=false;
+  
+function MAJIdMailSDL7() {
+  if (NEWP) {
+     document.theform.PER_LCIDPERS.value =  document.theform.PER_LLPRENOMPERS.value.toLowerCase().substring(0,1) +  str_replace(' ','',document.theform.PER_LLNOMPERS.value.toLowerCase()).substring(0,14);
+    }
+  }  
+   window.resizeTo(500,500);
+</script>
+
+<form action="amact_pers.php" method="post" name="theform" enctype="multipart/form-data"> 
+<input name="modif" value="C" type="hidden">
+<input name="PER_NUPERS" value="2" type="hidden">
+<input name="PER_LMTYPERS" value="INT" type="hidden">
+
+<div align="center">
+<a name="haut"></a>
+<table border="0" width="450"> 
+<tbody><tr><td colspan="2" align="center" width="450">
+<span class="TRM"></span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="javascript:self.close()"><img src="exemple4_files/bout_fermer.gif" alt="fermer cette fenêtre" border="0"></a>
+  <table style="line-height: 2;" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr><td width="42"><img src="exemple4_files/bd_gauche.gif" border="0"></td>
+<td class="txtintbredfbbold" height="13" nowrap="nowrap">FICHE PERSONNE</td>
+<td width="44"><img src="exemple4_files/bd_droite.gif" border="0"></td></tr>
+</tbody></table>
+
+</td></tr>
+<tr><td colspan="2" align="center"><span class="chapitrered12px">M.<input name="PER_LMTITREPER" value="M." type="hidden"> Francis<input name="PER_LLPRENOMPERS" value="Francis" type="hidden"> BREUILLE<input name="PER_LLNOMPERS" value="BREUILLE" type="hidden"></span><br>
+<input name="OldPER_PHOTO" value="2_fb_1.jpg" type="hidden"><b></b><p><b><img src="exemple4_files/2_fb_1.jpg"></b></p></td></tr>
+<tr><td class="backredc" width="220"><b>Coordonnées</b></td><td align="center" width="220"><a href="http://xinf-prodlinux/webcalendar/week.php?user=" target="_blank"><img src="exemple4_files/webcal_icon.png" title="consulter son agenda" border="0" width="16"> Son agenda</a>&nbsp;</td></tr>
+<tr><td>Téléphone fixe</td>
+<td>05 55 73 83 84<input name="PER_TELFIXE" value="05 55 73 83 84" type="hidden"></td></tr>
+<tr><td>N° de teleph. abrégé</td>
+<td>8384<input name="PER_LCABREGE" value="8384" type="hidden"></td></tr>
+<tr><td>Fax</td>
+<td>05 55 73 83 42<input name="PER_FAX" value="05 55 73 83 42" type="hidden"></td></tr>
+<tr><td>Téléph. portable</td>
+<td>06 70 01 32 38<input name="PER_PORPERS" value="06 70 01 32 38" type="hidden"></td></tr>
+<tr><td>Email</td>
+<td><a href="mailto:francis.breuille@haras-nationaux.fr">francis.breuille@haras-nationaux.fr</a><input name="PER_MAILPERS" value="francis.breuille@haras-nationaux.fr" type="hidden"></td></tr>
+<tr><td>Unité fonctionnelle de rattachement</td><td><a class="boldred11px" href="http://xinf-prodlinux/intra_drh/html/popup_fichUF.php?NUUNITE=DSI">DSI<input name="DRH_NUUNITE" value="DSI" type="hidden"></a></td></tr><tr><td>Fonction ou spécialité</td><td>Chef de  département<input name="DRH_COFONC" value="CHFDPT" type="hidden"> - Informaticien<input name="DRH_COSPECIAL" value=",INF," type="hidden"> - Ingénieur<input name="DRH_LLFONCCOMP" value="Ingénieur" type="hidden"></td></tr><tr><td>Correspondant(s)</td>
+<td>Communication, Reproduction<input name="DRH_COCORRESP" value=",COM,REP," type="hidden"></td></tr>
+<tr><td colspan="2" align="center">
+  <a name="bas"><br>
+  </a><a href="#" onclick="javascript:self.close()"><img src="exemple4_files/bout_fermer.gif" alt="fermer cette fenêtre" border="0"></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="javascript:self.print()"><img src="exemple4_files/imprimer.gif" alt="Imprimer cette fiche" border="0"></a>
+</td></tr></tbody></table>
+</div>
+</form></body></html>

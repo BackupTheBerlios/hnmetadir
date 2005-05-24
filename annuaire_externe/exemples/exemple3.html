@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <title>Meta annuaire des Haras Nationnaux</title>
+    <link rel="stylesheet" type="text/css" href="templates/style.css">
+    <script language="javascript">
+      function go()
+      {
+        box = document.getElementById('menu_branche');
+        destination = box.options[box.selectedIndex].value;
+        if (destination) location.href = '?changebra='+destination;
+      }
+    </script>
+  </head>
+  <body>
+    <div id="bandeau">
+      <div id="menugris">
+	<a href="index.php">Accueil</a>
+	&nbsp;|&nbsp;
+	Recherche rapide :&nbsp;<input type="text">
+	&nbsp;|&nbsp;
+	<b>Vous etes :</b> admin
+	&nbsp;|&nbsp;
+	<a href="index-gestion.php">Gestion</a>
+	&nbsp;|&nbsp;
+	<a href="index-admin.php">Admin</a>
+      </div>
+      <div id="menu">
+       <a href="consulter.php">Consulter</a> | <a href="rechercher.php">Rechercher Avancé</a> | <a href="login.php">Login/Logout</a> 
+      </div>
+    </div>
+
+<script type="text/javascript" src="templates/overlib/overlib.js"><!-- overLIB (c) Erik Bosrup --></script>
+
+  <div id="g_arbo">
+    <h2>Arborescence</h2>
+    <table>
+      <tr>
+        <td valign="middle"> <img src="templates/images/branche.png" alt="fiche"> <a href="exemple1.html">DSI DEP</a></td>
+      </tr>
+      <tr>
+        <td valign="middle"> <img src="templates/images/branche.png" alt="fiche"> <a href="exemple1.html">Fournisseurs</a></td>
+      </tr>
+      <tr>
+        <td valign="middle"> <img src="templates/images/branche.png" alt="fiche"> <a href="exemple1.html">DIT - Organisations professionnelles agricoles</a></td>
+      </tr>
+      <tr>
+        <td valign="middle"><img src="templates/images/espace.gif" alt=""> <img src="templates/images/folder.png" alt="folder"> <a href="exemple2.html">Chambres d'agricultures</a></td>
+      </tr>
+
+      <tr>
+        <td valign="middle" style="background-color:#C1C1C1"><img src="templates/images/espace.gif" alt=""><img src="templates/images/espace.gif" alt=""> <img src="templates/images/entity.png" alt="folder"> <a href="exemple3.html">Exemple entitée</a></td>
+      </tr>
+      <tr>
+        <td valign="middle"><img src="templates/images/espace.gif" alt=""><img src="templates/images/espace.gif" alt=""> <img src="templates/images/folder.png" alt="folder"> <a href="exemple2.html">Nieme catégorie</a></td>
+      </tr>
+
+      
+      <tr>
+        <td valign="middle"><img src="templates/images/espace.gif" alt="espace"> <img src="templates/images/folder.png" alt="folder"> <a href="exemple2.html">Syndicalisme agricole</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="c_entitee">
+    <h2>Exemple entité</h2>
+    <table width="99%">
+	  <tr>
+        <td valign="top">
+	      <b>Raison sociale :</b> INC<br>
+    	  	<b>Nomination :</b> Microsoft<br>
+	      <b>Siret :</b><br>
+		  <b>Code NAF :</b><br>
+		  <b>Adresse :</b><br>
+		  <b>Adresse complémentaire :</b><br>
+		  <b>Ville :<b><br>
+		  <b>Code Postal :</b><br>
+	 	  <b>Pays :</b><br>
+		  <b>Région :</b><br>
+		  <b>Tel :</b><br>
+	 	  <b>Fax :</b><br>
+		  <b>Mobile :</b><br>
+	 	</td>
+		<td valign="top">
+		  <b>Site web :</b><br>
+		  <b>Description :</b><br>
+		  <b>Commentaire privé</b><br>
+		  <b>Propriétée spéciale 1 :</b><br>
+		  <b>Propriétée spéciale 2 :</b><br>
+		  <b>Propriétée spéciale 3 :</b><br>
+		  <b>Propriétée spéciale 4 :</b><br>
+		  <b>Propriété spéciale 5 :</b><br>
+		</td>
+	  </tr>
+	</table>
+	<br>
+	<h4>Action :</h4> 
+	- <a href="">Modifier cette fiche</a><br>
+	- <a href="">Ajouter une sous entitée (succursale)</a><br>	
+	- <a href="">Ajouter une personne</a><br>
+  </div>
+
+  <div id="c_user">
+    <table width="100%">
+      <tr>
+        <th>Nom Prénom</th>
+        <th>Adresse</th>
+        <th>Tel</th>
+        <th>Mobile</th>
+		<th>Informations</th>
+      </tr>
+      <tr>
+        <td><img src="templates/images/user.png" alt=""> Mr Francis Breuille</td>
+	 	<td>Haras Nationaux - Pompadour</td>
+		<td>0555456789</td>
+		<td>0654567754</td>
+		<td><a href="#" onclick="window.open('exemple4.html', 'Fiche de {nom}', config='height=600, width=400, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no');">Plus d'infos</a></td>
+      <tr>
+      <tr>
+        <td><img src="templates/images/user.png" alt=""> Mr Francis Breuille</td>
+	 	<td>Haras Nationaux - Pompadour</td>
+		<td>0555456789</td>
+		<td>0654567754</td>
+		<td><a href="#" onclick="window.open('exemple4.html', 'Fiche de {nom}', config='height=600, width=400, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no');">Plus d'infos</a></td>
+      <tr>
+      <tr>
+        <td><img src="templates/images/user.png" alt=""> Mr Francis Breuille</td>
+	 	<td>Haras Nationaux - Pompadour</td>
+		<td>0555456789</td>
+		<td>0654567754</td>
+		<td><a href="#" onclick="window.open('exemple4.html', 'Fiche de {nom}', config='height=600, width=400, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no');">Plus d'infos</a></td>
+      <tr>
+    </table>
+	<br>
+  </div>
+  

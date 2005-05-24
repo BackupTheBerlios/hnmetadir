@@ -1,0 +1,58 @@
+body {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; color:#000000; background-color:#FFFFFF; font-weight:normal;
+}
+table {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; color:#000000; font-weight:normal;}
+.backredc {background-color:#FFCCCC; padding:2px; padding-right:5px; padding-left:5px; }
+.backwhiten {background-color:#FFFFFF; padding-right:5px; padding-left:5px; }
+.backredF_boldwhite {font-weight:bold; color:#FFFFFF; background-color:#990033; padding:2px; padding-right:5px; padding-left:5px; }
+
+.txtintbredfbbold
+                    {
+                              background-color: #990033;
+                              font-size:11px;
+                              line-height: 10px; 
+                              font-weight: bold;
+                              color: #FFFFFF;
+                              padding-bottom: 0px;
+                              padding-left: 5px;
+                              padding-right: 5px;
+                              padding-top: 0px
+                    }
+
+.alertered14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#990033; line-height:16px; }
+.alerteblack14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#000000; line-height:16px; }
+.legendered9px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:9px; color:#990033; line-height:9px; }
+.legendeblack9px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:9px; color:#000000; line-height:9px; }
+.boldred11px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; font-weight:bold; color:#990033; line-height:12px; font-style:normal;
+}
+.boldblack11px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; font-weight:bold; color:#000000; line-height:12px; font-style:normal;
+}
+.chapitrered12px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:12px; font-weight:bold; color:#990033; line-height:13px; }
+.chapitreblack12px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:12px; font-weight:bold; color:#000000; line-height:13px; }
+.normalred11px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; color:#990033; line-height:13px; font-style:normal;
+font-weight:normal;
+}
+.normalblack11px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; color:#000000; line-height:13px; font-style:normal;
+font-weight:normal;
+}
+.titrered14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#990033; line-height:18px; }
+.titreblack14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#000000; line-height:18px; }
+.titrered20px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:20px; font-weight:bold; color:#990033; line-height:25px; }
+H1 {font-size:20px; font-weight:bold; color:#990033; }
+.titreblack20px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:20px; font-weight:bold; color:#000000; }
+H2 {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:20px; font-weight:bold; color:#000000; }
+.chapitreredC14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#D7B3C6; line-height:17px; }
+.chapitreredM14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#C36886; line-height:17px; }
+.chapitreredF14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; color:#990134; line-height:17px; }
+.TRC {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:12px; font-weight:bold; color:#D7B3C6; }
+.TRM {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:12px; font-weight:bold; color:#C36886; }
+.TRF {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:12px; font-weight:bold; color:#990134; }
+.alertes14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; line-height:16px; }
+.legendes9px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:9px; line-height:9px; }
+.legendesred9px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:9px; line-height:9px;color:#990134; }
+.stylebold11px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; font-weight:bold; line-height:12px; font-style:normal;
+}
+.stylechapitre12px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:12px; font-weight:bold; line-height:13px; }
+.stylenormal11px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:11px; line-height:13px; font-style:normal;
+font-weight:normal;
+}
+.styletitre14px {font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular; font-size:14px; font-weight:bold; line-height:18px; }

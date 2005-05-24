@@ -1,0 +1,105 @@
+<script language="javascript">
+function SelectionnerTout(action, selectbox) {
+  var srcList = document.getElementById(selectbox);
+  for(var i=0;i<srcList.length;i++) {
+    srcList.options[i].selected = action;
+  }
+}
+function AddGroupe(zone) {
+  var destList  = document.getElementById("users_"+zone);
+  var srcList  = document.getElementById("groupes_"+zone);
+  var len = srcList.options.length;
+  for(var i = (len-1); i >= 0; i--) {
+    if ((srcList.options[i] != null) && (srcList.options[i].selected == true)) {
+      find=false;
+      for(var j=0;j<destList.length;j++) {
+        if(destList.options[j].value == srcList.options[i].value) { find=true; }
+      }
+      if(find==false) {
+        destList.options[destList.options.length] = new Option(srcList.options[i].text, srcList.options[i].value);
+      }
+    }
+  }
+}
+function SupprGroupe(zone) {
+  var destList = document.getElementById("users_"+zone);
+  var len = destList.options.length;
+  for(var i = (len-1); i >= 0; i--) {
+    if ((destList.options[i] != null) && (destList.options[i].selected == true)) {
+      destList.options[i] = null;
+    }
+  }
+}
+</script>
+
+
+<h2>Gestion de la catégorie {c_nom}</h2>
+
+<form action="gestion-categories-edit.php?id={c_id}" method="POST">
+<h4>Informations</h4>
+<div id="zonetravail">
+  <b>Nom :</b> <input type="text" name="nom" value="{c_nom}"><br>
+  <b>Description :</b> <input type="text" name="description" value="{c_description}"><br>
+</div>
+<br>
+
+<h4>Droit de lecture</h4>
+<div id="zonetravail">
+<img src="templates/images/info.jpeg" alt="info"> Par défaut, tous les utilisateurs ont accès en lecture. Cette permission représente l'accessibilité par l'utilisateur aux champs spéciaux et au champs confidentiel.<br>
+<br>
+<table>
+  <tr>
+    <td valign="middle">
+      <select name="groupes_r[]" id="groupes_r" size="10" style="width:200px;" multiple="multiple">
+        <!-- BEGIN groupes -->
+	    <option value="{g_id}">{g_nom}</option>
+	    <!-- END groupes -->
+      </select>
+    </td>
+    <td valign="middle">
+      <input type="button" value=">>" onclick="AddGroupe('r');"><br>
+      <input type="button" value="<<" onclick="SupprGroupe('r');">
+    </td>
+    <td valign="middle">
+      <select name="users_r[]" id="users_r" size="10" style="width:200px;" multiple="multiple">
+        <!-- BEGIN users_r -->
+        <option value="{ur_id}">{ur_nom}</option>
+        <!-- END users_r -->
+      </select>
+    </td>
+  </tr>
+</table><br>
+</div>
+<br>
+
+<h4>Droit d'ajout</h4>
+<div id="zonetravail">
+<img src="templates/images/info.jpeg" alt="info"> Droit en écriture dans cette partie d'categories.<br>
+<br>
+<table>
+  <tr>
+    <td valign="middle">
+      <select name="groupes_w[]" id="groupes_w" size="10" style="width:200px;" multiple="multiple">
+        <!-- BEGIN groupes -->
+	    <option value="{g_id}">{g_nom}</option>
+	    <!-- END groupes -->
+      </select>
+    </td>
+    <td valign="middle">
+      <input type="button" value=">>" onclick="AddGroupe('w');"><br>
+      <input type="button" value="<<" onclick="SupprGroupe('w');">
+    </td>
+    <td valign="middle">
+      <select name="users_w[]" id="users_w" size="10" style="width:200px;" multiple="multiple">
+        <!-- BEGIN users_w -->
+        <option value="{uw_id}">{uw_nom}</option>
+        <!-- END users_w -->
+      </select>
+    </td>
+  </tr>
+</table><br>
+</div>
+<br>
+<input type="image" src="templates/images/valide.gif" onclick="SelectionnerTout(true, 'users_r');SelectionnerTout(true, 'users_w');">
+<input type="image" src="templates/images/del.gif" onclick="go.back;">
+</form>
