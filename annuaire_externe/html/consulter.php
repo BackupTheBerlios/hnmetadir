@@ -13,7 +13,8 @@ $tpl->set_file('FileRef','consulter.html');
 
 function affstruct_cat($pere,$espace,$bra_id)
 {
-        global $db,$tpl,$_GET;
+        global $db,$tpl,$_GETi,$tabcat;
+
         $query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'" AND `BRANCHES_BRA_ID`="'.$bra_id.'" ORDER BY `CAT_NOM` ASC';
 	$result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
@@ -33,10 +34,16 @@ function affstruct_cat($pere,$espace,$bra_id)
                 $tpl->set_var('id', $id );
                 $tpl->parse('arbre_block', 'arbre', true);
 
-		if($_GET['cat'] && ($id != $_GET['cat']) )
+
+		// on regarde si c'est un des id du chemin dans lequel on doit s'enfoncer
+		$found = false;
+		for($j=0;$j<count($tabcat);$j++)
 		{
-                	#affstruct_cat($_GET['cat'],$espace,$bra_id);
+			if($id == $tabcat[$j]) $found = true;
 		}
+
+		if($found == true) affstruct_cat($id,$espace,$bra_id);
+
        }
 } 
 
@@ -124,11 +131,11 @@ function affstruct_branches() {
 // ------------------------------------------------
 
 $tpl->set_block('FileRef', 'arbre', 'arbre_block');
+	
+	$tabcat = array();
+	$tabcat = chemin_categorie($_GET['cat']);
+	print_r($tabcat);
 
-/*
-	affstruct_cat((int)$cat,'0','');
-	$tpl->set_var('chemin', chemin('categorie',(int)$cat,'') );
-*/	
 	affstruct_branches();
 
 $tpl->parse('FileOut', 'FileRef');
