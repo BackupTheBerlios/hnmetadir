@@ -8,6 +8,21 @@ include('HEADER.php');
 $tpl->set_file('FileRef','consulter.html');
 
 
+// EXPLICATION
+// ~~~~~~~~~~~
+// On initialise en premier deux tableaux $tabcat et tabent. Ces deux tableaux sont destinés à recevoir
+// l'ensemble des ids des catégories et des entitées qui seront "utilisé" lorsqu'une personne s'enfonce
+// dans l'arborescence.
+// Donc via les deux fonctions qui se trouvent dans functions.php, on y insert ces ids.
+// On lance l'affichage de la branche via affstruc_branche().
+// Si la variable $cat est déjà définie, cela signifie que l'user est déjà ou veut s'enfoncer dans une
+// des arborescences (note: arborescence = branche + catéforie + entitée)
+// On est donc a présent dans la boucle qui affiche les branche, hop ca nous envoie vers l'affichage des
+// catégorie. Ici, on liste l'ensemble des catégories tout en vérifiant que l'id de celle ci n'est pas
+// présente dans le $tabcat. Si c'est le cas, cela signifie qu'il faut s'enfoncer dans cette catégorie.
+// Parallelement on liste les entitées que possède cette catégorie.
+
+
 // - Fonction - Listage des catégories
 // ------------------------------------
 
@@ -42,8 +57,13 @@ function affstruct_cat($pere,$espace,$bra_id)
 			if($id == $tabcat[$j]) $found = true;
 		}
 
-		if($found == true) affstruct_cat($id,$espace,$bra_id);
+		if($found == true) 
+		{
+			affstruct_cat($id,$espace,$bra_id);
 
+			// affiche les entitées
+			affstruct_ent($id,0,$espace,$bra_id);
+		}
        }
 } 
 
@@ -52,9 +72,10 @@ function affstruct_cat($pere,$espace,$bra_id)
 // - Fonction - Listage des entitee d'une catégorie
 // -------------------------------------------------
 
-function affstruct_ent($cat,$pere,$espace)
+function affstruct_ent($cat,$pere,$espace,$bra_id)
 {
-        global $db,$tpl;
+        global $db,$tpl,$tabent;
+
         $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
         $result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
@@ -64,23 +85,29 @@ function affstruct_ent($cat,$pere,$espace)
 		$nom         = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
 		$nom	     .= ' '.stripslashes( mysql_result($result,$i,"ENT_NOMINATION") );
 		$id          = mysql_result($result,$i,"ENT_ID");
-		$liendetail  = '<a href="#" onclick="window.open(\'entitee.php?id='.$id.'\', \'Fiche de {nom}\', config=\'height=600, width=400, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');"><small>[détails]</small></a>';
 
-		// entité déployable ou non
-		$req = mysql_query('SELECT * FROM `AFFECTE_ENTITEES_FICHES` WHERE `ENTITEES_ENT_ID`="'.$id.'"') or die(mysql_error()); 
-		if( mysql_num_rows($req) ) {
-                	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a> '.$liendetail );
-		} else {
-			$tpl->set_var('nom', $nom.' '.$liendetail );
-		}
+               	$tpl->set_var('nom', '<a href="consulter.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
                 $tpl->set_var('espace', $espace );
                 $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
                 $tpl->set_var('id', $id );
                 $tpl->parse('arbre_block', 'arbre', true);
 
-                affstruct_ent($cat,$id,$espace);
+		
+                $found = false;
+                for($j=0;$j<count($tabent);$j++)
+                {
+                        if($id == $tabent[$j]) $found = true;
+                }
+
+                if($found == true)
+                {
+			echo $id;
+                	affstruct_ent($cat,$id,$espace,$bra_id);
+                }
+
        }
 }              
+
 
 // - Fonction - Listage des entitee d'une catégorie
 // -------------------------------------------------
@@ -123,7 +150,6 @@ function affstruct_branches() {
                  if( $braid == $_GET['bra_id'] ) {
                          affstruct_cat(0,'',$_GET['bra_id']);
                  }
-
 	}
 }
 
@@ -133,8 +159,16 @@ function affstruct_branches() {
 $tpl->set_block('FileRef', 'arbre', 'arbre_block');
 	
 	$tabcat = array();
-	$tabcat = chemin_categorie($_GET['cat']);
-	print_r($tabcat);
+	$tabent = array();
+	
+	if($_GET['cat']) 
+	{
+		$tabcat = chemin_categorie($_GET['cat']);
+	} 
+	elseif($_GET['ent'])
+	{
+		$tabent = chemin_entitee($_GET['ent']);
+	}
 
 	affstruct_branches();
 

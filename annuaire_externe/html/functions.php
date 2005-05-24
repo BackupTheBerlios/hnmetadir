@@ -4,9 +4,12 @@
 // -- Arguments :
 // --- id     : l'id de l'objet en court
 
-/*
 function chemin_entitee($id)
 {
+	global $tabent;
+
+	array_push($tabent, $id);
+
 	$query='SELECT `ENT_ID`,`ENT_RAISONSOCIAL`,`ENT_NOMINATION`,`ENT_PARENTID`,`CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$id.'"';
 	$result = mysql_query($query) or die(mysql_error());
        	$row = mysql_fetch_array($result);
@@ -16,15 +19,14 @@ function chemin_entitee($id)
 		
 	if( $parentid == 0 )
 	{
-		chemin('categorie', $row['CATEGORIES_CAT_ID']);
+		chemin_categorie($row['CATEGORIES_CAT_ID']);
 	} 
 	else 
 	{
-		chemin('entitee',$parentid);
+		chemin_entitee($parentid);
 	}
-	return $var;
+	return $tabent;
 }
-*/
 
 function chemin_categorie($id)
 {
