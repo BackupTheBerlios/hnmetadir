@@ -9,7 +9,7 @@ $tpl = new Template('templates/');
 
 $tpl->set_file('FileRef','login.html');
 
-if($type == 'anonyme')
+if($_GET['type'] == 'anonyme')
 {
 	$_SESSION['auth'] = true;
 	$_SESSION['auth_id']='';
