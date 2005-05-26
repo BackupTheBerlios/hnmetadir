@@ -4,8 +4,20 @@
 // ------------------------------------------------------------
 $tpl->set_file('HeaderRef','header.html');
 
-  $tpl->set_var('login', $_SESSION['auth_login']);
+	// affiche le login dans la barre grise
+	$tpl->set_var('login', $_SESSION['auth_login']);
 
+
+	// connexion ou déconnexion dans le sous meun
+	if( $_SESSION['auth'] == true || $_SESSION['auth_login'] != 'anonyme')
+	{
+  		$tpl->set_var('connect', 'Déconnexion');
+	}
+	else
+	{
+		$tpl->set_var('connect', 'Connexion');
+	}
+	
 $tpl->parse('HeaderOut', 'HeaderRef');
 // ------------------------------------------------------------
 

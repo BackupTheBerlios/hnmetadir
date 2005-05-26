@@ -12,8 +12,14 @@ $tpl->set_file('FileRef','admin-groupes.html');
 // ---------------------------------- 
 if($_GET['action'] == 'add' && $_POST['nom']) {
 	$db->query('INSERT INTO `GROUPES` (GRO_NOM) VALUES ("'.addslashes($_POST['nom']).'")');	
-
 }
+
+// - Ajout d'un groupe
+// ---------------------------------- 
+if($_GET['action'] == 'supprimer' && $_GET['id']) {
+	$db->query('DELETE FROM `GROUPES` WHERE `GRO_ID`="'.(int)$_GET['id'].'"');
+}
+
 
 // - Listage des groupes
 // ----------------------------------- 

@@ -9,7 +9,7 @@
 <div id="zonetravail">
 <ul>
   <!-- BEGIN groupes -->
-  <li><a href="admin-groupes-edit.php?id={g_id}">{g_nom}</a></li>
+  <li><a href="admin-groupes-edit.php?id={g_id}">{g_nom}</a> (<a href="admin-groupes.php?id={g_id}&action=supprimer" onClick="choix=confirm('Etes vous sur de vouloir supprimer ce groupe ?'); if(choix==false){return false;}">supprimer</a>)</li>
   <!-- END groupes -->
 </ul>
 </div>

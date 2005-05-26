@@ -2,14 +2,6 @@
   <head>
     <title>Meta annuaire des Haras Nationnaux</title>
     <link rel="stylesheet" type="text/css" href="templates/style.css">
-    <script language="javascript">
-      function go()
-      {
-        box = document.getElementById('menu_branche');
-        destination = box.options[box.selectedIndex].value;
-        if (destination) location.href = '?changebra='+destination;
-      }
-    </script>
   </head>
   <body>
     <div id="bandeau">
@@ -25,7 +17,9 @@
 	<a href="index-admin.php">Admin</a>
       </div>
       <div id="menu">
-       <a href="consulter.php">Consulter</a> | <a href="rechercher.php">Rechercher Avancé</a> | <a href="login.php">Login/Logout</a> 
+       <a href="consulter.php">Consulter</a> | <a href="rechercher.php">Rechercher Avancé</a>
+       &nbsp;|&nbsp;
+       <a href="login.php">{connect}</a> 
       </div>
     </div>
 

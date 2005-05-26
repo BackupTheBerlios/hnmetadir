@@ -101,7 +101,6 @@ function affstruct_ent($cat,$pere,$espace,$bra_id)
 
                 if($found == true)
                 {
-			echo $id;
                 	affstruct_ent($cat,$id,$espace,$bra_id);
                 }
 
