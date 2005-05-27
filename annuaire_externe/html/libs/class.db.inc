@@ -49,7 +49,7 @@ class database {
 			$this->error_mysql("Problème de requète");
 			return 0;
 		}
-        $this->requetes++;
+		else return ($this->result);
 	}
 
 

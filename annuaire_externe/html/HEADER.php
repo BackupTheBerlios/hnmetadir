@@ -3,6 +3,7 @@
 include('libs/class.template.inc');
 include('libs/class.db.inc');
 include('functions.php');
+include('fonctions.php');
 
 // objet template
 $tpl = new Template('templates/');

@@ -5,6 +5,38 @@ include('HEADER.php');
 
 // ##################################################################
 
+$sql="SELECT * FROM ENTITEES WHERE ENT_ID=".$_GET['ent'];
+
+$CIL=InitPOReq($sql,'annuaire_externe');
+$rep=$db->query($sql);
+$data=$db->fetch_array();
+echo "<table>";
+foreach ($CIL as $pobj) {
+	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+	EchoLig($pobj->NmChamp);
+}
+echo "</table>";
+// fonction qui affiche une ligne de tableau
+// AFfiche le champ toujours en édition, et en consult uniquement si valeur non vide
+// FTE=Force Type Edit (ne tiens pas compte de ce qu'il y a ds l'objet)
+function EchoLig($NmChamp,$FTE=""){
+	global $CIL,$pobj;
+	// FTE= Force Type Edit
+	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
+	if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") { 
+	  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
+		if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+			echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+			} 
+		echo "</td>\n";
+		echo "<td>";
+	  	// traitement valeurs avant MAJ
+  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+		echo "</td></tr>\n";
+	}
+}
+
 $tpl->set_file('FileRef','consulter.html');
 
 
@@ -86,7 +118,8 @@ function affstruct_ent($cat,$pere,$espace,$bra_id)
 		$nom	     .= ' '.stripslashes( mysql_result($result,$i,"ENT_NOMINATION") );
 		$id          = mysql_result($result,$i,"ENT_ID");
 
-               	$tpl->set_var('nom', '<a href="consulter.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
+               	//$tpl->set_var('nom', '<a href="consulter.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
+		$tpl->set_var('nom', '<a href="consulter_prov.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
                 $tpl->set_var('espace', $espace );
                 $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
                 $tpl->set_var('id', $id );
