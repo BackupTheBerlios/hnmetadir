@@ -5,8 +5,8 @@ include('HEADER.php');
 
 // ##################################################################
 
-$sql="SELECT * FROM ENTITEES WHERE ENT_ID=".$_GET['ent'];
-
+/*
+$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
 $CIL=InitPOReq($sql,'annuaire_externe');
 $rep=$db->query($sql);
 $data=$db->fetch_array();
@@ -36,6 +36,7 @@ function EchoLig($NmChamp,$FTE=""){
 		echo "</td></tr>\n";
 	}
 }
+*/
 
 $tpl->set_file('FileRef','consulter.html');
 
@@ -58,15 +59,17 @@ $tpl->set_file('FileRef','consulter.html');
 // - Fonction - Listage des catégories
 // ------------------------------------
 
-function affstruct_cat($pere,$espace,$bra_id)
+function affstruct_cat($pere,$espace)
 {
         global $db,$tpl,$_GETi,$tabcat;
 
-        $query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'" AND `BRANCHES_BRA_ID`="'.$bra_id.'" ORDER BY `CAT_NOM` ASC';
+        $query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'"  ORDER BY `CAT_NOM` ASC';
 	$result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
 	$cats = explode('|', $_GET['cats']);
+	if($pere != 0) {
 	$espace .= '<img src="templates/images/espace.gif" alt="espace">';
+	}
 	
         for ($i=0; $i<$n; $i++)
 	{
@@ -74,11 +77,17 @@ function affstruct_cat($pere,$espace,$bra_id)
                 $id=mysql_result($result,$i,"CAT_ID");
 		$description=mysql_result($result,$i,"CAT_DESCRIPTION");
 		
-              	$tpl->set_var('nom', '<a href="consulter.php?bra_id='.$bra_id.'&cat='.$id.'">'.$nom.'</a>' );
+              	$tpl->set_var('nom', '<a href="consulter.php?cat='.$id.'">'.$nom.'</a>' );
 		$tpl->set_var('espace', $espace );
 		$tpl->set_var('description', $description ); // laisser slashé 
-		$tpl->set_var('icone', '<img src="templates/images/folder.png" alt="folder">' );
                 $tpl->set_var('id', $id );
+
+		if($pere == 0) {
+			$tpl->set_var('icone', '<img src="templates/images/branche.png" alt="folder">' );
+		} else {
+			$tpl->set_var('icone', '<img src="templates/images/folder.png" alt="folder">' );
+		}
+
                 $tpl->parse('arbre_block', 'arbre', true);
 
 
@@ -91,10 +100,10 @@ function affstruct_cat($pere,$espace,$bra_id)
 
 		if($found == true) 
 		{
-			affstruct_cat($id,$espace,$bra_id);
+			affstruct_cat($id,$espace);
 
 			// affiche les entitées
-			affstruct_ent($id,0,$espace,$bra_id);
+			affstruct_ent($id,0,$espace);
 		}
        }
 } 
@@ -104,7 +113,7 @@ function affstruct_cat($pere,$espace,$bra_id)
 // - Fonction - Listage des entitee d'une catégorie
 // -------------------------------------------------
 
-function affstruct_ent($cat,$pere,$espace,$bra_id)
+function affstruct_ent($cat,$pere,$espace)
 {
         global $db,$tpl,$tabent;
 
@@ -119,7 +128,7 @@ function affstruct_ent($cat,$pere,$espace,$bra_id)
 		$id          = mysql_result($result,$i,"ENT_ID");
 
                	//$tpl->set_var('nom', '<a href="consulter.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
-		$tpl->set_var('nom', '<a href="consulter_prov.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
+		$tpl->set_var('nom', '<a href="consulter_prov.php?ent='.$id.'">'.$nom.'</a>' );
                 $tpl->set_var('espace', $espace );
                 $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
                 $tpl->set_var('id', $id );
@@ -160,53 +169,33 @@ function affstruct_users($id)
 	}
 }
 
-// - Fonction - Listage des branches
-// -------------------------------------------
-
-function affstruct_branches() {
-	global $db,$tpl,$_GET;
-
-	$db->query('SELECT * FROM `BRANCHES` ORDER BY `BRA_ID` ASC');
-	while( $data = $db->fetch_array() )
-	{
-		$braid = $data['BRA_ID'];
-		$branom  = stripslashes($data['BRA_NOM']);
-
-		$tpl->set_var('id', $braid );
-		$tpl->set_var('nom', '<a href="?bra_id='.$braid.'">'.$branom.'</a>' );
-		$tpl->set_var('icone', '<img src="templates/images/branche.png" alt="fiche">' );
-		$tpl->set_var('espace', '' );
-		$tpl->parse('arbre_block', 'arbre', true);
-
-		 // branche à explorer ?
-                 if( $braid == $_GET['bra_id'] ) {
-                         affstruct_cat(0,'',$_GET['bra_id']);
-                 }
-	}
-}
-
 // ------------------------------------------------
 // ------------------------------------------------
 
-$tpl->set_block('FileRef', 'arbre', 'arbre_block');
-	
 	$tabcat = array();
 	$tabent = array();
 	
 	if($_GET['cat']) 
 	{
 		$tabcat = chemin_categorie($_GET['cat']);
+		$tpl->set_var('div_udisp', 'none');
 	} 
 	elseif($_GET['ent'])
 	{
 		$tabent = chemin_entitee($_GET['ent']);
+		$tpl->set_var('div_udisp', 'display');
+	}
+	else
+	{
+		$tpl->set_var('div_udisp', 'none');
 	}
 
-	affstruct_branches();
+	$tpl->set_block('FileRef', 'arbre', 'arbre_block');
+	affstruct_cat(0, '');
 
 $tpl->parse('FileOut', 'FileRef');
 
 // ######################################################################
-$tpl->parse('arbre_block', 'arbre', true);
+
 include('FOOTER.php');
 ?>

@@ -35,7 +35,7 @@ function chemin_categorie($id)
         // ajout dans ce tableau temporaire
         array_push($tabcat, $id);
 
-	$query='SELECT `CAT_ID`,`CAT_PARENTID`,`BRANCHES_BRA_ID` FROM `CATEGORIES` WHERE `CAT_ID`="'.$id.'"';
+	$query='SELECT `CAT_ID`,`CAT_PARENTID` FROM `CATEGORIES` WHERE `CAT_ID`="'.$id.'"';
 	$result = mysql_query($query) or die(mysql_error());
         $row = mysql_fetch_array($result);
 	

@@ -166,14 +166,13 @@ DIV#g_arbo {
 float:left;
 width:30%;
 overflow:auto;
-border-right:1px dashed black;
+border-right:1px solid black;
 padding:5px;
 height:100%
 }
 
 DIV#c_entitee {
 float:right;;
-border-bottom:1px dashed black;
 width: 68%;
 right:2%;
 height:50%;
@@ -186,3 +185,14 @@ width: 68%;
 right:2%;
 height:50%
 }
+
+DIV#c_user H2 {
+background:#900000;
+color:#FFFFFF;
+}
+
+DIV#c_entitee H2 {
+background:#900000;
+color:#FFFFFF;
+}
+
