@@ -22,9 +22,11 @@ $tpl->parse('HeaderOut', 'HeaderRef');
 // ------------------------------------------------------------
 
 // On imprime la page dans le bonne ordre
-$tpl->p('HeaderOut');
-$tpl->p('FileOut');
-
+if($popup != true) 
+{	
+	$tpl->p('HeaderOut');
+	$tpl->p('FileOut');
+}
 
 // on ferme la connexion
 $db->close_mysql();

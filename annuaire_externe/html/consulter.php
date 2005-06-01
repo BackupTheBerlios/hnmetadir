@@ -5,38 +5,6 @@ include('HEADER.php');
 
 // ##################################################################
 
-/*
-$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
-$CIL=InitPOReq($sql,'annuaire_externe');
-$rep=$db->query($sql);
-$data=$db->fetch_array();
-echo "<table>";
-foreach ($CIL as $pobj) {
-	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-	EchoLig($pobj->NmChamp);
-}
-echo "</table>";
-// fonction qui affiche une ligne de tableau
-// AFfiche le champ toujours en édition, et en consult uniquement si valeur non vide
-// FTE=Force Type Edit (ne tiens pas compte de ce qu'il y a ds l'objet)
-function EchoLig($NmChamp,$FTE=""){
-	global $CIL,$pobj;
-	// FTE= Force Type Edit
-	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") { 
-	  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
-		if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-			echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-			} 
-		echo "</td>\n";
-		echo "<td>";
-	  	// traitement valeurs avant MAJ
-  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-		echo "</td></tr>\n";
-	}
-}
-*/
 
 $tpl->set_file('FileRef','consulter.html');
 
@@ -123,13 +91,12 @@ function affstruct_ent($cat,$pere,$espace)
         $espace .= '<img src="templates/images/espace.gif" alt="espace">';
         for ($i=0; $i<$n; $i++)
         {
-		$nom         = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
-		$nom	     .= ' '.stripslashes( mysql_result($result,$i,"ENT_NOMINATION") );
-		$id          = mysql_result($result,$i,"ENT_ID");
+				$nom = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
+				$nom .= ' '.stripslashes( mysql_result($result,$i,"ENT_NOMINATION") );
+				$id  = mysql_result($result,$i,"ENT_ID");
 
-               	//$tpl->set_var('nom', '<a href="consulter.php?bra_id='.$bra_id.'&ent='.$id.'">'.$nom.'</a>' );
-		$tpl->set_var('nom', '<a href="consulter_prov.php?ent='.$id.'">'.$nom.'</a>' );
-                $tpl->set_var('espace', $espace );
+               	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a>' );
+				$tpl->set_var('espace', $espace );
                 $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
                 $tpl->set_var('id', $id );
                 $tpl->parse('arbre_block', 'arbre', true);
@@ -150,22 +117,28 @@ function affstruct_ent($cat,$pere,$espace)
 }              
 
 
-// - Fonction - Listage des entitee d'une catégorie
+// - Fonction - Listage des personnes d'une entitée 
 // -------------------------------------------------
 
-function affstruct_users($id)
+function aff_personnes($id)
 {
 	global $tpl,$db;
 
-	$db->query('SELECT * FROM `FICHES`,`AFFECTE_ENTITEES_FICHES` WHERE AFFECTE_ENTITEES_FICHES.ENTITEES_ENT_ID="'.$id.'" AND AFFECTE_ENTITEES_FICHES.FICHES_FIC_ID=FICHES.FIC_ID');
+	$db->query('SELECT * FROM `PERSONNES`,`AFFECTE_ENTITEES_PERSONNES` WHERE AFFECTE_ENTITEES_PERSONNES.ENTITEES_ENT_ID="'.$id.'" AND AFFECTE_ENTITEES_PERSONNES.PERSONNES_PER_ID=PERSONNES.PER_ID');
+	$tpl->set_block('FileRef', 'personnes', 'personnes_block');
+
 	while( $data = $db->fetch_array($req) )
 	{
-		$tpl->set_var('id', $data['FIC_ID'] );
-		$nom = stripslashes($data['FIC_NOM']).' '.stripslashes($data['FIC_PRENOM']);
-		$nom = '<a href="#" onclick="window.open(\'fiche.php?id='.$id.'\', \'Fiche de {nom}\', config=\'height=600, width=400, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
-		$tpl->set_var('nom',  $nom);
-		$tpl->set_var('icone', '<img src="templates/images/user.png" alt="fiche">' );
-		$tpl->parse('arbre_block', 'arbre', true);
+		$tpl->set_var('u_id', $data['PER_ID'] );
+		$nom = $data['PER_TITRE'].' '.stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']);
+		$nom = '<a href="#" onclick="window.open(\'personne.php?id='.$id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
+		$tpl->set_var('p_nom',  $nom);
+		$tpl->set_var('p_mail', $data['PER_MAIL'] );
+		$tpl->set_var('p_tel', $data['PER_TEL'] );
+		$tpl->set_var('p_mobile', $data['PER_MOBILE']);
+		$tpl->set_var('p_fonction', $data['PER_FONCTION']);
+
+		$tpl->parse('personnes_block', 'personnes', true);
 	}
 }
 
@@ -174,20 +147,82 @@ function affstruct_users($id)
 
 	$tabcat = array();
 	$tabent = array();
-	
+
+	// ON NAVIGUE DANS LES CATEGORIE
 	if($_GET['cat']) 
 	{
+		// fonction permettant de récuperer tout les id des cats parents
 		$tabcat = chemin_categorie($_GET['cat']);
-		$tpl->set_var('div_udisp', 'none');
+		// on cache la partie "personne"
+		$tpl->set_var('div_pdisp', 'none');
+
+		// On affiche la description de la cat
+		$db->query('SELECT `CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_ID`="'.(int)$_GET['cat'].'"');
+		$data = $db->fetch_array();
+
+		$contenu  = stripslashes($data['CAT_DESCRIPTION']);
+		$contenu .= '<br><br><b>Actions :</b><br>
+		             - <a href="">Ajouter une sous catégorie</a><br>
+			     - <a href="">Ajouter une entitée</a><br>
+			     - <a href="">Gérer les droits</a><br>
+			     - <a htef="">Gérer les champs spéciaux</a><br>';
+		$tpl->set_var('contenu', $contenu);
 	} 
+	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
 	elseif($_GET['ent'])
 	{
+		// on récupere les ids des entitées parentes
 		$tabent = chemin_entitee($_GET['ent']);
-		$tpl->set_var('div_udisp', 'display');
+		// on affiche le calque des personnes
+		$tpl->set_var('div_pdisp', 'display');
+		// hop on affiche la liste des personnes
+		aff_personnes((int)$_GET['ent']);
+
+		// on affiche les infos sur l'entitée
+
+
+
+$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
+$CIL=InitPOReq($sql,'annuaire_externe');
+$rep=$db->query($sql);
+$data=$db->fetch_array();
+echo "<table>";
+
+foreach ($CIL as $pobj) 
+{
+	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+	$NmChamp = $pobj->NmChamp;
+
+	// consultation ou édition ?
+	if ($FTE!="") $CIL[$Nmchamp]->TypEdit=$FTE;
+
+	if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") { 
+	  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
+		if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+			echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+		} 
+		echo "</td>\n";
+		echo "<td>";
+	  	// traitement valeurs avant MAJ
+		$CIL[$NmChamp]->DirEcho=true;
+  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+		echo "</td></tr>\n";
+	}
+}
+
+echo "</table>";
+
+
+
+
+
+
+		
 	}
 	else
 	{
-		$tpl->set_var('div_udisp', 'none');
+		$tpl->set_var('div_pdisp', 'none');
 	}
 
 	$tpl->set_block('FileRef', 'arbre', 'arbre_block');

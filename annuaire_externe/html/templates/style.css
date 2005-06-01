@@ -178,21 +178,11 @@ right:2%;
 height:50%;
 }
 
-DIV#c_user {
+DIV#c_personnes {
 float:right;
 margin-top:10px;
 width: 68%;
 right:2%;
 height:50%
-}
-
-DIV#c_user H2 {
-background:#900000;
-color:#FFFFFF;
-}
-
-DIV#c_entitee H2 {
-background:#900000;
-color:#FFFFFF;
 }
 
