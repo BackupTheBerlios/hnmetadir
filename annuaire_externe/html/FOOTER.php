@@ -25,8 +25,8 @@ $tpl->parse('HeaderOut', 'HeaderRef');
 if($popup != true) 
 {	
 	$tpl->p('HeaderOut');
-	$tpl->p('FileOut');
 }
+$tpl->p('FileOut');
 
 // on ferme la connexion
 $db->close_mysql();

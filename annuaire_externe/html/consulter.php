@@ -36,7 +36,9 @@ function affstruct_cat($pere,$espace)
         $n = mysql_num_rows($result);
 	$cats = explode('|', $_GET['cats']);
 	if($pere != 0) {
-	$espace .= '<img src="templates/images/espace.gif" alt="espace">';
+		$espace .= '<img src="templates/images/espace.gif" alt="espace">|';
+	} else {
+		$espace .= '|';
 	}
 	
         for ($i=0; $i<$n; $i++)
@@ -46,7 +48,7 @@ function affstruct_cat($pere,$espace)
 		$description=mysql_result($result,$i,"CAT_DESCRIPTION");
 		
               	$tpl->set_var('nom', '<a href="consulter.php?cat='.$id.'">'.$nom.'</a>' );
-		$tpl->set_var('espace', $espace );
+		$tpl->set_var('espace', $espace.'&nbsp;--' );
 		$tpl->set_var('description', $description ); // laisser slashé 
                 $tpl->set_var('id', $id );
 
@@ -88,7 +90,7 @@ function affstruct_ent($cat,$pere,$espace)
         $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
         $result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
-        $espace .= '<img src="templates/images/espace.gif" alt="espace">';
+        $espace .= '<img src="templates/images/espace.gif" alt="espace">|';
         for ($i=0; $i<$n; $i++)
         {
 				$nom = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
@@ -96,7 +98,7 @@ function affstruct_ent($cat,$pere,$espace)
 				$id  = mysql_result($result,$i,"ENT_ID");
 
                	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a>' );
-				$tpl->set_var('espace', $espace );
+				$tpl->set_var('espace', $espace.'&nbsp;--&nbsp;' );
                 $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
                 $tpl->set_var('id', $id );
                 $tpl->parse('arbre_block', 'arbre', true);
@@ -131,7 +133,7 @@ function aff_personnes($id)
 	{
 		$tpl->set_var('u_id', $data['PER_ID'] );
 		$nom = $data['PER_TITRE'].' '.stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']);
-		$nom = '<a href="#" onclick="window.open(\'personne.php?id='.$id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
+		$nom = '<a href="#" onclick="window.open(\'popup_personne.php?id='.$id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
 		$tpl->set_var('p_nom',  $nom);
 		$tpl->set_var('p_mail', $data['PER_MAIL'] );
 		$tpl->set_var('p_tel', $data['PER_TEL'] );
@@ -162,10 +164,11 @@ function aff_personnes($id)
 
 		$contenu  = stripslashes($data['CAT_DESCRIPTION']);
 		$contenu .= '<br><br><b>Actions :</b><br>
-		             - <a href="">Ajouter une sous catégorie</a><br>
-			     - <a href="">Ajouter une entitée</a><br>
-			     - <a href="">Gérer les droits</a><br>
-			     - <a htef="">Gérer les champs spéciaux</a><br>';
+		             Catégorie : <a href="#" onclick="window.open(\'popup_cat.php?action=ajout&id='.(int)$_GET['cat'].'\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">Ajouter une sous catégorie</a> / 
+			     <a href="#" onclick="window.open(\'popup_cat.php?action=edit&id='.(int)$_GET['cat'].'\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">Editer cette catégorie</a> / 
+			     <a href="">Supprimer cette catégorie</a><br>
+			     Entitées : <a  href="#" onclick="window.open(\'http://localhost/pya/edit_table.php?lc_NM_TABLE=ENTITEES&lc_adrr[popup_ent.php]=/pya/LIST_TABLES.php&lc_parenv[noinfos]=true\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Ajouter</a><br>
+			     Gestion : <a href="#" onclick="window.open(\'popup_droits.php?id='.(int)$_GET['cat'].'\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Les droits</a> / <a htef="">Les champs spéciaux</a><br>';
 		$tpl->set_var('contenu', $contenu);
 	} 
 	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
@@ -182,42 +185,42 @@ function aff_personnes($id)
 
 
 
-$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
-$CIL=InitPOReq($sql,'annuaire_externe');
-$rep=$db->query($sql);
-$data=$db->fetch_array();
-echo "<table>";
+		$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
+		$CIL=InitPOReq($sql,'annuaire_externe');
+		$rep=$db->query($sql);
+		$data=$db->fetch_array();
+		$tmp = '<table>';
 
-foreach ($CIL as $pobj) 
-{
-	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-	$NmChamp = $pobj->NmChamp;
+		foreach ($CIL as $pobj) 
+		{
+			$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+			$NmChamp = $pobj->NmChamp;
 
-	// consultation ou édition ?
-	if ($FTE!="") $CIL[$Nmchamp]->TypEdit=$FTE;
+			// consultation ou édition ?
+			$CIL[$Nmchamp]->TypEdit = 'C';
 
-	if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") { 
-	  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
-		if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-			echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-		} 
-		echo "</td>\n";
-		echo "<td>";
-	  	// traitement valeurs avant MAJ
-		$CIL[$NmChamp]->DirEcho=true;
-  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-		echo "</td></tr>\n";
-	}
-}
+			if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") 
+			{ 
+			  	$tmp .= '<tr><td>'.$CIL[$NmChamp]->Libelle;
 
-echo "</table>";
+				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
+				{
+					$tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+				} 
 
+				$tmp .= '</td>'."\n";
+				$tmp .= '<td>';
+			  	// traitement valeurs avant MAJ
+				$CIL[$NmChamp]->DirEcho = false;
+		  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+				$tmp .= $CIL[$NmChamp]->EchoEdit(); // pas de champs hidden
+				$tmp .= '</td></tr>'."\n";
+			}
+		}
 
+		$tmp .= '</table>';
 
-
-
-
+		$tpl->set_var('contenu', $tmp);
 		
 	}
 	else
