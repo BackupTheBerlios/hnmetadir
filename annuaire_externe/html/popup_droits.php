@@ -1,31 +1,27 @@
 <?PHP
 
+$popup = true;
 include('HEADER.php');
-
-if( !$_SESSION['branche_admin'] ) header('Location: index.php');
 
 // ##################################################################
 
 
-$tpl->set_file('FileRef','gestion-categories-edit.html');
+$tpl->set_file('FileRef','popup_droits.html');
 
 $id = (int)$_GET['id'];
 
 // cette arbo existe bien ?
 $db->query('SELECT * FROM `CATEGORIES` WHERE `CAT_ID`="'.$id.'"');
 if(! $db->num_rows()) {
-	header('Location: gestion-categories.php');
+	echo '<script language="javascript">window.close();</script>';	
 }
-
 
 // - Traitement du du formulaire
 // --------------------------------------
 
 
-if($_POST['nom']) 
+if($_POST) 
 {
-	echo 'Nbr lecture :'.count($_POST['users_r'])."\n";
-	echo 'Nbr ecriture : '.count($_POST['users_w']);
 
 	// on supprime toutes les perms pour toutes les refaires
 	$db->query('DELETE FROM `PERMISSIONS` WHERE `CATEGORIES_CAT_ID`="'.$id.'"');
@@ -33,7 +29,7 @@ if($_POST['nom'])
 	// on reconstruit le droit de lecture
 	for($i=0; $i<count($_POST['users_r']);$i++) 
 	{
-		mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE) VALUES ("'.$id.'","'.$_POST['users_r'][$i].'","R")');
+		mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE,PERM_DTCREA,PERM_COOPE) VALUES ("'.$id.'","'.$_POST['users_r'][$i].'","R","CURDATE()","'.$_SESSION['auth_id'].'")');
 	}
 
 	// on reconstruit le droit d'ajout
@@ -50,16 +46,18 @@ if($_POST['nom'])
 		// Read & Write
 		if( $found == true ) 
 		{ 
-			mysql_query('UPDATE `PERMISSIONS` SET `PERM_TYPE`="RW" WHERE CATEGORIES_CAT_ID="'.$id.'" AND `GROUPES_GRO_ID`="'.$_POST['users_w'][$i].'"');
+			mysql_query('UPDATE `PERMISSIONS` SET `PERM_TYPE`="RW", `PERM_DTMAJ`="CURDATE()", `PERM_COOPE`="'.$_SESSION['auth_id'].'" WHERE CATEGORIES_CAT_ID="'.$id.'" AND `GROUPES_GRO_ID`="'.$_POST['users_w'][$i].'"');
 		} 
 		else 
 		{ 
-			mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE) VALUES ("'.$id.'","'.$_POST['users_w'][$i].'","W")');
+			mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE,PERM_DTCREA,PERM_COOPE) VALUES ("'.$id.'","'.$_POST['users_w'][$i].'","W","CURDATE()","'.$_SESSION['auth_id'].'")');
 		}
 	}
 
-	$db->query('UPDATE `CATEGORIES` SET `CAT_NOM`="'.addslashes($_POST['nom']).'", `CAT_DESCRIPTION`="'.addslashes($_POST['description']).'" WHERE `CAT_ID`="'.$id.'"');	
-	header('Location: gestion-categories.php');
+                echo '<script language="javascript">
+                        window.close();
+                      </script>';
+
 
 }
 
@@ -102,6 +100,7 @@ While( $data = $db->fetch_array() ) {
 $tpl->parse('FileOut', 'FileRef');
 
 // ######################################################################
+
 
 include('FOOTER.php');
 ?>

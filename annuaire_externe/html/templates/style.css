@@ -165,7 +165,7 @@ width:600px;
 DIV#g_arbo {
 float:left;
 width:30%;
-overflow:auto;
+overflow:scroll;
 border-right:1px solid black;
 padding:5px;
 height:100%
@@ -176,6 +176,7 @@ float:right;;
 width: 68%;
 right:2%;
 height:50%;
+overflow:auto;
 }
 
 DIV#c_personnes {

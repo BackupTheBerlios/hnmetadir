@@ -1,3 +1,9 @@
+<html>
+  <head>
+     <link rel="stylesheet" type="text/css" href="templates/style.css">
+  </head>
+  <body>
+
 <script language="javascript">
 function SelectionnerTout(action, selectbox) {
   var srcList = document.getElementById(selectbox);
@@ -35,13 +41,7 @@ function SupprGroupe(zone) {
 
 <h2>Gestion de la catégorie {c_nom}</h2>
 
-<form action="gestion-categories-edit.php?id={c_id}" method="POST">
-<h4>Informations</h4>
-<div id="zonetravail">
-  <b>Nom :</b> <input type="text" name="nom" value="{c_nom}"><br>
-  <b>Description :</b> <input type="text" name="description" value="{c_description}"><br>
-</div>
-<br>
+<form action="popup_droits.php?id={c_id}" method="POST">
 
 <h4>Droit de lecture</h4>
 <div id="zonetravail">
@@ -101,5 +101,7 @@ function SupprGroupe(zone) {
 </div>
 <br>
 <input type="image" src="templates/images/valide.gif" onclick="SelectionnerTout(true, 'users_r');SelectionnerTout(true, 'users_w');">
-<input type="image" src="templates/images/del.gif" onclick="go.back;">
+<input type="image" src="templates/images/del.gif" onclick="window.close();">
 </form>
+</body>
+</html>
