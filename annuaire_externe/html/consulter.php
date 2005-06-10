@@ -24,6 +24,26 @@ $tpl->set_file('FileRef','consulter.html');
 // Parallelement on liste les entitées que possède cette catégorie.
 
 
+// ORGANISATION DU CODE
+// ~~~~~~~~~~~~~~~~~~~~
+// fonction d'affichage des catégories
+// fonction d'affichage des entitées
+// fonction de listage des personnes
+//
+// Si $cat est définie alors :
+//    on recupere les id parents
+//    on affiche le menu et la description dans le cadre haut droit
+// Sinon si $ent est défini
+//    on récupere les id des entitées parents
+//    on affiche le calques des personnes
+//    on affiche les personnes
+//    on affiche les propriétés/valeur de l'entitée
+// Fin de boucle
+// On affiche les catégories en appelant la "fonction cat" qui appelera la "fonction ent" si besoin
+//
+
+
+
 // - Fonction - Listage des catégories
 // ------------------------------------
 
@@ -184,7 +204,6 @@ function aff_personnes($id)
 		// on affiche les infos sur l'entitée
 
 
-
 		$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
 		$CIL=InitPOReq($sql,'annuaire_externe');
 		$rep=$db->query($sql);
@@ -198,17 +217,17 @@ function aff_personnes($id)
 
 			// consultation ou édition ?
 			// a modifier suivant profil
-			$CIL[$NmChamp]->TypEdit = '1';
+			$CIL[$NmChamp]->TypEdit = 'C';
 			if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 			{ 
-			  	$tmp .= '<tr><td>'.$CIL[$NmChamp]->Libelle;
+			  	$tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
 				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
 				{
 					$tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
 				} 
 
 				$tmp .= '</td>'."\n";
-				$tmp .= '<td>';
+				$tmp .= '<td><b>:</b> ';
 			  	// traitement valeurs avant MAJ
 				$CIL[$NmChamp]->DirEcho = false;
 		  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);

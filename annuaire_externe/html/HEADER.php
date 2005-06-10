@@ -15,9 +15,16 @@ $db->connect();
 session_start();
 
 // Untilisateur ou anonyme ?
-if($_SESSION['auth'] != true && $REQUEST_URI != '/login.php' ) 
+if($_SESSION['auth'] != true && $REQUEST_URI != '/login.php') 
 {
-	header('Location: login.php');
+	if($popup == true) {
+                echo '<script language="javascript">
+                        window.opener.location.reload();
+                        window.close();
+                      </script>';
+	} else {
+		header('Location: login.php');
+	}
 }
 
 

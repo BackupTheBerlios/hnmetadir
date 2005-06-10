@@ -8,9 +8,8 @@ include('HEADER.php');
 $tpl->set_file('FileRef','index.html');
 
 
+header('Location: consulter.php');
 
-
-//$tpl->set_var('breves_bloc','breves');
 
 $tpl->parse('FileOut', 'FileRef');
 

@@ -1,7 +1,7 @@
 <?PHP
 
-include('HEADER.php');
 $popup = true;
+include('HEADER.php');
 
 // ##################################################################
 
@@ -14,13 +14,13 @@ $popup = true;
 
 
 
+
+
+
 // - Génération du formulaire
 // ------------------------------------------------------
 
-$NM_TABLE="ENTITEES";  
-// construction du set
-$sql= $db->query("SELECT NM_CHAMP from `DESC_TABLES` where NM_TABLE='$NM_TABLE' ORDER BY ORDAFF, LIBELLE");
-
+$sql='SELECT * FROM `PERSONNES` WHERE PER_ID="'.$_GET['id'].'"';
 $CIL=InitPOReq($sql,'annuaire_externe');
 $rep=$db->query($sql);
 $data=$db->fetch_array();
@@ -29,7 +29,7 @@ echo '<form action="popup_personne.php" method="post" name="theform" ENCTYPE="mu
 echo "<table>";
 foreach ($CIL as $pobj) {
 	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-	EchoLig($pobj->NmChamp, 'C');
+	EchoLig($pobj->NmChamp, '');
 }
 echo "</table>";
 
@@ -40,13 +40,15 @@ function EchoLig($NmChamp,$FTE=""){
 	global $CIL,$pobj;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") { 
-	  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
+	if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	{ 
+		
+	  	echo "<tr><td><b>".$CIL[$NmChamp]->Libelle.'</b>';
 		if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
 			echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
 			} 
 		echo "</td>\n";
-		echo "<td>";
+		echo "<td><b>:</b> ";
 	  	// traitement valeurs avant MAJ
   	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
 		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
@@ -54,6 +56,9 @@ function EchoLig($NmChamp,$FTE=""){
 	}
 }
 
+echo '</table>';
+echo '<center><br><hr width="150"><br>'."\n";
+echo '<input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center>'."\n";
 echo '</form>';
 
 // ######################################################################
