@@ -133,7 +133,7 @@ function aff_personnes($id)
 	{
 		$tpl->set_var('u_id', $data['PER_ID'] );
 		$nom = $data['PER_TITRE'].' '.stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']);
-		$nom = '<a href="#" onclick="window.open(\'popup_personne.php?id='.$id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
+		$nom = '<a href="#" onclick="window.open(\'popup_personne.php?id='.$id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=400, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
 		$tpl->set_var('p_nom',  $nom);
 		$tpl->set_var('p_mail', $data['PER_MAIL'] );
 		$tpl->set_var('p_tel', $data['PER_TEL'] );
@@ -167,7 +167,7 @@ function aff_personnes($id)
 		             Catégorie : <a href="#" onclick="window.open(\'popup_cat.php?action=ajout&id='.(int)$_GET['cat'].'\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">Ajouter une sous catégorie</a> / 
 			     <a href="#" onclick="window.open(\'popup_cat.php?action=edit&id='.(int)$_GET['cat'].'\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">Editer cette catégorie</a> / 
 			     <a href="">Supprimer cette catégorie</a><br>
-			     Entitées : <a  href="#" onclick="window.open(\'http://localhost/pya/edit_table.php?lc_NM_TABLE=ENTITEES&lc_adrr[popup_ent.php]=/pya/LIST_TABLES.php&lc_parenv[noinfos]=true\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Ajouter</a><br>
+			     Entitées : <a  href="#" onclick="window.open(\'popup_personne.php\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Ajouter</a><br>
 			     Gestion : <a href="#" onclick="window.open(\'popup_droits.php?id='.(int)$_GET['cat'].'\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Les droits</a> / <a htef="">Les champs spéciaux</a><br>';
 		$tpl->set_var('contenu', $contenu);
 	} 
@@ -197,7 +197,7 @@ function aff_personnes($id)
 			$NmChamp = $pobj->NmChamp;
 
 			// consultation ou édition ?
-			$CIL[$Nmchamp]->TypEdit = 'C';
+			$CIL[$NmChamp]->TypEdit = 'C';
 
 			if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") 
 			{ 

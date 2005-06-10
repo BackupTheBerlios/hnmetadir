@@ -5,14 +5,27 @@ $popup = true;
 
 // ##################################################################
 
-$tpl->set_file('FileRef','consulter.html');
 
 
-$sql='SELECT * FROM `PERSONNES` WHERE PER_ID="'.$_GET['id'].'"';
+// - Traitement si formulaire posté
+// ------------------------------------------------------
+
+
+
+
+
+// - Génération du formulaire
+// ------------------------------------------------------
+
+$NM_TABLE="ENTITEES";  
+// construction du set
+$sql= $db->query("SELECT NM_CHAMP from `DESC_TABLES` where NM_TABLE='$NM_TABLE' ORDER BY ORDAFF, LIBELLE");
+
 $CIL=InitPOReq($sql,'annuaire_externe');
 $rep=$db->query($sql);
 $data=$db->fetch_array();
 
+echo '<form action="popup_personne.php" method="post" name="theform" ENCTYPE="multipart/form-data">';
 echo "<table>";
 foreach ($CIL as $pobj) {
 	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
@@ -21,7 +34,7 @@ foreach ($CIL as $pobj) {
 echo "</table>";
 
 // fonction qui affiche une ligne de tableau
-// AFfiche le champ toujours en édition, et en consult uniquement si valeur non vide
+// AFfiche le champ toujours en Ã©dition, et en consult uniquement si valeur non vide
 // FTE=Force Type Edit (ne tiens pas compte de ce qu'il y a ds l'objet)
 function EchoLig($NmChamp,$FTE=""){
 	global $CIL,$pobj;
@@ -41,9 +54,8 @@ function EchoLig($NmChamp,$FTE=""){
 	}
 }
 
-$tpl->parse('FileOut', 'FileRef');
+echo '</form>';
 
 // ######################################################################
 
-include('FOOTER.php');
 ?>
