@@ -197,12 +197,11 @@ function aff_personnes($id)
 			$NmChamp = $pobj->NmChamp;
 
 			// consultation ou édition ?
-			$CIL[$NmChamp]->TypEdit = 'C';
-
-			if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") 
+			// a modifier suivant profil
+			$CIL[$NmChamp]->TypEdit = '1';
+			if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 			{ 
 			  	$tmp .= '<tr><td>'.$CIL[$NmChamp]->Libelle;
-
 				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
 				{
 					$tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
@@ -213,7 +212,7 @@ function aff_personnes($id)
 			  	// traitement valeurs avant MAJ
 				$CIL[$NmChamp]->DirEcho = false;
 		  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-				$tmp .= $CIL[$NmChamp]->EchoEdit(); // pas de champs hidden
+				$tmp .= $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
 				$tmp .= '</td></tr>'."\n";
 			}
 		}
