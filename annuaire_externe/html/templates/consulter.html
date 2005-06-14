@@ -1,4 +1,8 @@
-<script type="text/javascript" src="templates/overlib/overlib.js"><!-- overLIB (c) Erik Bosrup --></script>
+  <script language="javascript">
+	function display() {
+		document.getElementById('amenu').style.visibility='visible';
+	}
+  </script>
 
   <div id="g_arbo">
     <h2>Arborescence</h2>
@@ -6,7 +10,7 @@
       <tr><td><b>Racine</b></td></tr>
       <!-- BEGIN arbre -->
       <tr>
-        <td valign="middle">{espace} {icone} {nom}</td>
+        <td valign="bottom">{espace} <a href="javascript:void(0);" onclick="overlib('{menu}', STICKY, CAPTION, 'Menu',TEXTSIZE, '10px', WRAP)"  onmouseout="return nd();">{icone}</a> {nom}</td>
       </tr>
       <!-- END arbre -->
     </table>

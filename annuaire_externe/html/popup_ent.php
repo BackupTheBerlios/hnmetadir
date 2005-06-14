@@ -6,7 +6,6 @@ include('HEADER.php');
 // ##################################################################
 
 
-// on redimentionne la fenetre
 ?>
 <html>
   <head>
@@ -16,55 +15,130 @@ include('HEADER.php');
   <body>
 <?php
 
-
-// Ajout de l'entitée
-// -----------------------------
-
-if($_POST) 
-{
-	echo '<script language="javascript">
-		window.opener.location.reload();
-		window.close();
-      </script>';
-}
-
-// ---------------------
-
-$db->query('INSERT INTO `ENTITEES` (CATEGORIES_CAT_ID,ENT_DTCREA,ENT_COOPE) VALUES ("'.(int)$_GET['cat_parentid'].'"i,"CURDATE()","'.$_SESSION['auth_id'].'");');
-$id  = mysql_insert_id();
-
-$sql='SELECT * FROM `ENTITEES` WHERE ENT_ID="'.$id.'"';
-$CIL=InitPOReq($sql,'annuaire_externe');
-$rep=$db->query($sql);
-$data=$db->fetch_array();
-echo '<table width="100%">';
-foreach ($CIL as $pobj) {
-	$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-	EchoLig($pobj->NmChamp);
-}
-echo "</table>";
-// fonction qui affiche une ligne de tableau
-// AFfiche le champ toujours en édition, et en consult uniquement si valeur non vide
-// FTE=Force Type Edit (ne tiens pas compte de ce qu'il y a ds l'objet)
 function EchoLig($NmChamp,$FTE=""){
 	global $CIL,$pobj;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") { 
+	if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	{
 	  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
 		if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
 			echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-			} 
+		} 
 		echo "</td>\n";
 		echo "<td>";
 	  	// traitement valeurs avant MAJ
-  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
 		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
 		echo "</td></tr>\n";
 	}
 }
 
+// TRAITEMENT DU FORMULAIRE APRES POSTAGE
+
+if($_POST) 
+{
+
+	$sql=$db->query("SELECT `NM_CHAMP` from `DESC_TABLES` WHERE NM_TABLE='ENTITEES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE");
+	$PYAoMAJ=new PYAobj();
+	$PYAoMAJ->NmBase='annuaire_externe';
+	$PYAoMAJ->NmTable='ENTITEES';
+	$PYAoMAJ->TypEdit='';
+
+	while ($data = $db->fetch_array())
+	{
+		$NOMC=$data['NM_CHAMP']; // nom variable=nom du champ
+  		$PYAoMAJ->NmChamp=$NOMC;
+  		$PYAoMAJ->InitPO();
+		$PYAoMAJ->ValChp=$_POST[$NOMC]; // issu du formulaire
+
+        if ($PYAoMAJ->TypeAff=="FICFOT") 
+		{
+           	$VarFok="Fok".$NOMC;
+           	$PYAoMAJ->Fok=$$VarFok;
+           	$VarFname=$NOMC."_name";
+           	$PYAoMAJ->Fname=$$VarFname;
+           	$VarFsize=$NOMC."_size";
+           	$PYAoMAJ->Fsize=$$VarFsize;
+           	$VarOldFName="Old".$NOMC;
+           	$PYAoMAJ->OFN=$$VarOldFName;
+             
+            $rqncs=$db->query("select ".$PYAoMAJ->NmChamp." from ".$PYAoMAJ->NmTable." where $key ");
+            $rwncs=mysql_fetch_array($rqncs);
+            $PYAoMAJ->Fname=$rwncs[0];
+         }
+       	$set.=$PYAoMAJ->RetSet($keycopy); // key copy sert à la gestion des fichiers liés
+	} // fin boucle sur les champs
+
+	$set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
+	
+	if($_GET['action'] == 'ajout']) {
+		$db->query("INSERT INTO `ENTITEES` SET ".$set);
+	} else {
+		$db->query("UPDATE `ENTITEES` SET ".$set." WHERE `ENT_ID`='".(int)$_GET['id']."'");		
+	}
+
+	// ferme la fenetre & rafraichie la fenetre parent
+	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
+}
+
+
+// Ajout de l'entitée
+// -----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------
+if($_GET['action'] == 'ajout') 
+{
+
+	$sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="ENTITEES" AND `NM_CHAMP`!="TABLE0COMM" ORDER BY `ORDAFF`';
+    $rep=$db->query($sql);
+	        
+	while($data=$db->fetch_array())
+	{
+	    $NM_CHAMP=$data['NM_CHAMP'];
+	    $CIL[$NM_CHAMP] = new PYAobj();
+      	$CIL[$NM_CHAMP]->NmBase='annuaire_externe';
+        $CIL[$NM_CHAMP]->NmTable='ENTITEES';
+	    $CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+		$CIL[$NM_CHAMP]->TypEdit='';
+		$CIL[$NM_CHAMP]->InitPO();
+	}
+
+	echo '<form action="popup_ent.php?action=ajout" method="post" name="theform" ENCTYPE="multipart/form-data">';
+    echo '<table width="100%">';
+    foreach ($CIL as $pobj) {
+            $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+            EchoLig($pobj->NmChamp);
+    }
+    echo '</table>';
+	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
+	echo '</form>';
+
+} 
+// Edition d'une entité
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+elseif($_GET['action'] == 'edition')
+{
+
+	$sql='SELECT * FROM `ENTITEES` WHERE ENT_ID="'.$id.'"';
+	$CIL=InitPOReq($sql,'annuaire_externe');
+	$rep=$db->query($sql);
+	$data=$db->fetch_array();
+	
+	echo '<form action="popup_ent.php?action=edit&id='.(int)$_GET['id'].'" method="post" name="theform" ENCTYPE="multipart/form-data">';
+	echo '<table width="100%">';
+	foreach ($CIL as $pobj) {
+		$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+		EchoLig($pobj->NmChamp);
+	}
+	echo "</table>";
+	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
+	echo '</form>';
+}
+
+
 echo '</body></html>';
+
 // ###############################################:#######################
 
 include('FOOTER.php');

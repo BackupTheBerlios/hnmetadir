@@ -14,7 +14,7 @@
 //\  license agreement at the link above. Please give credit on sites that
 //\  use overLIB and submit changes of the script so other people can use
 //\  them as well.
-//   $Revision: 1.1 $                $Date: 2005/05/24 08:41:15 $
+//   $Revision: 1.2 $                $Date: 2005/06/14 15:08:45 $
 //\/////
 //\mini
 
@@ -35,7 +35,7 @@ registerCommands('donothing,inarray,caparray,sticky,background,noclose,caption,l
 // changed on your html page or through an overLIB call.
 ////////
 if (typeof ol_fgcolor=='undefined') var ol_fgcolor="#CCCCFF";
-if (typeof ol_bgcolor=='undefined') var ol_bgcolor="#333399";
+if (typeof ol_bgcolor=='undefined') var ol_bgcolor="900000";
 if (typeof ol_textcolor=='undefined') var ol_textcolor="#000000";
 if (typeof ol_capcolor=='undefined') var ol_capcolor="#FFFFFF";
 if (typeof ol_closecolor=='undefined') var ol_closecolor="#9999FF";

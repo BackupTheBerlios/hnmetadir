@@ -56,7 +56,7 @@ function affstruct_cat($pere,$espace)
         $n = mysql_num_rows($result);
 	$cats = explode('|', $_GET['cats']);
 	if($pere != 0) {
-		$espace .= '<img src="templates/images/espace.gif" alt="espace">|';
+		$espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
 	} else {
 		$espace .= '|';
 	}
@@ -72,10 +72,30 @@ function affstruct_cat($pere,$espace)
 		$tpl->set_var('description', $description ); // laisser slashé 
                 $tpl->set_var('id', $id );
 
+		// MENU
+		// --------------------------------
+		$menu = "
+			  <b>Catégorie :</b><br>
+			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=ajout&id=".$id."\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
+			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
+			  <b>Entitee :</b><br>
+			  - <a  href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parent=".$id."\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
+			  <b>Gestion :</b><br>
+			  - <a href=\"#\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>
+			  - <a htef=\"\">Les champs spéciaux</a><br";
+			  
+		$menu = str_replace("\"", "&quot;", $menu);
+		$menu = str_replace("\t", "", $menu);
+		$menu = str_replace("\n", "", $menu);
+
+		// -----------------------------------
+
 		if($pere == 0) {
 			$tpl->set_var('icone', '<img src="templates/images/branche.png" alt="folder">' );
+			$tpl->set_var('menu', $menu);
 		} else {
 			$tpl->set_var('icone', '<img src="templates/images/folder.png" alt="folder">' );
+			$tpl->set_var('menu', $menu);
 		}
 
                 $tpl->parse('arbre_block', 'arbre', true);
@@ -110,7 +130,7 @@ function affstruct_ent($cat,$pere,$espace)
         $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
         $result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
-        $espace .= '<img src="templates/images/espace.gif" alt="espace">|';
+        $espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
         for ($i=0; $i<$n; $i++)
         {
 				$nom = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
@@ -183,12 +203,6 @@ function aff_personnes($id)
 		$data = $db->fetch_array();
 
 		$contenu  = stripslashes($data['CAT_DESCRIPTION']);
-		$contenu .= '<br><br><b>Actions :</b><br>
-		             Catégorie : <a href="#" onclick="window.open(\'popup_cat.php?action=ajout&id='.(int)$_GET['cat'].'\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">Ajouter une sous catégorie</a> / 
-			     <a href="#" onclick="window.open(\'popup_cat.php?action=edit&id='.(int)$_GET['cat'].'\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');">Editer cette catégorie</a> / 
-			     <a href="">Supprimer cette catégorie</a><br>
-			     Entitées : <a  href="#" onclick="window.open(\'popup_personne.php\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Ajouter</a><br>
-			     Gestion : <a href="#" onclick="window.open(\'popup_droits.php?id='.(int)$_GET['cat'].'\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">Les droits</a> / <a htef="">Les champs spéciaux</a><br>';
 		$tpl->set_var('contenu', $contenu);
 	} 
 	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
