@@ -17,8 +17,8 @@ if($_GET['action'] == 'ajout')
 	{
 		$nom = addslashes($_POST['nom']);
 		$description = $_POST['description'];
-		$parentid = $_POST['parentid'];
-		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_PARENTID,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$parentid.'","CURDATE()", "'.$_SESSION['auth_id'].'");');
+		$cat_parentid = $_POST['cat_parentid'];
+		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_PARENTID,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$cat_parentid.'","CURDATE()", "'.$_SESSION['auth_id'].'");');
 		echo '<script language="javascript">
 			window.opener.location.reload();
 			window.close();
@@ -32,7 +32,7 @@ if($_GET['action'] == 'ajout')
 		parent.window.resizeTo('350','200');
 	</SCRIPT>
 	<form action="popup_cat.php?action=ajout" method="POST">
-	<input type="hidden" name="parentid" value="<?=$_GET['id']?>">
+	<input type="hidden" name="cat_parentid" value="<?=$_GET['cat_parentid']?>">
 	<b>Nom :</b><br>
 	<input type="text" maxlength="50" size="45" name="nom"><br>
 	<b>Description :</b><br>

@@ -19,23 +19,26 @@ function EchoLig($NmChamp,$FTE=""){
 	global $CIL,$pobj;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if( ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
-	{
-		// ne pas afficher les libelle des champs cachés
-		if($CIL[$NmChamp]->TypeAff!="HID") {
-		  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
-			if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-				echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+		if( ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+		{
+			// on vire la ligne categorie parent et entitee parent
+			if($NmChamp != 'CATEGORIES_CAT_ID' && $NmChamp != 'ENT_PARENTID')
+			{
+			// ne pas afficher les libelle des champs cachés
+			if($CIL[$NmChamp]->TypeAff!="HID") {
+		  		echo "<tr><td>".$CIL[$NmChamp]->Libelle;
+				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+				}
 			}
+
+			echo "</td>\n";
+			echo "<td>";
+	  		// traitement valeurs avant MAJ
+	  		$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+			$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+			echo "</td></tr>\n";
 		}
-
-		echo "</td>\n";
-		echo "<td>";
-	  	// traitement valeurs avant MAJ
-	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-		echo "</td></tr>\n";
-
 	}
 }
 
@@ -160,6 +163,11 @@ if($_GET['action'] == 'ajout')
     	}
 
 	echo '</table>';
+
+	// on ajoute en hidden la categorie parent et l'entitée parent
+	echo '<input type="hidden" name="CATEGORIES_CAT_ID" value="'.$_GET['cat_parentid'].'">';
+	echo '<input type="hidden" name="ENT_PARENTID" value="'.$_GET['ent_parentid'].'">';
+	
 	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
 	echo '</form>';
 
@@ -182,6 +190,11 @@ elseif($_GET['action'] == 'edition')
 		EchoLig($pobj->NmChamp);
 	}
 	echo "</table>";
+
+        // on ajoute en hidden la categorie parent et l'entitée parent
+        echo '<input type="hidden" name="CATEGORIES_CAT_ID" value="'.$data['CATEGORIES_CAT_ID'].'">';
+        echo '<input type="hidden" name="ENT_PARENTID" value="'.$data['ENT_PARENTID'].'">';
+
 	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
 	echo '</form>';
 }

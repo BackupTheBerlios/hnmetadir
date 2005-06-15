@@ -76,10 +76,10 @@ function affstruct_cat($pere,$espace)
 		// --------------------------------
 		$menu = "
 			  <b>Catégorie :</b><br>
-			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=ajout&id=".$id."\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
+			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
 			  <b>Entitee :</b><br>
-			  - <a  href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parent=".$id."\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
+			  - <a  href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$id."\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  <b>Gestion :</b><br>
 			  - <a href=\"#\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>
 			  - <a htef=\"\">Les champs spéciaux</a><br";
@@ -144,8 +144,8 @@ function affstruct_ent($cat,$pere,$espace)
 
 		// menu
 		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'Edition\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
-			- Ajouter une sous-entitée<br>
-			- Ajouter une personne";
+			- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'Ajouter une sous-entitée\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
+			- <a href=\"#\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'Ajouter une personne\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a>";
                 $menu = str_replace("\"", "&quot;", $menu);
                 $menu = str_replace("\t", "", $menu);
                 $menu = str_replace("\n", "", $menu);
@@ -244,19 +244,23 @@ function aff_personnes($id)
 			$CIL[$NmChamp]->TypEdit = 'C';
 			if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 			{ 
-			  	$tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
-				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
+				// on vire les champs categorie et entitée parent
+				if($NmChamp != 'ENT_PARENTID' && $NmChamp != 'CATEGORIES_CAT_ID') 
 				{
-					$tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-				} 
+			  		$tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+					if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
+					{
+						$tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+					} 
 
-				$tmp .= '</td>'."\n";
-				$tmp .= '<td><b>:</b> ';
-			  	// traitement valeurs avant MAJ
-				$CIL[$NmChamp]->DirEcho = false;
-		  	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-				$tmp .= $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-				$tmp .= '</td></tr>'."\n";
+					$tmp .= '</td>'."\n";
+					$tmp .= '<td><b>:</b> ';
+			  		// traitement valeurs avant MAJ
+					$CIL[$NmChamp]->DirEcho = false;
+		  	  		$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+					$tmp .= $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+					$tmp .= '</td></tr>'."\n";
+				}
 			}
 		}
 
