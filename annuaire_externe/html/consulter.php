@@ -56,7 +56,7 @@ function affstruct_cat($pere,$espace)
         $n = mysql_num_rows($result);
 	$cats = explode('|', $_GET['cats']);
 	if($pere != 0) {
-		$espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
+		$espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
 	} else {
 		$espace .= '|';
 	}
@@ -130,7 +130,7 @@ function affstruct_ent($cat,$pere,$espace)
         $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
         $result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
-        $espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
+        $espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
         for ($i=0; $i<$n; $i++)
         {
 				$nom = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );

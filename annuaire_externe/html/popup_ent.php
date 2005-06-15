@@ -26,7 +26,7 @@ function EchoLig($NmChamp,$FTE=""){
 			{
 			// ne pas afficher les libelle des champs cachés
 			if($CIL[$NmChamp]->TypeAff!="HID") {
-		  		echo "<tr><td>".$CIL[$NmChamp]->Libelle;
+		  		echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
 				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
 					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
 				}

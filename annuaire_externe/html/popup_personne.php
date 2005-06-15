@@ -169,7 +169,7 @@ if($_GET['action'] == 'ajout')
 elseif($_GET['action'] == 'edition')
 {
 
-	$sql='SELECT * FROM `PERSONNES` WHERE PERS_ID="'.$_GET['id'].'"';
+	$sql='SELECT * FROM `PERSONNES` WHERE PER_ID="'.$_GET['id'].'"';
 	$CIL=InitPOReq($sql,'annuaire_externe');
 	$rep=$db->query($sql);
 	$data=$db->fetch_array();
