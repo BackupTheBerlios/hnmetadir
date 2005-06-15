@@ -51,7 +51,7 @@ function affstruct_cat($pere,$espace)
 {
         global $db,$tpl,$_GETi,$tabcat;
 
-        $query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'"  ORDER BY `CAT_NOM` ASC';
+        $query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'"  AND `CAT_ID`!="0" ORDER BY `CAT_NOM` ASC';
 	$result = mysql_query($query) or die(mysql_error());
         $n = mysql_num_rows($result);
 	$cats = explode('|', $_GET['cats']);
@@ -138,9 +138,19 @@ function affstruct_ent($cat,$pere,$espace)
 				$id  = mysql_result($result,$i,"ENT_ID");
 
                	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a>' );
-				$tpl->set_var('espace', $espace.'&nbsp;--&nbsp;' );
+		$tpl->set_var('espace', $espace.'&nbsp;--&nbsp;' );
                 $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
                 $tpl->set_var('id', $id );
+
+		// menu
+		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'Edition\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
+			- Ajouter une sous-entitée<br>
+			- Ajouter une personne";
+                $menu = str_replace("\"", "&quot;", $menu);
+                $menu = str_replace("\t", "", $menu);
+                $menu = str_replace("\n", "", $menu);
+		$tpl->set_var('menu', $menu);
+
                 $tpl->parse('arbre_block', 'arbre', true);
 
 		
