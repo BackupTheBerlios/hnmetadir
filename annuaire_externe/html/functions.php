@@ -50,3 +50,31 @@ function chemin_categorie($id)
 
 	return $tabcat;
 }
+
+// - Focntion permettant de récuperer toutes les sous catégorie à partir d'un point précis d'une branche
+//   pour supression. Revoie un WHERe tout fait
+function get_subcatsfordel($id)
+{
+        global $tabcat;
+	array_push($tabcat, $id);
+
+        $query='SELECT `CAT_ID`,`CAT_PARENTID` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$id.'"';
+        $result = mysql_query($query) or die(mysql_error());
+	$n = mysql_num_rows($result);
+
+        for ($i=0; $i<$n; $i++)
+	{
+		$id  = mysql_result($result,$i,"CAT_ID"); 
+		get_subcatsfordel($id);
+	}
+
+	for($i=0;$i<count($tabcat);$i++)
+	{
+		if($i == 0 ) {
+			$tmp .= '`CAT_ID`="'.$tabcat[$i].'"';
+		} else {
+			$tmp .= ' OR `CAT_ID`="'.$tabcat[$i].'"';
+		}
+	}
+	return $tmp;
+}

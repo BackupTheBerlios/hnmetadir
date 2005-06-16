@@ -1,0 +1,19 @@
+<html><head></head><body><h3>Création d'une nouvelle branche</h3>
+<div id="zonetravail">
+  <form action="admin-branches.php?action=ajouter" method="post">
+  <b>Nom : <input name="nom" maxlength="50" type="text"> Description :</b> <input name="description" size="30" type="text"><br>
+  <b>Administrateur  :</b>
+  <select name="admin"><!-- BEGIN users --><option value="{u_id}">{u_nom} {u_prenom}</option><!-- END users --></select>
+  <br>
+  <input src="templates/images/valide.gif" type="image">
+  </form>
+</div>
+
+<h3>Gestions des branches</h3>
+<div id="zonetravail">
+  <ul>
+    <!-- BEGIN branches -->
+    <li><img src="templates/images/branche.png" alt="branche"> <a href="admin-branches-edit.php?id={b_id}">{b_nom}</a> (<a href="admin-branches.php?id={b_id}&action=supprimer" onclick="choix=confirm('Etes vous sur de vouloir supprimer cette branche ?\nToutes les sous branches et les entitées qui y sont reliées seront supprimées !'); if(choix==false){return false;}">supprimer</a>)</li>
+    <!-- END branches -->
+  </ul>
+</div></body></html>

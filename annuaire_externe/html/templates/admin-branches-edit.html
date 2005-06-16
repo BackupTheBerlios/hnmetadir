@@ -1,0 +1,10 @@
+<html><head></head><body><h3>Edition de la branche : {nom}</h3>
+<div id="zonetravail">
+  <form action="admin-branches-edit.php?id={id}" method="post">
+  <b>Nom : <input name="nom" maxlength="50" value="{nom}" type="text"> Description :</b> <input name="description" size="30" value="{description}" type="text"><br>
+  <b>Administrateur  :</b>
+  <select name="admin"><!-- BEGIN users --><option value="{u_id}" {selected="">{u_nom} {u_prenom}</option><!-- END users --></select>
+  <br>
+  <input src="templates/images/valide.gif" type="image"> <input src="templates/images/del.gif" onclick="location.href='admin-branches.php';" type="image">
+  </form>
+</div></body></html>
