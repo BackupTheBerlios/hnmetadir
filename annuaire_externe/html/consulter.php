@@ -78,6 +78,7 @@ function affstruct_cat($pere,$espace)
 			  <b>Catégorie :</b><br>
 			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
+			  - Supprimer<br>
 			  <b>Entitee :</b><br>
 			  - <a  href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$id."\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  <b>Gestion :</b><br>
@@ -144,6 +145,7 @@ function affstruct_ent($cat,$pere,$espace)
 
 		// menu
 		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'Edition\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
+			- Supprimer cette entitée<br>
 			- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'Ajouter une sous-entitée\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
 			- <a href=\"#\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'Ajouter une personne\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a>";
                 $menu = str_replace("\"", "&quot;", $menu);
