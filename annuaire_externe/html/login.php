@@ -2,6 +2,7 @@
 
 session_start();
 
+include('functions.php');
 include('libs/class.db.inc');
 include('libs/class.template.inc');
 $tpl = new Template('templates/');

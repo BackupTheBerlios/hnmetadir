@@ -65,9 +65,11 @@ class user {
 		return $tmp;
 	}
 
+	// - RECUPERE LES IDs DES CATEGORIES OU IL A UN DROIT QUELCONQUE
+	// ---------------------------------------------------------------------------------------------------
 	function GetHisCats() 
 	{
-		global $_SESSION, $db;
+		global $_SESSION, $db, $tabcat;
 		
 		// on construit le where pour la requete
 		for( $i=0; $i<count($_SESSION['user_groups']); $i++ )
@@ -78,6 +80,12 @@ class user {
 		$where = substr( $where, 0, strlen($where)-2 );  // on vire le dernier 'OR'
 		$db->query('SELECT * FROM `PERMISSIONS` WHERE '.$where);
 		
+		$tabcat = array();
+		while( $rows = $db->fetch_array() )
+		{
+			GetSubCats( $rows['CATEGORIES_CAT_ID'], $rows['PERM_TYPE']); 
+		}
+		return $tabcat;
 	}
 
 	// - PARCOURS LE TABLEAU AFIN DE SAVOIR SI L'USER A ACCES 

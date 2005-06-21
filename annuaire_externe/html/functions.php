@@ -1,6 +1,6 @@
 <?php
 
-// - Fonction permetant de récupérer/reconstituer le chemin à partir de l'id d'une catégorie ou d'une entitée
+// - Fonction permetant de rÃ©cupÃ©rer/reconstituer le chemin Ã  partir de l'id d'une catÃ©gorie ou d'une entitÃ©e
 // -- Arguments :
 // --- id     : l'id de l'objet en court
 
@@ -51,18 +51,18 @@ function chemin_categorie($id)
 	return $tabcat;
 }
 
-// - Focntion permettant de r�cuperer toutes les sous cat�gorie � partir d'un point pr�cis d'une branche
+// - Fonction permettant de récuperer toutes les sous catégorie à partir d'un point précis d'une branche
 //   pour supression. Revoie un WHERe tout fait
 function get_subcatsfordel($id)
 {
-        global $tabcat;
+	global $tabcat;
 	array_push($tabcat, $id);
 
-        $query='SELECT `CAT_ID`,`CAT_PARENTID` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$id.'"';
-        $result = mysql_query($query) or die(mysql_error());
+	$query='SELECT `CAT_ID`,`CAT_PARENTID` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$id.'"';
+	$result = mysql_query($query) or die(mysql_error());
 	$n = mysql_num_rows($result);
 
-        for ($i=0; $i<$n; $i++)
+	for ($i=0; $i<$n; $i++)
 	{
 		$id  = mysql_result($result,$i,"CAT_ID"); 
 		get_subcatsfordel($id);
@@ -77,4 +77,26 @@ function get_subcatsfordel($id)
 		}
 	}
 	return $tmp;
+}
+
+
+// Fonctionpermettant de récuperer juste les ids des sous catégories
+// --------------------------------------------------------------------------------------------
+
+function GetSubCats($id, $perm)
+{
+	global $tabcat;
+	array_push($tabcat, array('id'=>$id, 'perm'=>$perm) );
+
+	$query='SELECT `CAT_ID`,`CAT_PARENTID` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$id.'"';
+	$result = mysql_query($query) or die(mysql_error());
+	$n = mysql_num_rows($result);
+
+	for ($i=0; $i<$n; $i++)
+	{
+		$id  = mysql_result($result,$i,"CAT_ID"); 
+		GetSubCats($id, $perm);
+	}
+	
+	return $tabcat;
 }
