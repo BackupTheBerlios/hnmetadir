@@ -8,10 +8,10 @@ $tpl->set_file('HeaderRef','header.html');
 	$tpl->set_var('login', $_SESSION['auth_login']);
 
 
-	// connexion ou déconnexion dans le sous meun
+	// connexion ou dÃ©connexion dans le sous meun
 	if( $_SESSION['auth'] == true || $_SESSION['auth_login'] != 'anonyme')
 	{
-  		$tpl->set_var('connect', 'Déconnexion');
+  		$tpl->set_var('connect', 'DÃ©connexion');
 	}
 	else
 	{

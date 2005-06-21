@@ -13,7 +13,7 @@ class database {
 		var $select_db;
 		var $result;
 		var $error;
-                var $requetes = 0;
+		var $requetes = 0;
 
 	
 	function connect () 
@@ -44,6 +44,7 @@ class database {
 	function query($QUERY)
 	{
 		$this->result = mysql_query($QUERY, $this->id_connect);
+		$this->requetes++;
 
 		if(!$this->result) {
 			$this->error_mysql("Problème de requète");
