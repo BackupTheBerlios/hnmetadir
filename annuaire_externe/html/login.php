@@ -2,6 +2,7 @@
 
 session_start();
 
+include('libs/class.db.inc');
 include('libs/class.template.inc');
 $tpl = new Template('templates/');
 
@@ -18,8 +19,13 @@ if($_GET['type'] == 'anonyme')
 	header('Location: index.php');
 
 } 
-elseif($type == 'user') 
+elseif($_GET['type'] == 'user') 
 {
+	
+	// connexion à mysql
+	$db  = new database;
+	$db->connect();
+
 	$rep = $user->auth($_POST['login'], $_POST['password']);
 	
 	if($rep == true) {

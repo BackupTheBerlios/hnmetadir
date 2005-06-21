@@ -37,7 +37,7 @@ class user {
 			// si auth ok : return true, sinon false.
 			
 			// bidouille
-			$this->id=11;
+			$this->id=1;
 			$this->login='admin';
 			$_SESSION['auth'] = true;
 			$_SESSION['auth_id'] = $this->id;
@@ -56,13 +56,28 @@ class user {
 	{
 		global $db, $_SESSION;
 		
+		$tmp = array();
 		$db->query('SELECT `GROUPES_GRO_ID` FROM `AFFECTE_USERS_GROUPES` WHERE `USERS_USE_ID`="'.$this->id.'"');
-		$rows = $db->fetch_array();
-		return $rows;
+		while( $rows = $db->fetch_row() )
+		{
+			array_push($tmp, $rows[0]);
+		}
+		return $tmp;
 	}
 
 	function GetHisCats() 
 	{
+		global $_SESSION, $db;
+		
+		// on construit le where pour la requete
+		for( $i=0; $i<count($_SESSION['user_groups']); $i++ )
+		{
+			$where .= ' `GROUPES_GRO_ID`="'.$_SESSION['user_groups'][$i].'" OR';
+		}
+		
+		$where = substr( $where, 0, strlen($where)-2 );  // on vire le dernier 'OR'
+		$db->query('SELECT * FROM `PERMISSIONS` WHERE '.$where);
+		
 	}
 
 	// - PARCOURS LE TABLEAU AFIN DE SAVOIR SI L'USER A ACCES 
