@@ -5,7 +5,6 @@ include('HEADER.php');
 
 // ##################################################################
 
-
 ?>
 <html>
   <head>
@@ -15,30 +14,32 @@ include('HEADER.php');
   <body>
 <?php
 
-function EchoLig($NmChamp,$FTE=""){
+function EchoLig($NmChamp,$FTE="")
+{
 	global $CIL,$pobj;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-		if( ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
-		{
+	
+	if( ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	{
 			// on vire la ligne categorie parent et entitee parent
 			if($NmChamp != 'CATEGORIES_CAT_ID' && $NmChamp != 'ENT_PARENTID')
 			{
-			// ne pas afficher les libelle des champs cachés
-			if($CIL[$NmChamp]->TypeAff!="HID") {
-		  		echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
-				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+				// ne pas afficher les libelle des champs cachÃ©s
+				if($CIL[$NmChamp]->TypeAff!="HID") 
+				{
+					echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+					if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+						echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+					}
 				}
+				echo "</td>\n";
+				echo "<td>";
+				// traitement valeurs avant MAJ
+				$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+				$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+				echo "</td></tr>\n";
 			}
-
-			echo "</td>\n";
-			echo "<td>";
-	  		// traitement valeurs avant MAJ
-	  		$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-			$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-			echo "</td></tr>\n";
-		}
 	}
 }
 
@@ -47,7 +48,7 @@ function EchoLig($NmChamp,$FTE=""){
 if($_POST) 
 {
 
-	// début traitement fichier
+	// dÃ©but traitement fichier
 	// composition du nom
 	// ---------------------------------------
 	
@@ -57,8 +58,8 @@ if($_POST)
 	$chp   = $nmchp[0];
 	$mff   = mysqff ($chp, 'ENTITEES');
 	// dans mff on a les caract. de cle primaire, auto_increment, etc ... du 1er champ
-	if (stristr($mff,"primary_key")) { // si 1er champ est une clé primaire
-		// on regarde si c'est un auto incrément
+	if (stristr($mff,"primary_key")) { // si 1er champ est une clÃ© primaire
+		// on regarde si c'est un auto incrÃ©ment
 		if (stristr($mff,"auto_increment") && $_GET['action'] == 'ajout')
 		{ // si auto increment et nouvel enregistrement ou copie
 			$rp1 = $db->query("SELECT $chp from `ENTITEES` order by $chp DESC LIMIT 1");
@@ -69,12 +70,13 @@ if($_POST)
 		else
 		{ 
 			// si pas auto increment ou modif, on recup la valeur
-			echo $keycopy=$$nmchp[0]."_"; // VALEUR du premier champ  
+			$keycopy=$_POST[$nmchp[0]].'_'; // VALEUR du premier champ  
 		}
 
 	}
 	else // si 1er champ pas cle primaire, elle est forcement constituee des 2 autres
 	{
+		echo '!';
 		$keycopy = $$nmchp[0]; // VALEUR du premier champ
 		$nmchp   = $db->fetch_array($rqkc);
 		$keycopy = $keycopy."_".$$nmchp[0]."_";// VALEUR du deuxieme champ
@@ -103,9 +105,9 @@ if($_POST)
      			$VarFok="Fok".$NOMC;
      			$PYAoMAJ->ValChp=($_FILES[$NOMC][tmp_name]!="" ? $_FILES[$NOMC][tmp_name] : $PYAoMAJ->ValChp);
      			$PYAoMAJ->Fok=$$VarFok;
-     			$VarFname=$NOMC."_name"; // ancienne méthode
+     			$VarFname=$NOMC."_name"; // ancienne mÃ©thode
      			$PYAoMAJ->Fname=($$VarFname !="" ? $$VarFname : $_FILES[$NOMC][name]);
-     			$VarFsize=$NOMC."_size";// ancienne méthode
+     			$VarFsize=$NOMC."_size";// ancienne mÃ©thode
      			$PYAoMAJ->Fsize=($$VarFsize!="" ? $$VarFsize : $_FILES[$NOMC][size]);
      			$VarOldFName="Old".$NOMC;
      			$PYAoMAJ->OFN=$$VarOldFName;
@@ -121,9 +123,9 @@ if($_POST)
 
 	} // fin boucle sur les champs
 
-	$set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
+	$set= substr($set,0,-2); // enlÃ¨ve la derniÃ¨re virgule et esp en trop Ã  la fin
 	
-/*	
+	
 	if($_GET['action'] == 'ajout') {
 		$db->query("INSERT INTO `ENTITEES` SET ".tbset2set($tbset));
 	} elseif($_GET['action'] == 'edition') {
@@ -132,11 +134,11 @@ if($_POST)
 
 	// ferme la fenetre & rafraichie la fenetre parent
 	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
-*/
+
 }
 
 
-// Ajout de l'entitée
+// Ajout de l'entitÃ©e
 // -----------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------
 if($_GET['action'] == 'ajout') 
@@ -166,7 +168,7 @@ if($_GET['action'] == 'ajout')
 
 	echo '</table>';
 
-	// on ajoute en hidden la categorie parent et l'entitée parent
+	// on ajoute en hidden la categorie parent et l'entitÃ©e parent
 	echo '<input type="hidden" name="CATEGORIES_CAT_ID" value="'.$_GET['cat_parentid'].'">';
 	echo '<input type="hidden" name="ENT_PARENTID" value="'.$_GET['ent_parentid'].'">';
 	
@@ -174,7 +176,7 @@ if($_GET['action'] == 'ajout')
 	echo '</form>';
 
 } 
-// Edition d'une entité
+// Edition d'une entitÃ©
 // -------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------
 elseif($_GET['action'] == 'edition')
@@ -193,7 +195,7 @@ elseif($_GET['action'] == 'edition')
 	}
 	echo "</table>";
 
-        // on ajoute en hidden la categorie parent et l'entitée parent
+        // on ajoute en hidden la categorie parent et l'entitÃ©e parent
         echo '<input type="hidden" name="CATEGORIES_CAT_ID" value="'.$data['CATEGORIES_CAT_ID'].'">';
         echo '<input type="hidden" name="ENT_PARENTID" value="'.$data['ENT_PARENTID'].'">';
 

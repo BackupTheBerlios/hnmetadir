@@ -11,40 +11,40 @@ $tpl->set_file('FileRef','consulter.html');
 
 // EXPLICATION
 // ~~~~~~~~~~~
-// On initialise en premier deux tableaux $tabcat et tabent. Ces deux tableaux sont destinÃ©s Ã  recevoir
-// l'ensemble des ids des catÃ©gories et des entitÃ©es qui seront "utilisÃ©" lorsqu'une personne s'enfonce
+// On initialise en premier deux tableaux $tabcat et tabent. Ces deux tableaux sont destinés Ã  recevoir
+// l'ensemble des ids des catégories et des entitées qui seront "utilisé" lorsqu'une personne s'enfonce
 // dans l'arborescence.
 // Donc via les deux fonctions qui se trouvent dans functions.php, on y insert ces ids.
 // On lance l'affichage de la branche via affstruc_branche().
-// Si la variable $cat est dÃ©jÃ  dÃ©finie, cela signifie que l'user est dÃ©jÃ  ou veut s'enfoncer dans une
-// des arborescences (note: arborescence = branche + catÃ©forie + entitÃ©e)
-// On est donc a prÃ©sent dans la boucle qui affiche les branche, hop ca nous envoie vers l'affichage des
-// catÃ©gorie. Ici, on liste l'ensemble des catÃ©gories tout en vÃ©rifiant que l'id de celle ci n'est pas
-// prÃ©sente dans le $tabcat. Si c'est le cas, cela signifie qu'il faut s'enfoncer dans cette catÃ©gorie.
-// Parallelement on liste les entitÃ©es que possÃ¨de cette catÃ©gorie.
+// Si la variable $cat est déjÃ  définie, cela signifie que l'user est déjÃ  ou veut s'enfoncer dans une
+// des arborescences (note: arborescence = branche + catéforie + entitée)
+// On est donc a présent dans la boucle qui affiche les branche, hop ca nous envoie vers l'affichage des
+// catégorie. Ici, on liste l'ensemble des catégories tout en vérifiant que l'id de celle ci n'est pas
+// présente dans le $tabcat. Si c'est le cas, cela signifie qu'il faut s'enfoncer dans cette catégorie.
+// Parallelement on liste les entitées que possÃ¨de cette catégorie.
 
 
 // ORGANISATION DU CODE
 // ~~~~~~~~~~~~~~~~~~~~
-// fonction d'affichage des catÃ©gories
-// fonction d'affichage des entitÃ©es
+// fonction d'affichage des catégories
+// fonction d'affichage des entitées
 // fonction de listage des personnes
 //
-// Si $cat est dÃ©finie alors :
+// Si $cat est définie alors :
 //    on recupere les id parents
 //    on affiche le menu et la description dans le cadre haut droit
-// Sinon si $ent est dÃ©fini
-//    on rÃ©cupere les id des entitÃ©es parents
+// Sinon si $ent est défini
+//    on récupere les id des entitées parents
 //    on affiche le calques des personnes
 //    on affiche les personnes
-//    on affiche les propriÃ©tÃ©s/valeur de l'entitÃ©e
+//    on affiche les propriétés/valeur de l'entitée
 // Fin de boucle
-// On affiche les catÃ©gories en appelant la "fonction cat" qui appelera la "fonction ent" si besoin
+// On affiche les catégories en appelant la "fonction cat" qui appelera la "fonction ent" si besoin
 //
 
 
 
-// - Fonction - Listage des catÃ©gories
+// - Fonction - Listage des catégories
 // ------------------------------------
 
 function affstruct_cat($pere,$espace)
@@ -69,23 +69,23 @@ function affstruct_cat($pere,$espace)
 		
 		$tpl->set_var('nom', '<a href="consulter.php?cat='.$id.'">'.$nom.'</a>' );
 		$tpl->set_var('espace', $espace.'&nbsp;--' );
-		$tpl->set_var('description', $description ); // laisser slashÃ© 
+		$tpl->set_var('description', $description ); // laisser slashé 
 		$tpl->set_var('id', $id );
 		
 
 		// MENU
 		// --------------------------------
-		$menu =  "<b>CatÃ©gorie</b><br>
+		$menu =  "<b>Catégorie</b><br>
 			  - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'Ajouter\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'Editer\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
 			  - Supprimer<br>
-			  <b>EntitÃ©e :</b><br>
+			  <b>Entitée :</b><br>
 			  - <a  href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$id."\', \'Ajouter\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  <b>Gestion :</b><br>
 			  - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>
-			  - <a htef=\"#\">Les champs spÃ©ciaux</a><br>
+			  - <a htef=\"#\">Les champs spéciaux</a><br>
 			  <b>Extraction :</b><br>
-			  - <a href=\"#\">Toutes les entitÃ©es</a><br>
+			  - <a href=\"#\">Toutes les entitées</a><br>
 			  - <a href=\"#\">Toutes les personnes</a><br>
 			  ";
 
@@ -118,7 +118,7 @@ function affstruct_cat($pere,$espace)
 		{
 			affstruct_cat($id,$espace);
 
-			// affiche les entitÃ©es
+			// affiche les entitées
 			affstruct_ent($id,0,$espace);
 		}
        }
@@ -126,7 +126,7 @@ function affstruct_cat($pere,$espace)
 
 
 
-// - Fonction - Listage des entitee d'une catÃ©gorie
+// - Fonction - Listage des entitee d'une catégorie
 // -------------------------------------------------
 
 function affstruct_ent($cat,$pere,$espace)
@@ -149,9 +149,9 @@ function affstruct_ent($cat,$pere,$espace)
                 $tpl->set_var('id', $id );
 
 		// menu
-		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'Edition\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitÃ©e</a><br>
-			- Supprimer cette entitÃ©e<br>
-			- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'Ajouter une sous-entitÃ©e\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitÃ©e</a><br>
+		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'Edition\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
+			- Supprimer cette entitée<br>
+			- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'Ajouter une sous-entitée\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
 			- <a href=\"#\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'Ajouter une personne\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a>";
                 $menu = str_replace("\"", "&quot;", $menu);
                 $menu = str_replace("\t", "", $menu);
@@ -176,7 +176,7 @@ function affstruct_ent($cat,$pere,$espace)
 }              
 
 
-// - Fonction - Listage des personnes d'une entitÃ©e 
+// - Fonction - Listage des personnes d'une entitée 
 // -------------------------------------------------
 
 function aff_personnes($id)
@@ -219,7 +219,7 @@ function aff_personnes($id)
 	// ON NAVIGUE DANS LES CATEGORIE
 	if($_GET['cat']) 
 	{
-		// fonction permettant de rÃ©cuperer tout les id des cats parents
+		// fonction permettant de récuperer tout les id des cats parents
 		$tabcat = chemin_categorie($_GET['cat']);
 		// on cache la partie "personne"
 		$tpl->set_var('div_pdisp', 'none');
@@ -235,7 +235,7 @@ function aff_personnes($id)
 	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
 	elseif($_GET['ent'])
 	{
-		// on rÃ©cupere les ids des entitÃ©es parentes
+		// on récupere les ids des entitées parentes
 		$tabent = chemin_entitee($_GET['ent']);
 		// on affiche le calque des personnes
 		$tpl->set_var('div_pdisp', 'display');
@@ -245,13 +245,13 @@ function aff_personnes($id)
 
 		// on envoie le menu
 		$onglets   = '<ul id="tabnav">';
-    		$onglets  .= '<li id="li_entitee" class="active"><a href="#" onclick="javascript:ShowTab(\'entitee\');">EntitÃ©e</a></li>';
+    		$onglets  .= '<li id="li_entitee" class="active"><a href="#" onclick="javascript:ShowTab(\'entitee\');">Entitée</a></li>';
         	$onglets  .= '<li id="li_personnes" class=""><a href="#" onclick="javascript:ShowTab(\'personnes\');">Personnes</a></li>';
 		$onglets  .= '</ul><br>';
 		$tpl->set_var('onglets', $onglets);
 		
 
-		// on affiche les infos sur l'entitÃ©e
+		// on affiche les infos sur l'entitée
 		$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
 		$CIL=InitPOReq($sql,'annuaire_externe');
 		$rep=$db->query($sql);
@@ -263,12 +263,12 @@ function aff_personnes($id)
 			$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
 			$NmChamp = $pobj->NmChamp;
 
-			// consultation ou Ã©dition ?
+			// consultation ou édition ?
 			// a modifier suivant profil
 			$CIL[$NmChamp]->TypEdit = 'C';
 			if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 			{ 
-				// on vire les champs categorie et entitÃ©e parent
+				// on vire les champs categorie et entitée parent
 				if($NmChamp != 'ENT_PARENTID' && $NmChamp != 'CATEGORIES_CAT_ID') 
 				{
 			  		$tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
