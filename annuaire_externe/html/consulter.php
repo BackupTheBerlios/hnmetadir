@@ -74,21 +74,25 @@ function affstruct_cat($pere,$espace)
 
 		// MENU
 		// --------------------------------
-		$menu = "
-			  <b>Catégorie :</b><br>
-			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'Ajouter une sous catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
-			  - <a href=\"#\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'Editer cette catégorie\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
+		$menu =  "<b>Catégorie</b><br>
+			  - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'Ajouter\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
+			  - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'Editer\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
 			  - Supprimer<br>
-			  <b>Entitee :</b><br>
-			  - <a  href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$id."\', \'Ajouter entitée\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
+			  <b>Entitée :</b><br>
+			  - <a  href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$id."\', \'Ajouter\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			  <b>Gestion :</b><br>
-			  - <a href=\"#\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>
-			  - <a htef=\"\">Les champs spéciaux</a><br";
-			  
-		$menu = str_replace("\"", "&quot;", $menu);
-		$menu = str_replace("\t", "", $menu);
-		$menu = str_replace("\n", "", $menu);
+			  - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'Gestion des droits\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>
+			  - <a htef=\"#\">Les champs spéciaux</a><br>
+			  <b>Extraction :</b><br>
+			  - <a href=\"#\">Toutes les entitées</a><br>
+			  - <a href=\"#\">Toutes les personnes</a><br>
+			  ";
 
+                $menu = str_replace("\"", "&quot;", $menu);
+                $menu = str_replace("\t", "", $menu);
+                $menu = str_replace("\n", "", $menu);
+                $menu = str_replace("\r", "", $menu); 
+		
 		// -----------------------------------
 
 		if($pere == 0) {
@@ -199,6 +203,15 @@ function aff_personnes($id)
 // ------------------------------------------------
 // ------------------------------------------------
 
+	// suppression -------------------------------
+	if( $_GET['action'] == 'supprimer')
+	{
+		
+
+	}
+	// -------------------------------------------
+
+
 	$tabcat = array();
 	$tabent = array();
 
@@ -214,7 +227,8 @@ function aff_personnes($id)
 		$db->query('SELECT `CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_ID`="'.(int)$_GET['cat'].'"');
 		$data = $db->fetch_array();
 
-		$contenu  = stripslashes($data['CAT_DESCRIPTION']);
+		$contenu   = '<h2>Description</h2>'."\n";
+		$contenu  .= stripslashes($data['CAT_DESCRIPTION']);
 		$tpl->set_var('contenu', $contenu);
 	} 
 	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
@@ -227,9 +241,16 @@ function aff_personnes($id)
 		// hop on affiche la liste des personnes
 		aff_personnes((int)$_GET['ent']);
 
+
+		// on envoie le menu
+		$onglets   = '<ul id="tabnav">';
+    		$onglets  .= '<li id="li_entitee" class="active"><a href="#" onclick="javascript:ShowTab(\'entitee\');">Entitée</a></li>';
+        	$onglets  .= '<li id="li_personnes" class=""><a href="#" onclick="javascript:ShowTab(\'personnes\');">Personnes</a></li>';
+		$onglets  .= '</ul><br>';
+		$tpl->set_var('onglets', $onglets);
+		
+
 		// on affiche les infos sur l'entitée
-
-
 		$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
 		$CIL=InitPOReq($sql,'annuaire_externe');
 		$rep=$db->query($sql);
@@ -270,10 +291,6 @@ function aff_personnes($id)
 
 		$tpl->set_var('contenu', $tmp);
 		
-	}
-	else
-	{
-		$tpl->set_var('div_pdisp', 'none');
 	}
 
 	$tpl->set_block('FileRef', 'arbre', 'arbre_block');

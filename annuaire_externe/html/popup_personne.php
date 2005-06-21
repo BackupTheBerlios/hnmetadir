@@ -119,7 +119,7 @@ if($_POST)
 	} // fin boucle sur les champs
 
 	$set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
-	
+
 	if($_GET['action'] == 'ajout') {
 		$db->query("INSERT INTO `PERSONNES` SET ".tbset2set($tbset));
 	} elseif($_GET['action'] == 'edition') {

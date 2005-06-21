@@ -1,11 +1,4 @@
-  <script language="javascript">
-	function display() {
-		document.getElementById('amenu').style.visibility='visible';
-	}
-  </script>
-
   <div id="g_arbo">
-    <h2>Arborescence</h2>
     <table cellspacing="0" cellpadding="0">
       <!-- BEGIN arbre -->
       <tr>
@@ -15,31 +8,33 @@
     </table>
   </div>
 
-  <div id="c_entitee">
-    <h2><img src="templates/images/info.jpeg"> Description</h2> 
-    {contenu}
-  </div>
+  <div id="onglets">
+    {onglets}
 
-  <div id="c_personnes" style="display:{div_pdisp};">
-    <h2>&raquo; Personnes</h2>
-    <table width="100%">
-      <tr>
-        <th nowrap></th>
-        <th>Nom</th>
-        <th>Mail</th>
-	<th>Mobile</th>
-        <th>Mobile</th>
-        <th>Fonction</th>
-      </tr>
-      <!-- BEGIN personnes -->
-      <tr>
-        <td width="15"><img src="templates/images/user.png" alt="fiche"></td>
-        <td align="center">{p_nom}</td>
-	<td align="center"><a href="mailto:{p_mail}">{p_mail}</a></td>
-	<td align="center">{p_tel}</td>
-	<td align="center">{p_mobile}</td>
-	<td>{p_fonction}</td>
-      </tr>
-      <!-- END personnes -->
+    <div id="c_entitee" style="">
+      {contenu}
+    </div>
+
+    <div id="c_personnes" style="">
+      <table width="100%">
+        <tr>
+          <th nowrap></th>
+          <th>Nom</th>
+          <th>Mail</th>
+	  <th>Téléphone</th>
+          <th>Mobile</th>
+          <th>Fonction</th>
+        </tr>
+        <!-- BEGIN personnes -->
+        <tr>
+          <td width="15"><img src="templates/images/user.png" alt="fiche"></td>
+          <td align="center">{p_nom}</td>
+	  <td align="center"><a href="mailto:{p_mail}">{p_mail}</a></td>
+	  <td align="center">{p_tel}</td>
+	  <td align="center">{p_mobile}</td>
+	  <td>{p_fonction}</td>
+        </tr>
+        <!-- END personnes -->
+      </table>
+    </div>
   </div>
-  

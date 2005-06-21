@@ -161,20 +161,55 @@ padding:5px;
 height:80%;
 }
 
-DIV#c_entitee {
+DIV#onglets {
 float:right;;
 width: 68%;
 right:2%;
-height:50%;
-overflow:auto;
+}
+
+DIV#c_entitee {
+display:block;
 }
 
 DIV#c_personnes {
-float:right;
-margin-top:10px;
-width: 68%;
-right:2%;
-height:50%
+display:none;
 }
 
+/* MENU TABULAIRE ***********************************************
+****************************************************************/
 
+ul#tabnav {
+font: bold 11px verdana, arial, sans-serif;
+list-style-type: none;
+padding-bottom: 24px;
+border-bottom: 1px solid #900000;
+margin: 0;
+}
+
+ul#tabnav li {
+float: left;
+height: 21px;
+background-color: #ebdd62;
+margin: 2px 2px 0 2px;
+border: 1px solid #900000;
+}
+
+ul#tabnav li.active {
+border-bottom: 1px solid #fff;
+background-color: #fff;
+}
+
+#tabnav a {
+float: left;
+display: block;
+color: black;
+text-decoration: none;
+padding: 4px;
+}
+
+#tabnav a:hover {
+background: #fff;
+}
+
+/********************************************************************
+*********************************************************************/

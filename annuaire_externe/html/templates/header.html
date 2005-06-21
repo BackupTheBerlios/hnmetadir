@@ -3,6 +3,26 @@
     <title>Meta annuaire des Haras Nationnaux</title>
     <link rel="stylesheet" type="text/css" href="templates/style.css">
     <script type="text/javascript" src="templates/overlib/overlib.js"><!-- overLIB (c) Erik Bosrup --></script>
+    <script language="javascript">
+        function ShowTab (string) 
+	{
+                if(string == "entitee") 
+		{
+                        document.getElementById("c_entitee").style.display="block";
+                        document.getElementById("c_personnes").style.display="none";
+                        document.getElementById("li_entitee").className="active";
+                        document.getElementById("li_personnes").className="";
+                } 
+
+		if(string == "personnes") 
+		{
+                        document.getElementById("c_entitee").style.display="none";
+                        document.getElementById("c_personnes").style.display="block";
+			document.getElementById("li_entitee").className="";
+                        document.getElementById("li_personnes").className="active";
+                } 
+        }
+  </script>
   </head>
   <body>
     <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
@@ -10,7 +30,7 @@
       <div id="menugris">
 	<a href="index.php">Accueil</a>
 	&nbsp;|&nbsp;
-	Recherche rapide :&nbsp;<form action="resultats.php" method="post"><input type="text" name="entree"></form>
+	Recherche rapide :&nbsp;<form action="resultats.php" method="post"><input type="text" name="entree" ></form>
 	&nbsp;|&nbsp;
 	<b>Vous etes :</b> {login}
 	&nbsp;|&nbsp;

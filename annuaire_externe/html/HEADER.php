@@ -2,13 +2,14 @@
 
 include('libs/class.template.inc');
 include('libs/class.db.inc');
+include('libs/class.users.inc');
 include('functions.php');
 include('fonctions.php');
 
 // objet template
 $tpl = new Template('templates/');
 
-// connexion à mysql
+// connexion Ã  mysql
 $db  = new database;
 $db->connect();
 
@@ -28,6 +29,4 @@ if($_SESSION['auth'] != true && $REQUEST_URI != '/login.php')
 }
 
 
-### PROVISOIR
-$_SESSION['auth_id']=11;
-$_SESSION['auth_login']='admin';
+$user = new user($_SESSION['auth_id'], $_SESSION['auth_login']);

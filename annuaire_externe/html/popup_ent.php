@@ -69,7 +69,7 @@ if($_POST)
 		else
 		{ 
 			// si pas auto increment ou modif, on recup la valeur
-			$keycopy=$$nmchp[0]."_"; // VALEUR du premier champ  
+			echo $keycopy=$$nmchp[0]."_"; // VALEUR du premier champ  
 		}
 
 	}
@@ -123,6 +123,7 @@ if($_POST)
 
 	$set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
 	
+/*	
 	if($_GET['action'] == 'ajout') {
 		$db->query("INSERT INTO `ENTITEES` SET ".tbset2set($tbset));
 	} elseif($_GET['action'] == 'edition') {
@@ -131,6 +132,7 @@ if($_POST)
 
 	// ferme la fenetre & rafraichie la fenetre parent
 	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
+*/
 }
 
 

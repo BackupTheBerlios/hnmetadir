@@ -6,7 +6,11 @@ include('HEADER.php');
 // ##################################################################
 
 
-
+?>
+<SCRIPT LANGUAGE="JavaScript">
+  parent.window.resizeTo('420','230');
+</SCRIPT>
+<?php
 
 // Ajout d'une catégorie
 // -----------------------------
@@ -28,9 +32,6 @@ if($_GET['action'] == 'ajout')
 	// ---------------------
 	?>
 
-	<SCRIPT LANGUAGE="JavaScript">
-		parent.window.resizeTo('350','200');
-	</SCRIPT>
 	<form action="popup_cat.php?action=ajout" method="POST">
 	<input type="hidden" name="cat_parentid" value="<?=$_GET['cat_parentid']?>">
 	<b>Nom :</b><br>
@@ -74,9 +75,6 @@ elseif($_GET['action'] == 'edit')
 
         ?>
 
-        <SCRIPT LANGUAGE="JavaScript">
-                parent.window.resizeTo('350','200');
-        </SCRIPT>
         <form action="popup_cat.php?action=edit" method="POST">
         <input type="hidden" name="id" value="<?=$row['CAT_ID']?>">
         <b>Nom :</b><br>
