@@ -101,12 +101,30 @@ class user {
 		else
 		{
 			$found = false;
-			for($i=0; $i<count($_SESSION['his']); $i++)
+			
+			// on veréifie qu'il existe une permition pour cette cat
+			for($i=0; $i<count($_SESSION['user_cats']); $i++)
 			{
-				if($id == $_SESSION['hiscat'][$i]) $found=true;
+				if($id == $_SESSION['user_cats'][$i]['id']) {
+					$found=true;
+					break;
+				}
 			} 
-			return $found;
-		}
+			
+			// on vérifie la permission en elle-meme
+			if( $found == true) 
+			{
+				if( ereg($perm, $_SESSION['user_cats'][$i]['perm']) ) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		} // fin si anonyme
 	}
 
 
