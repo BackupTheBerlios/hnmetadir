@@ -11,7 +11,7 @@ $tpl->set_file('HeaderRef','header.html');
 	// connexion ou déconnexion dans le sous meun
 	if( $_SESSION['auth'] == true || $_SESSION['auth_login'] != 'anonyme')
 	{
-  		$tpl->set_var('connect', 'Déconnexion');
+  		$tpl->set_var('connect', 'D�connexion');
 	}
 	else
 	{

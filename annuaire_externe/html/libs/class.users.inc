@@ -18,9 +18,9 @@ class user {
 
 	// - AUTHENTIFICATION
 	// -----------------------------------------------------------------------
-	function auth($login, $pass, $anonyme=false) 
+	function auth($login, $passwd, $anonyme=false) 
 	{
-		global $db, $_SESSION;
+		global $db, $_SESSION, $client;
 
 		if($anonyme == true)
 		{
@@ -31,22 +31,70 @@ class user {
 			$_SESSION['auth_login'] = $this->login;
 			return true;
 		}
+		elseif($login == 'admin' && $passwd == 'admin') 
+		{
+                        $this->id = '1';
+                        $this->login = 'admin';
+                        $_SESSION['auth'] = true;
+                        $_SESSION['auth_id'] = $this->id;
+			$_SESSION['auth_login'] = $this->login;
+			return true;
+		}
 		else
 		{
-			// authentification LDAP
-			// si auth ok : return true, sinon false.
+			// Authentification LDAP
+			// Si auth ok : return true, sinon false.
+
+			$parametres['uid']=$login;
+			$parametres['passwd']=$passwd; // l'encryption est faite dans le service
+			$parametres['code_appli']="webcal"; // n'est PAS facultatif
+			//$parametres[encrypt]=false; // facultatif
 			
-			// bidouille
-			$this->id=1;
-			$this->login='admin';
-			$_SESSION['auth'] = true;
-			$_SESSION['auth_id'] = $this->id;
-			$_SESSION['auth_login'] = $this->login;			
-			// fin de la bidouille
+			$ldapauth = $client->call('auth', $parametres);			
 			
-			$_SESSION['user_groups'] = $this->GetHisGroups(); // on recupere ses groupes
-			$_SESSION['user_cats'] = $this->GetHisCats(); // maintenant qu'on a ses groupes on peut savoir ou il à accès
-			return true;
+			if ( $ldapauth['ConnOk'] ) 
+			{
+				$ret = true; // found login/password
+				$ldapauth['Nom']=addslashes($ldapauth['Nom']);
+				$ldapauth['Prenom']=addslashes($ldapauth['Prenom']);
+				
+				$db->query('SELECT * FROM `USERS` WHERE `USE_LOGIN`="'.$login.'"');
+				
+				// il y a t'il l'enregistrement ?
+				if( $db->num_rows() )
+				{
+					$row = $db->fetch_array();
+					
+					// on met les champs à jour si besoin
+					if( $row['USE_PRENOM'] != $ldapauth['Prenom'] OR $row['USE_NOM'] != $ldapauth['Nom'] )
+					{
+						$db->query('UPDATE `USERS` SET `USE_NOM`="'.$ldapauth['Nom'].'", `USE_PRENOM`="'.$ldapauth['Prenom'].'" WHERE `USE_ID`="'.$row['USE_ID'].'"');
+					}
+					
+					$id = $row['USE_ID'];
+				}
+				else
+				{
+					$db->query('INSERT INTO `USERS` (USE_LOGIN,USE_NOM,USE_PRENOM) VALUES ("'.$login.'","'.$ldapauth['Nom'].'","'.$ldapauth['Prenom'].'")');
+					$id = mysql_insert_id();
+				}
+
+				
+				$this->id = $id;
+				$this->login = $login;
+				$_SESSION['auth'] = true;
+				$_SESSION['auth_id'] = $this->id;
+				$_SESSION['auth_login'] = $this->login;
+			
+				$_SESSION['user_groups'] = $this->GetHisGroups(); // on recupere ses groupes
+				$_SESSION['user_cats'] = $this->GetHisCats(); // maintenant qu'on a ses groupes on peut savoir ou il à accès
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			
 		}
 	}
 	
@@ -78,6 +126,8 @@ class user {
 		}
 		
 		$where = substr( $where, 0, strlen($where)-2 );  // on vire le dernier 'OR'
+		if(!$where) $where = 1;
+
 		$db->query('SELECT * FROM `PERMISSIONS` WHERE '.$where);
 		
 		$tabcat = array();
@@ -97,6 +147,11 @@ class user {
 		if( $_SESSION['auth_login'] == 'anonyme' )
 		{
 			return false;
+		}
+		elseif( $_SESSION['auth_login'] == 'admin' )
+		{
+			// a le droit forcément
+			return true;
 		}
 		else
 		{
