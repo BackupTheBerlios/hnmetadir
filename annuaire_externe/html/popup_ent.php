@@ -176,10 +176,10 @@ if($_GET['action'] == 'ajout')
 	echo '</form>';
 
 } 
-// Edition d'une entité
+// Edition ou Consultation d'une entité
 // -------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------
-elseif($_GET['action'] == 'edition')
+elseif($_GET['action'] == 'edition' || $_GET['action'] == 'consultation')
 {
 
 	$sql='SELECT * FROM `ENTITEES` WHERE ENT_ID="'.$_GET['id'].'"';
@@ -191,7 +191,12 @@ elseif($_GET['action'] == 'edition')
 	echo '<table width="100%">';
 	foreach ($CIL as $pobj) {
 		$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-		EchoLig($pobj->NmChamp);
+                
+                if( $_GET['action'] == 'consultation' ) {
+		      EchoLig($pobj->NmChamp, 'C');
+                } else {
+		      EchoLig($pobj->NmChamp);                        
+                }
 	}
 	echo "</table>";
 
@@ -199,7 +204,11 @@ elseif($_GET['action'] == 'edition')
         echo '<input type="hidden" name="CATEGORIES_CAT_ID" value="'.$data['CATEGORIES_CAT_ID'].'">';
         echo '<input type="hidden" name="ENT_PARENTID" value="'.$data['ENT_PARENTID'].'">';
 
-	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
+        if( $_GET['action'] == 'consultation' ) {
+                echo '<center><br><hr width="400"><br><br><a href="#" onclick="window.print();"><img src="templates/images/imprimante.gif" border="0"></a></center>'."\n";
+        } else {
+                echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></a></center>'."\n";                        
+        }        
 	echo '</form>';
 }
 else
