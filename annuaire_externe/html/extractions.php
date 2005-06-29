@@ -16,8 +16,8 @@ include('HEADER.php');
 
 if( $_GET['type'] == 'categories' )
 {
-	$debut = (int)$_GET['debut'];
-	$db->query('SELECT `CAT_NOM` FROM `CATEGORIES` WHERE `CAT_ID`="'.$debut.'" LIMIT 1');
+	$cat_id = (int)$_GET['cat_id'];
+	$db->query('SELECT `CAT_NOM` FROM `CATEGORIES` WHERE `CAT_ID`="'.$cat_id.'" LIMIT 1');
 	$row = $db->fetch_array();
 
 	$filename = strtolower( $row['CAT_NOM'] );
@@ -26,7 +26,6 @@ if( $_GET['type'] == 'categories' )
 	header("Content-disposition: attachment; filename=\"extraction-categories-$filename.csv\"");
 	header("Content-Type: application/force-download");
 	header("Content-Transfer-Encoding: binary");
-
 	
 	// on récupere les ids des sous cat en dessous
         function GetCatsForCSV($pere, $position)
@@ -54,7 +53,7 @@ if( $_GET['type'] == 'categories' )
                 }
         }
 
-        GetCatsForCSV($debut, $position);
+        GetCatsForCSV($cat_id, $position);
 
 }
 # PARTIE 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -63,16 +62,16 @@ elseif( $_GET['type'] == 'entitees' )
 {
 
         // on genere le nom
-        $debut = (int)$_GET['debut'];
-        $db->query('SELECT `CAT_NOM` FROM `CATEGORIES` WHERE `CAT_ID`="'.$debut.'" LIMIT 1');
+        $cat_id = (int)$_GET['cat_id'];
+        $db->query('SELECT `CAT_NOM` FROM `CATEGORIES` WHERE `CAT_ID`="'.$cat_id.'" LIMIT 1');
         $row = $db->fetch_array();
 
         $filename = strtolower( $row['CAT_NOM'] );
         $filename = str_replace(' ', '_', $filename);
 
-#        header("Content-disposition: attachment; filename=\"extraction-entitees-$filename.csv\"");
-#        header("Content-Type: application/force-download");
-#        header("Content-Transfer-Encoding: binary");
+        header("Content-disposition: attachment; filename=\"extraction-entitees-$filename.csv\"");
+        header("Content-Type: application/force-download");
+        header("Content-Transfer-Encoding: binary"); 
         // fin de la generation du nom
 
         // on affiche la premiere ligne avec les noms des champs
@@ -109,9 +108,8 @@ elseif( $_GET['type'] == 'entitees' )
 
         // on rempli le tableau
         $tabcat = array();
-	$where = get_subcats($debut);
+	$where = get_subcats($cat_id);
 
-        unset($ECT, $NM_CHAMP);
         $sql = 'SELECT * FROM `ENTITEES` WHERE `CATEGORIES_CAT_ID` IN '.$where;
 	$CIL=InitPOReq($sql,$DBName);
 	$rep=$db->query($sql);
@@ -150,8 +148,8 @@ elseif( $_GET['type'] == 'entitees' )
                                                 } else {
                                                         echo ',"'.$tmp.'"';                                               
                                                 }
-                                                $j++;
                                         } 
+                                        $j++;
                                 } // fin si champs auto
 
                                 // si on est dans les champs spéciaux et que je suis admin ou que j'ai le droit
@@ -177,7 +175,102 @@ elseif( $_GET['type'] == 'entitees' )
 # PARTIE 3 !!!!!!!!!!!!!!!!!!!!!
 elseif( $_GET['type'] == 'personnes' )
 {
+        // on genere le nom
+        $ent_id = (int)$_GET['ent_id'];
+        $db->query('SELECT `ENT_NOMINATION`, `ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
+        $row = $db->fetch_array();
 
+        $filename = strtolower( $row['ENT_RAISONSOCIAL'].'_'.$row['ENT_NOMINATION'] );
+        $filename = str_replace(' ', '_', $filename);
+
+        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
+        header("Content-Type: application/force-download");
+        header("Content-Transfer-Encoding: binary");
+        // fin de la generation du nom
+
+        // on affiche la premiere ligne avec les noms des champs
+        $NM_TABLE = 'PERSONNES';
+        $db->query("SELECT `NM_CHAMP` from $TBDname where NM_TABLE='$NM_TABLE' AND NM_CHAMP!='$NmChDT' ORDER BY ORDAFF, LIBELLE");
+
+        while ( $CcChp = $db->fetch_array() )  {
+                $NM_CHAMP=$CcChp[0];
+                $ECT[$NM_CHAMP]=new PYAobj();
+                $ECT[$NM_CHAMP]->NmBase=$DBName;
+                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;
+                $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+                $ECT[$NM_CHAMP]->TypEdit='C';
+                $ECT[$NM_CHAMP]->InitPO();
+        }
+
+        $i = 0;
+        foreach ($ECT as $PYAObj) {
+                if ($PYAObj->TypeAff == "AUT") 
+                {
+                        if( $i == 0 ) {
+                                echo '"'.$PYAObj->Libelle.'"';
+                        } else {
+                                echo ',"'.$PYAObj->Libelle.'"';
+                        }
+                        $i++;
+                }
+        }
+        echo ";\n";
+        // fin de l'affichage de la premiere ligne
+
+        // on récupère la catégorie parent avant tout pour connaitre les droits
+        $db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
+        $row = $db->fetch_array();
+        $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'L');
+
+        $sql = 'SELECT * FROM `PERSONNES`, `AFFECTE_ENTITEES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITEES_ENT_ID`="'.$ent_id.'"';
+	$CIL=InitPOReq($sql,$DBName);
+	$rep=$db->query($sql);
+
+
+        if( $db->num_rows() )
+        {
+                while( $data = $db->fetch_array() )
+                {
+                        $j=0;
+                        $listerouge = $data['PER_LISTEROUGE'];
+        		foreach ($CIL as $pobj) 
+        		{ 
+                                $NmChamp = $pobj->NmChamp;
+                                $CIL[$NmChamp]->ValChp=$data[$NmChamp];
+                                $CIL[$NmChamp]->TypEdit = 'C';
+
+                                // on ne traite que les champs de la fiche personne
+                                if( substr($NmChamp, 0, 4) == 'PER_' )
+                                {
+                                        // seulement les champs auto
+                                        if ($CIL[$NmChamp]->TypeAff == "AUT") 
+                                        {
+                                                // traitement champs sécurisé
+                                                if( $NmChamp == 'PER_TEL' || $NmChamp == 'PER_FAX' || $NmChamp == 'PER_MOBILE' || $NmChamp == 'PER_ABREGE' ) 
+                                                {
+                                                        if( $listrouge == 'O' && ($_SESSION['auth_login'] == 'admin' || $access == 'true') ) {
+                                                                $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
+                                                                echo ',"'.$tmp.'"';
+                                                        } else {
+                                                                echo ',""';
+                                                        }       
+                                                }
+                                                else
+                                                {
+                                                        $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
+                                                        if( $j == 0 ) {
+                                                                echo '"'.$tmp.'"';
+                                                        } else {
+                                                                echo ',"'.$tmp.'"';
+                                                        }
+                                                } 
+                                                $j++;
+                                        } // fin si champs auto
+                                } // fin si 'PER'
+                        } // fin du foreach
+                        echo ";\n";
+                } // fin du while
+        } // fin du mysql_num_rows()
 }
 
 

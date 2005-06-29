@@ -103,9 +103,8 @@ function affstruct_cat($pere,$espace)
 			- <a htef=\"#\">Les champs spéciaux</a><br>";
 		}
 			$menu .= "<b>Extraction :</b><br>
-			- <a href=\"#\">Entitées seulement</a><br>
-			- <a href=\"#\">Personnes seulement</a><br>
-			- <a href=\"#\">Toutes les Catégories</a><br>";
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=entitees&cat_id=".$id."\', \'Extraction entitees\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Entitées seulement</a><br>
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=categories&cat_id=".$id."\', \'Extraction toutes sous categries\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Toutes les Catégories</a><br>";
 
 		$menu = str_replace("\"", "&quot;", $menu);
 		$menu = str_replace("\t", "", $menu);
@@ -170,7 +169,9 @@ function affstruct_ent($cat,$pere,$espace)
 		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'Edition\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
 			- Supprimer cette entitée<br>
 			- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'Ajouter une sous-entitée\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
-			- <a href=\"#\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'Ajouter une personne\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a>";
+			- <a href=\"#\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'Ajouter une personne\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a><br>
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=personnes&ent_id=".$id."\', \'Extraction personnes\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Extraires les personnes</a><br>
+                        - <a href=\"#\">Version imprimable</a>";
                 $menu = str_replace("\"", "&quot;", $menu);
                 $menu = str_replace("\t", "", $menu);
                 $menu = str_replace("\n", "", $menu);
