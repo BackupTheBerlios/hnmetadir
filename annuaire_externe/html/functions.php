@@ -53,7 +53,7 @@ function chemin_categorie($id)
 
 // - Fonction permettant de récuperer toutes les sous catégorie à partir d'un point précis d'une branche
 //   pour supression. Revoie un WHERe tout fait
-function get_subcatsfordel($id)
+function get_subcats($id)
 {
 	global $tabcat;
 	array_push($tabcat, $id);
@@ -65,18 +65,18 @@ function get_subcatsfordel($id)
 	for ($i=0; $i<$n; $i++)
 	{
 		$id  = mysql_result($result,$i,"CAT_ID"); 
-		get_subcatsfordel($id);
+		get_subcats($id);
 	}
 
 	for($i=0;$i<count($tabcat);$i++)
 	{
 		if($i == 0 ) {
-			$tmp .= '`CAT_ID`="'.$tabcat[$i].'"';
+			$tmp .= '('.$tabcat[$i];
 		} else {
-			$tmp .= ' OR `CAT_ID`="'.$tabcat[$i].'"';
+			$tmp .= ','.$tabcat[$i];
 		}
 	}
-	return $tmp;
+	return $tmp.')';
 }
 
 

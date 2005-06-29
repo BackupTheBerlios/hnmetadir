@@ -3,8 +3,9 @@
 include('libs/class.template.inc');
 include('libs/class.db.inc');
 include('libs/class.users.inc');
-include('functions.php');
-include('fonctions.php');
+include('functions.php'); // mes fonctions
+include('fonctions.php'); // celles de vincent (php_inc)
+include('config.inc.php');
 
 // objet template
 $tpl = new Template('templates/');

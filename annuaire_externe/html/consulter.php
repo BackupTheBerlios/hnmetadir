@@ -157,9 +157,9 @@ function affstruct_ent($cat,$pere,$espace)
         $espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
         for ($i=0; $i<$n; $i++)
         {
-				$nom = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
-				$nom .= ' '.stripslashes( mysql_result($result,$i,"ENT_NOMINATION") );
-				$id  = mysql_result($result,$i,"ENT_ID");
+		$nom = stripslashes( mysql_result($result,$i,"ENT_RAISONSOCIAL") );
+		$nom .= ' '.stripslashes( mysql_result($result,$i,"ENT_NOMINATION") );
+		$id  = mysql_result($result,$i,"ENT_ID");
 
                	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a>' );
 		$tpl->set_var('espace', $espace.'&nbsp;--&nbsp;' );
@@ -313,7 +313,6 @@ function aff_personnes($id)
 					$tmp .= '<td><b>:</b> ';
 			  		// traitement valeurs avant MAJ
 					$CIL[$NmChamp]->DirEcho = false;
-		  	  		$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
 					$tmp .= $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
 					$tmp .= '</td></tr>'."\n";
 				}
