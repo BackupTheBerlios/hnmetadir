@@ -26,9 +26,9 @@ if($_GET['action'] == 'ajouter') {
 } elseif($_GET['action'] == 'supprimer') {
 
 	$tabcat=array();
-	$where = get_subcatsfordel($_GET['id']);
+	$where = get_subcats($_GET['id']);
 
-	$db->query('DELETE FROM `CATEGORIES` WHERE '.$where);
+	$db->query('DELETE FROM `CATEGORIES` WHERE `CAT_ID` IN '.$where);
 	header('Location: admin-branches.php');
 
 // - Listage, normal

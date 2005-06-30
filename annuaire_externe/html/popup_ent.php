@@ -16,15 +16,19 @@ include('HEADER.php');
 
 function EchoLig($NmChamp,$FTE="")
 {
-	global $CIL,$pobj;
+	global $CIL,$pobj, $access;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
 	
 	if( $CIL[$NmChamp]->Typaff_l!='' && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 	{
 			// on vire la ligne categorie parent et entitee parent
-			if($NmChamp != 'CATEGORIES_CAT_ID' && $NmChamp != 'ENT_PARENTID')
-			{
+                        $display = true;
+			if($NmChamp == 'CATEGORIES_CAT_ID' || $NmChamp == 'ENT_PARENTID') $display = false;
+                        if($FTE == 'C' && ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
+			
+                        if($display == true) 
+                        {
 				// ne pas afficher les libelle des champs cachés
 				if($CIL[$NmChamp]->TypeAff!="HID") 
 				{
@@ -189,7 +193,11 @@ elseif($_GET['action'] == 'edition' || $_GET['action'] == 'consultation')
 	
 	echo '<form action="popup_ent.php?action=edition&id='.(int)$_GET['id'].'" method="post" name="theform" ENCTYPE="multipart/form-data">';
 	echo '<table width="100%">';
-	foreach ($CIL as $pobj) {
+
+        $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'R');
+        
+	foreach ($CIL as $pobj) 
+        {
 		$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
                 
                 if( $_GET['action'] == 'consultation' ) {

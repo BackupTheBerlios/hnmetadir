@@ -79,6 +79,31 @@ function get_subcats($id)
 	return $tmp.')';
 }
 
+function get_subents($id)
+{
+	global $tabent;
+	array_push($tabent, $id);
+
+	$query='SELECT `ENT_ID`,`ENT_PARENTID` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$id.'"';
+	$result = mysql_query($query) or die(mysql_error());
+	$n = mysql_num_rows($result);
+
+	for ($i=0; $i<$n; $i++)
+	{
+		$id  = mysql_result($result,$i,"ENT_ID"); 
+		get_subents($id);
+	}
+
+	for($i=0;$i<count($tabent);$i++)
+	{
+		if($i == 0 ) {
+			$tmp .= '('.$tabent[$i];
+		} else {
+			$tmp .= ','.$tabent[$i];
+		}
+	}
+	return $tmp.')';
+}
 
 // Fonctionpermettant de récuperer juste les ids des sous catégories
 // --------------------------------------------------------------------------------------------

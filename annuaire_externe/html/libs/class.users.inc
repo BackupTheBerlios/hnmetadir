@@ -142,7 +142,7 @@ class user {
 	// --------------------------------------------------------------------------------------
 	function HaveAccess($id, $perm) 
 	{
-		global $_SESSION;
+		global $_SESSION, $db;
 		
 		if( $_SESSION['auth_login'] == 'anonyme' )
 		{
@@ -155,30 +155,38 @@ class user {
 		}
 		else
 		{
-			$found = false;
+                        if($perm == 'A') 
+                        {
+                                
+
+                        }
+                        else
+                        {
+        			$found = false;
+        			     
+        			// on veréifie qu'il existe une permition pour cette cat
+        	       		for($i=0; $i<count($_SESSION['user_cats']); $i++)
+	              		{
+        	       			if($id == $_SESSION['user_cats'][$i]['id']) {
+	              				$found=true;
+        	       				break;
+        				}
+        			} 
 			
-			// on veréifie qu'il existe une permition pour cette cat
-			for($i=0; $i<count($_SESSION['user_cats']); $i++)
-			{
-				if($id == $_SESSION['user_cats'][$i]['id']) {
-					$found=true;
-					break;
-				}
-			} 
-			
-			// on vérifie la permission en elle-meme
-			if( $found == true) 
-			{
-				if( ereg($perm, $_SESSION['user_cats'][$i]['perm']) ) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-			else
-			{
-				return false;
-			}
+        			// on vérifie la permission en elle-meme
+        			if( $found == true) 
+        			{
+        				if( ereg($perm, $_SESSION['user_cats'][$i]['perm']) ) {
+        					return true;
+        				} else {
+        					return false;
+        				}
+        			}
+        			else
+        			{
+        				return false;
+        			}
+                        } // fin si recherche perm admin de la branche
 		} // fin si anonyme
 	}
 

@@ -51,10 +51,9 @@ function affstruct_cat($pere,$espace)
 {
 	global $db,$tpl,$_GET,$tabcat,$user;
 
-	$query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'"  AND `CAT_ID`!="0" ORDER BY `CAT_NOM` ASC';
-	$result = mysql_query($query) or die(mysql_error());
-	$n = mysql_num_rows($result);
-	$cats = explode('|', $_GET['cats']);
+	$query='SELECT `CAT_ID`,`CAT_NOM`,`CAT_DESCRIPTION`,`CAT_ADMIN` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$pere.'"  AND `CAT_ID`!="0" ORDER BY `CAT_NOM` ASC';
+	$result = $db->query($query) or die(mysql_error());
+	$n = $db->num_rows($result);
 	
 	if($pere != 0) {
 		$espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
@@ -65,6 +64,7 @@ function affstruct_cat($pere,$espace)
 		$nom=stripslashes( mysql_result($result,$i,"CAT_NOM") );
 		$id=mysql_result($result,$i,"CAT_ID");
 		$description=mysql_result($result,$i,"CAT_DESCRIPTION");
+                $cat_admin=mysql_result($result,$i,"CAT_ADMIN");
 		
 		
 		$tpl->set_var('nom', '<a href="consulter.php?cat='.$id.'">'.$nom.'</a>' );
@@ -78,14 +78,17 @@ function affstruct_cat($pere,$espace)
 		$tpl->set_var('description', $description ); // laisser slashé 
 		$tpl->set_var('id', $id );
 		
+                // on récupère les droits
+		$droit_w = $user->HaveAccess($id, 'W');
+		$droit_a = $user->HaveAccess($id, 'A');
+		
+
 
 		// MENU
 		// --------------------------------
 
 		$menu = '';
-		$droit_w = $user->HaveAccess($id, 'W');
-		$droit_a = $user->HaveAccess($id, 'A');
-		
+
 		if( $droit_w == true || $droit_a == true ) 
 		{
 			$menu =  "<b>Catégorie</b><br>
@@ -151,8 +154,8 @@ function affstruct_ent($cat,$pere,$espace)
         global $db,$tpl,$tabent,$user;
 
         $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
-        $result = mysql_query($query) or die(mysql_error());
-        $n = mysql_num_rows($result);
+        $result = $db->query($query) or die(mysql_error());
+        $n = $db->num_rows($result);
         $espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
         for ($i=0; $i<$n; $i++)
         {
@@ -238,8 +241,18 @@ function aff_personnes($id)
 	// suppression -------------------------------
 	if( $_GET['action'] == 'supprimer')
 	{
-		
-
+                if( $_GET['type'] == 'categorie' )
+                {
+                       $tabcat=array();
+	               $where = get_subcats($_GET['id']);
+	               $db->query('DELETE FROM `CATEGORIES` WHERE `CAT_ID` IN '.$where);
+                }
+                elseif( $_GET['type'] == 'entitees' )
+                {
+                       $tabent=array();
+	               $where = get_subents($_GET['id']);
+	               $db->query('DELETE FROM `ENTITEES` WHERE `ENT_ID` IN '.$where);
+                }	
 	}
 	// -------------------------------------------
 
@@ -289,45 +302,55 @@ function aff_personnes($id)
 		$data=$db->fetch_array();
 		$tmp = '<table>';
 		
+                // l'user a t'il accès en lecture pour les champs spéciaux
+                $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'R');
+
 		//$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$_GET['ent']);
 		$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",205);
 		
 		foreach ($CIL as $pobj) 
 		{
 			$NmChamp = $pobj->NmChamp;
-/*						
-			if ($vtb_name && strstr($NmChamp,"PROPRIETE")) {
-					//$CIL[$NmChamp]->NmTable=$_vtb_name;
-					$pobj->NmTable=$vtb_name;
-					//$pobj->NmBase="annuaire_externe";
-					//$pobj->NmChamp=$NmChamp;
+						
+/*			if ($vtb_name && strstr($NmChamp,"PROPRIETE")) 
+                        {
+                                //$CIL[$NmChamp]->NmTable=$_vtb_name;
+                                $pobj->NmTable=$vtb_name;
+                                //$pobj->NmBase="annuaire_externe";
+                                //$pobj->NmChamp=$NmChamp;
 					
-					$pobj->InitPO();
+                                $pobj->InitPO();
 				echo 'botte ';
 			}
-			
 */			
+			
 			$CIL[$NmChamp]->ValChp=$data[$NmChamp];
-			// consultation ou édition ?
-			// a modifier suivant profil
 			$CIL[$NmChamp]->TypEdit = 'C';
-			if ($CIL[$NmChamp]->Typaff_l!='' && $CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
-			{ 
-				// on vire les champs categorie et entitée parent
-				if($NmChamp != 'ENT_PARENTID' && $NmChamp != 'CATEGORIES_CAT_ID') 
-				{
-			  		$tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
-					if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
-					{
-						$tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-					} 
 
-					$tmp .= '</td>'."\n";
-					$tmp .= '<td><b>:</b> ';
-			  		// traitement valeurs avant MAJ
-					$CIL[$NmChamp]->DirEcho = false;
-					$tmp .= $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-					$tmp .= '</td></tr>'."\n";
+                        // on affiche aps les champs caché
+			if ($CIL[$NmChamp]->Typaff_l!='' && $CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+			{
+				// on vire les champs qui ne doivent pas etre affiché (droit ou inutiles)
+                                $display = true;
+				if($NmChamp == 'ENT_PARENTID' || $NmChamp == 'CATEGORIES_CAT_ID') $display = false;
+                                if( ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
+
+                                        
+                                if( $display == true ) 
+                                {
+                                        $tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+                                        if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
+                                        {
+                                                $tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+                                        } 
+
+                                        $tmp .= '</td>'."\n";
+                                        $tmp .= '<td><b>:</b> ';
+                                        
+                                        // traitement valeurs avant MAJ
+                                        $CIL[$NmChamp]->DirEcho = false;
+                                        $tmp .= $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+                                        $tmp .= '</td></tr>'."\n";
 				}
 			}
 		}
