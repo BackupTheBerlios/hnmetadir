@@ -10,7 +10,7 @@ $tpl->set_file('FileRef','admin-groupes-edit.html');
 
 // - Formulaire validé 
 // ---------------------------------- 
-if($_POST['nom']) {
+if($_POST) {
 
 	# mise a jour du nom
 	$db->query('UPDATE `GROUPES` SET `GRO_NOM`="'.addslashes($_POST['nom']).'" WHERE `GRO_ID`="'.(int)$_GET['id'].'"');	
@@ -41,7 +41,7 @@ $tpl->set_var('id', (int)$_GET['id'] );
 
 # on récupere la liste des users
 $tpl->set_block('FileRef', 'users', 'users_block');
-$db->query('SELECT `USE_ID`,`USE_NOM`,`USE_PRENOM` FROM `USERS`');
+$db->query('SELECT `USE_ID`,`USE_NOM`,`USE_PRENOM` FROM `USERS` ORDER BY `USE_NOM`');
 While( $data = $db->fetch_array() ) {
 	$tpl->set_var('u_id', $data['USE_ID'] );
 	$tpl->set_var('u_nom', stripslashes($data['USE_NOM']) );

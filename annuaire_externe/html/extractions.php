@@ -23,9 +23,9 @@ if( $_GET['type'] == 'categories' )
 	$filename = strtolower( $row['CAT_NOM'] );
 	$filename = str_replace(' ', '_', $filename);
 
-	header("Content-disposition: attachment; filename=\"extraction-categories-$filename.csv\"");
-	header("Content-Type: application/force-download");
-	header("Content-Transfer-Encoding: binary");
+        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
+        header("Content-Type: application/force-download");
+        header("Content-Transfer-Encoding: binary");
 	
 	// on récupere les ids des sous cat en dessous
         function GetCatsForCSV($pere, $position)
@@ -46,7 +46,7 @@ if( $_GET['type'] == 'categories' )
                 for ($i=0; $i<$n; $i++)
                 {
                         $nom = '"'.stripslashes(mysql_result($result,$i,"CAT_NOM")).'";';
-			echo $position.$nom."\n";
+			echo $position.$nom."\r\n";
                         $id  = mysql_result($result,$i,"CAT_ID");
                         GetCatsForCSV($id, $position);
 
@@ -69,9 +69,9 @@ elseif( $_GET['type'] == 'entitees' )
         $filename = strtolower( $row['CAT_NOM'] );
         $filename = str_replace(' ', '_', $filename);
 
-        header("Content-disposition: attachment; filename=\"extraction-entitees-$filename.csv\"");
+        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
         header("Content-Type: application/force-download");
-        header("Content-Transfer-Encoding: binary"); 
+        header("Content-Transfer-Encoding: binary");
         // fin de la generation du nom
 
         // on affiche la premiere ligne avec les noms des champs
@@ -103,7 +103,7 @@ elseif( $_GET['type'] == 'entitees' )
         // comme on affiche toute les entitées de toutes les sous catégories qui se trouve en dessous de l'id
         // les libellés des champs spéciaux ne seront pas pareille car il risque d'y avoir des sous catégories debutant
         // sur des champs spéciaux differents
-        echo ',"Champs Spécial 1","Champs Spécial 2","Champs Spécial 3","Champs Spécial 4","Champs Spécial 5";'."\n";
+        echo ',"Champs Spécial 1","Champs Spécial 2","Champs Spécial 3","Champs Spécial 4","Champs Spécial 5";'."\r\n";
         // fin de l'affichage de la premiere ligne
 
         // on rempli le tableau
@@ -168,7 +168,7 @@ elseif( $_GET['type'] == 'entitees' )
                                 }// fin du if pour les champs sécurisés
 
                         } // fin du foreach
-                        echo ";\n";
+                        echo ";\r\n";
                 } // fin du while
         } // fin du mysql_num_rows()
 }
@@ -186,6 +186,8 @@ elseif( $_GET['type'] == 'personnes' )
         header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
         header("Content-Type: application/force-download");
         header("Content-Transfer-Encoding: binary");
+
+
         // fin de la generation du nom
 
         // on affiche la premiere ligne avec les noms des champs
@@ -214,7 +216,7 @@ elseif( $_GET['type'] == 'personnes' )
                         $i++;
                 }
         }
-        echo ";\n";
+        echo ";\r\n";
         // fin de l'affichage de la premiere ligne
 
         // on récupère la catégorie parent avant tout pour connaitre les droits
@@ -268,7 +270,7 @@ elseif( $_GET['type'] == 'personnes' )
                                         } // fin si champs auto
                                 } // fin si 'PER'
                         } // fin du foreach
-                        echo ";\n";
+                        echo ";\r\n";
                 } // fin du while
         } // fin du mysql_num_rows()
 }

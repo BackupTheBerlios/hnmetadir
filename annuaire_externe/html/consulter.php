@@ -86,7 +86,7 @@ function affstruct_cat($pere,$espace)
 		$droit_w = $user->HaveAccess($id, 'W');
 		$droit_a = $user->HaveAccess($id, 'A');
 		
-		if( $droit_w == true ) 
+		if( $droit_w == true || $droit_a == true ) 
 		{
 			$menu =  "<b>Catégorie</b><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
@@ -148,7 +148,7 @@ function affstruct_cat($pere,$espace)
 
 function affstruct_ent($cat,$pere,$espace)
 {
-        global $db,$tpl,$tabent;
+        global $db,$tpl,$tabent,$user;
 
         $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
         $result = mysql_query($query) or die(mysql_error());
@@ -166,16 +166,28 @@ function affstruct_ent($cat,$pere,$espace)
                 $tpl->set_var('id', $id );
 
 		// menu
-		$menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
+                // ----------------------------------------------
+
+                $menu = '';
+		$droit_w = $user->HaveAccess($cat, 'W');
+		$droit_a = $user->HaveAccess($cat, 'A');
+
+                if( $droit_w == true || $droit_a == true ) 
+                {
+		      $menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
 			- Supprimer cette entitée<br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
-			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a><br>
-			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=personnes&ent_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Extraires les personnes</a><br>
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a><br>";
+                }
+
+			$menu .= "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=personnes&ent_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Extraires les personnes</a><br>
                         - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=consultation&id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Version imprimable</a><br>";
+
                 $menu = str_replace("\"", "&quot;", $menu);
                 $menu = str_replace("\t", "", $menu);
                 $menu = str_replace("\n", "", $menu);
 		$tpl->set_var('menu', $menu);
+                // ----------------------------------------------
 
                 $tpl->parse('arbre_block', 'arbre', true);
 
