@@ -20,7 +20,7 @@ function EchoLig($NmChamp,$FTE="")
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
 	
-	if( ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	if( $CIL[$NmChamp]->Typaff_l!='' && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 	{
 			// on vire la ligne categorie parent et entitee parent
 			if($NmChamp != 'CATEGORIES_CAT_ID' && $NmChamp != 'ENT_PARENTID')

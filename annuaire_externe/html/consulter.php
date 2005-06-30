@@ -311,7 +311,7 @@ function aff_personnes($id)
 			// consultation ou édition ?
 			// a modifier suivant profil
 			$CIL[$NmChamp]->TypEdit = 'C';
-			if ($CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+			if ($CIL[$NmChamp]->Typaff_l!='' && $CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 			{ 
 				// on vire les champs categorie et entitée parent
 				if($NmChamp != 'ENT_PARENTID' && $NmChamp != 'CATEGORIES_CAT_ID') 
