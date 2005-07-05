@@ -37,7 +37,7 @@ if($_GET['action'] == 'ajouter') {
 
 	# affichage de la liste des users pour l'overflow 
 	$tpl->set_block('FileRef', 'users', 'users_block');
-	$db->query('SELECT `USE_ID`,`USE_NOM`,`USE_PRENOM` FROM `USERS`');
+	$db->query('SELECT `USE_ID`,`USE_NOM`,`USE_PRENOM` FROM `USERS` ORDER BY `USE_NOM`');
 	While( $data = $db->fetch_array() ) {
         	$tpl->set_var('u_id', $data['USE_ID'] );
 	        $tpl->set_var('u_nom', stripslashes($data['USE_NOM']) );

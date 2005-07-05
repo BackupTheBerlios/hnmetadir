@@ -29,5 +29,4 @@ if($_SESSION['auth'] != true && $REQUEST_URI != '/login.php')
 	}
 }
 
-
 $user = new user($_SESSION['auth_id'], $_SESSION['auth_login']);

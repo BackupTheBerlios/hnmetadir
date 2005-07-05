@@ -113,13 +113,14 @@ function GetSubCats($id, $perm)
 	global $tabcat;
 	array_push($tabcat, array('id'=>$id, 'perm'=>$perm) );
 
-	$query='SELECT `CAT_ID`,`CAT_PARENTID` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$id.'"';
+	$query='SELECT `CAT_ID`,`CAT_PARENTID`,`CAT_ADMIN` FROM `CATEGORIES` WHERE `CAT_PARENTID`="'.$id.'"';
 	$result = mysql_query($query) or die(mysql_error());
 	$n = mysql_num_rows($result);
 
 	for ($i=0; $i<$n; $i++)
 	{
-		$id  = mysql_result($result,$i,"CAT_ID"); 
+		$id  = mysql_result($result,$i,"CAT_ID");
+                $admin  = mysql_result($result,$i,"CAT_ADMIN");
 		GetSubCats($id, $perm);
 	}
 	

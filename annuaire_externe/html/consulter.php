@@ -94,7 +94,7 @@ function affstruct_cat($pere,$espace)
 			$menu =  "<b>Catégorie</b><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=ajout&cat_parentid=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_cat.php?action=edit&id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
-			- Supprimer<br>
+			- <a href=\"consulter.php?action=supprimer&cat_id=".$id."\" onclick=\"choix=confirm(\'Etes vous sur de vouloir supprimer cette catégorie ?\nToutes les sous catégories et les entitées qui y sont reliées seront supprimées !\'); if(choix==false){return false;}\">Supprimer</a><br>
 			<b>Entitée :</b><br>
 			- <a  href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$id."\', \'\', config=\'height=600, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter</a><br>
 			<b>Gestion :</b><br>";
@@ -178,7 +178,7 @@ function affstruct_ent($cat,$pere,$espace)
                 if( $droit_w == true || $droit_a == true ) 
                 {
 		      $menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
-			- Supprimer cette entitée<br>
+			- <a href=\"consulter.php?action=supprimer&ent_id=".$id."\" onclick=\"choix=confirm(\'Etes vous sur de vouloir supprimer cette entitée ?\nToutes les sous-entitées qui y sont reliées seront supprimées !\'); if(choix==false){return false;}\">Supprimer cette entitée</a><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a><br>";
                 }
@@ -241,16 +241,16 @@ function aff_personnes($id)
 	// suppression -------------------------------
 	if( $_GET['action'] == 'supprimer')
 	{
-                if( $_GET['type'] == 'categorie' )
+                if( $_GET['cat_id']  )
                 {
                        $tabcat=array();
-	               $where = get_subcats($_GET['id']);
+	               $where = get_subcats($_GET['cat_id']);
 	               $db->query('DELETE FROM `CATEGORIES` WHERE `CAT_ID` IN '.$where);
                 }
-                elseif( $_GET['type'] == 'entitees' )
+                elseif( $_GET['ent_id'] )
                 {
                        $tabent=array();
-	               $where = get_subents($_GET['id']);
+	               $where = get_subents($_GET['ent_id']);
 	               $db->query('DELETE FROM `ENTITEES` WHERE `ENT_ID` IN '.$where);
                 }	
 	}

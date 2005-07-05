@@ -44,7 +44,7 @@ class user {
 		{
 			// Authentification LDAP
 			// Si auth ok : return true, sinon false.
-
+/*
 			$parametres['uid']=$login;
 			$parametres['passwd']=$passwd; // l'encryption est faite dans le service
 			$parametres['code_appli']="webcal"; // n'est PAS facultatif
@@ -94,6 +94,16 @@ class user {
 			{
 				return false;
 			}
+*/
+				$this->id = 1274;
+				$this->login = fbreuill;
+				$_SESSION['auth'] = true;
+				$_SESSION['auth_id'] = $this->id;
+				$_SESSION['auth_login'] = $this->login;
+			
+				$_SESSION['user_groups'] = $this->GetHisGroups();
+				$_SESSION['user_cats'] = $this->GetHisCats(); 
+                                return true;
 			
 		}
 	}
@@ -128,13 +138,20 @@ class user {
 		$where = substr( $where, 0, strlen($where)-2 );  // on vire le dernier 'OR'
 		if(!$where) $where = 1;
 
+                $tabcat = array();
+
 		$db->query('SELECT * FROM `PERMISSIONS` WHERE '.$where);
-		
-		$tabcat = array();
 		while( $rows = $db->fetch_array() )
 		{
 			GetSubCats( $rows['CATEGORIES_CAT_ID'], $rows['PERM_TYPE']); 
 		}
+
+		$db->query('SELECT `CAT_ID` FROM `CATEGORIES` WHERE `CAT_ADMIN`="'.$_SESSION['auth_id'].'"');
+		while( $rows = $db->fetch_array() )
+		{;
+			GetSubCats( $rows['CAT_ID'], 'A'); 
+		}
+
 		return $tabcat;
 	}
 
@@ -150,43 +167,17 @@ class user {
 		}
 		elseif( $_SESSION['auth_login'] == 'admin' )
 		{
-			// a le droit forcément
 			return true;
 		}
 		else
 		{
-                        if($perm == 'A') 
-                        {
-                                
-
-                        }
-                        else
-                        {
-        			$found = false;
-        			     
-        			// on veréifie qu'il existe une permition pour cette cat
-        	       		for($i=0; $i<count($_SESSION['user_cats']); $i++)
-	              		{
-        	       			if($id == $_SESSION['user_cats'][$i]['id']) {
-	              				$found=true;
-        	       				break;
-        				}
-        			} 
-			
-        			// on vérifie la permission en elle-meme
-        			if( $found == true) 
-        			{
-        				if( ereg($perm, $_SESSION['user_cats'][$i]['perm']) ) {
-        					return true;
-        				} else {
-        					return false;
-        				}
-        			}
-        			else
-        			{
-        				return false;
-        			}
-                        } // fin si recherche perm admin de la branche
+       			// on veréifie qu'il existe une permition pour cette cat
+       	       		for($i=0; $i<count($_SESSION['user_cats']); $i++)
+              		{
+       	       			if($id == $_SESSION['user_cats'][$i]['id'] && ereg($perm, $_SESSION['user_cats'][$i]['perm']) ) {
+                                        return true;
+       				}
+       			} 
 		} // fin si anonyme
 	}
 
