@@ -16,7 +16,7 @@ if($_GET['action'] == 'ajouter') {
 		$description = addslashes($_POST['description']);
 		$admin = $_POST['admin'];
 
-		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_ADMIN,CAT_PARENTID) VALUES ("'.$nom.'","'.$description.'","'.$admin.'","0")');
+		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_ADMIN,CAT_PARENTID,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$admin.'","0",CURDATE(),"1")');
 	}
 
 	header('Location: admin-branches.php');

@@ -19,7 +19,7 @@ if( $db->num_rows() )
 		$nom = addslashes($_POST['nom']);
 		$description = addslashes($_POST['description']);
 		$admin = $_POST['admin'];
-		$db->query('UPDATE `CATEGORIES` SET `CAT_NOM`="'.$nom.'", `CAT_DESCRIPTION`="'.$description.'", `CAT_ADMIN`="'.$admin.'" WHERE `CAT_ID`="'.(int)$_GET['id'].'"');
+		$db->query('UPDATE `CATEGORIES` SET `CAT_NOM`="'.$nom.'", `CAT_DESCRIPTION`="'.$description.'", `CAT_ADMIN`="'.$admin.'", `CAT_DTMAJ`=CURDATE(), `CAT_COOPE`="1" WHERE `CAT_ID`="'.(int)$_GET['id'].'"');
 		header('Location: admin-branches.php');
 		
 	} 

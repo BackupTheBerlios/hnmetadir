@@ -22,7 +22,7 @@ if($_GET['action'] == 'ajout')
 		$nom = addslashes($_POST['nom']);
 		$description = $_POST['description'];
 		$cat_parentid = $_POST['cat_parentid'];
-		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_PARENTID,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$cat_parentid.'","CURDATE()", "'.$_SESSION['auth_id'].'");');
+		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_PARENTID,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$cat_parentid.'",CURDATE(), "'.$_SESSION['auth_id'].'");');
 		echo '<script language="javascript">
 			window.opener.location.reload();
 			window.close();
@@ -56,7 +56,7 @@ elseif($_GET['action'] == 'edit')
                 $description = $_POST['description'];
                 $id = $_POST['id'];
 
-		$db->query('UPDATE `CATEGORIES` SET `CAT_NOM`="'.$nom.'", `CAT_DESCRIPTION`="'.$description.'", `CAT_COOPE`="'.$_SESSION['auth_id'].'", `CAT_DTMAJ`="CURDATE()" WHERE `CAT_ID`="'.$id.'"');
+		$db->query('UPDATE `CATEGORIES` SET `CAT_NOM`="'.$nom.'", `CAT_DESCRIPTION`="'.$description.'", `CAT_COOPE`="'.$_SESSION['auth_id'].'", `CAT_DTMAJ`=CURDATE() WHERE `CAT_ID`="'.$id.'"');
 
                 echo '<script language="javascript">
                         window.opener.location.reload();

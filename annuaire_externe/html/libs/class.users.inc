@@ -44,7 +44,7 @@ class user {
 		{
 			// Authentification LDAP
 			// Si auth ok : return true, sinon false.
-/*
+
 			$parametres['uid']=$login;
 			$parametres['passwd']=$passwd; // l'encryption est faite dans le service
 			$parametres['code_appli']="webcal"; // n'est PAS facultatif
@@ -94,16 +94,6 @@ class user {
 			{
 				return false;
 			}
-*/
-				$this->id = 1274;
-				$this->login = fbreuill;
-				$_SESSION['auth'] = true;
-				$_SESSION['auth_id'] = $this->id;
-				$_SESSION['auth_login'] = $this->login;
-			
-				$_SESSION['user_groups'] = $this->GetHisGroups();
-				$_SESSION['user_cats'] = $this->GetHisCats(); 
-                                return true;
 			
 		}
 	}

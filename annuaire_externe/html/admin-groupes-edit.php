@@ -13,13 +13,13 @@ $tpl->set_file('FileRef','admin-groupes-edit.html');
 if($_POST) {
 
 	# mise a jour du nom
-	$db->query('UPDATE `GROUPES` SET `GRO_NOM`="'.addslashes($_POST['nom']).'" WHERE `GRO_ID`="'.(int)$_GET['id'].'"');	
+	$db->query('UPDATE `GROUPES` SET `GRO_NOM`="'.addslashes($_POST['nom']).'", `GRO_DTMAJ`=CURDATE(), `GRO_COOPE`="1" WHERE `GRO_ID`="'.(int)$_GET['id'].'"');	
 	# on vide la liste d'affectation
 	$db->query('DELETE FROM `AFFECTE_USERS_GROUPES` WHERE `GROUPES_GRO_ID`="'.(int)$_GET['id'].'"'); 
 
 	# mise a jour des affectations
 	for($i=0; $i<count($_POST['usersgroup']);$i++) {
-		$db->query('INSERT INTO `AFFECTE_USERS_GROUPES` (GROUPES_GRO_ID,USERS_USE_ID) VALUES ("'.(int)$_GET['id'].'","'.(int)$_POST['usersgroup'][$i].'")');	
+		$db->query('INSERT INTO `AFFECTE_USERS_GROUPES` (GROUPES_GRO_ID,USERS_USE_ID,AUG_DTCREA,AUG_COOPE) VALUES ("'.(int)$_GET['id'].'","'.(int)$_POST['usersgroup'][$i].'",CURDATE(),"1")');	
 	}
 
 	header('Location: admin-groupes.php');

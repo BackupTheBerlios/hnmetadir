@@ -29,7 +29,7 @@ if($_POST)
 	// on reconstruit le droit de lecture
 	for($i=0; $i<count($_POST['users_r']);$i++) 
 	{
-		mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE,PERM_DTCREA,PERM_COOPE) VALUES ("'.$id.'","'.$_POST['users_r'][$i].'","R","CURDATE()","'.$_SESSION['auth_id'].'")');
+		mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE,PERM_DTCREA,PERM_COOPE) VALUES ("'.$id.'","'.$_POST['users_r'][$i].'","R",CURDATE(),"'.$_SESSION['auth_id'].'")');
 	}
 
 	// on reconstruit le droit d'ajout
@@ -46,11 +46,11 @@ if($_POST)
 		// Read & Write
 		if( $found == true ) 
 		{ 
-			mysql_query('UPDATE `PERMISSIONS` SET `PERM_TYPE`="RW", `PERM_DTMAJ`="CURDATE()", `PERM_COOPE`="'.$_SESSION['auth_id'].'" WHERE CATEGORIES_CAT_ID="'.$id.'" AND `GROUPES_GRO_ID`="'.$_POST['users_w'][$i].'"');
+			mysql_query('UPDATE `PERMISSIONS` SET `PERM_TYPE`="RW", `PERM_DTMAJ`=CURDATE(), `PERM_COOPE`="'.$_SESSION['auth_id'].'" WHERE CATEGORIES_CAT_ID="'.$id.'" AND `GROUPES_GRO_ID`="'.$_POST['users_w'][$i].'"');
 		} 
 		else 
 		{ 
-			mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE,PERM_DTCREA,PERM_COOPE) VALUES ("'.$id.'","'.$_POST['users_w'][$i].'","W","CURDATE()","'.$_SESSION['auth_id'].'")');
+			mysql_query('INSERT INTO `PERMISSIONS` (CATEGORIES_CAT_ID,GROUPES_GRO_ID,PERM_TYPE,PERM_DTCREA,PERM_COOPE) VALUES ("'.$id.'","'.$_POST['users_w'][$i].'","W",CURDATE(),"'.$_SESSION['auth_id'].'")');
 		}
 	}
 

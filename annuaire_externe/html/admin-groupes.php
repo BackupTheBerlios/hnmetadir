@@ -11,7 +11,7 @@ $tpl->set_file('FileRef','admin-groupes.html');
 // - Ajout d'un groupe
 // ---------------------------------- 
 if($_GET['action'] == 'add' && $_POST['nom']) {
-	$db->query('INSERT INTO `GROUPES` (GRO_NOM) VALUES ("'.addslashes($_POST['nom']).'")');	
+	$db->query('INSERT INTO `GROUPES` (GRO_NOM,GRO_DTCREA,GRO_COOPE) VALUES ("'.addslashes($_POST['nom']).'",CURDATE(),"1")');	
 }
 
 // - Ajout d'un groupe
