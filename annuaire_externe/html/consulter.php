@@ -180,10 +180,10 @@ function affstruct_ent($cat,$pere,$espace)
 		      $menu = "- <a href=\"#\" onclick=\"window.open(\'popup_ent.php?action=edition&id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer cette entitée</a><br>
 			- <a href=\"consulter.php?action=supprimer&ent_id=".$id."\" onclick=\"choix=confirm(\'Etes vous sur de vouloir supprimer cette entitée ?\nToutes les sous-entitées qui y sont reliées seront supprimées !\'); if(choix==false){return false;}\">Supprimer cette entitée</a><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=ajout&cat_parentid=".$cat."&ent_parentid=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une sous-entitée</a><br>
-			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_personne.php?action=ajout&ent_parent=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a><br>";
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_add_pers_1.php?ent_id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Ajouter une personne</a><br>";
                 }
 
-			$menu .= "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=personnes&ent_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Extraires les personnes</a><br>
+			$menu .= "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=personnes&ent_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Extraire les personnes</a><br>
                         - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_ent.php?action=consultation&id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Version imprimable</a><br>";
 
                 $menu = str_replace("\"", "&quot;", $menu);
