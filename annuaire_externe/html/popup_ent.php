@@ -155,7 +155,7 @@ if($_GET['action'] == 'ajout')
 	{
 	    	$NM_CHAMP=$data['NM_CHAMP'];
 	    	$CIL[$NM_CHAMP] = new PYAobj();
-      		$CIL[$NM_CHAMP]->NmBase='annuaire_externe';
+      		$CIL[$NM_CHAMP]->NmBase=$DBName;
         	$CIL[$NM_CHAMP]->NmTable='ENTITEES';
 		$CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
 		$CIL[$NM_CHAMP]->TypEdit='';

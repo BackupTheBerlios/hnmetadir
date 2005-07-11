@@ -9,45 +9,47 @@ include('HEADER.php');
 ?>
 <html>
   <head>
-    <SCRIPT LANGUAGE="JavaScript">parent.window.resizeTo('700','600');</SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript">parent.window.resizeTo('720','600');</SCRIPT>
     <link rel="stylesheet" type="text/css" href="templates/style.css">
   </head>
   <body>
+
 <?php
+
+
 
 function EchoLig($NmChamp,$FTE=""){
 	global $CIL,$pobj;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if( ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	if( $CIL[$NmChamp]->Typaff_l!='' &&  ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 	{
 		// ne pas afficher les libelle des champs cachés
 		if($CIL[$NmChamp]->TypeAff!="HID") {
-		  	echo "<tr><td>".$CIL[$NmChamp]->Libelle;
+		  	echo "<tr><td><b>".$CIL[$NmChamp]->Libelle;
 			if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
 				echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
 			}
 		}
 
-		echo "</td>\n";
-		echo "<td>";
+		echo "</b></td>\n";
+		echo "<td>: ";
 	  	// traitement valeurs avant MAJ
 	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
 		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
 		echo "</td></tr>\n";
-
 	}
 }
 
-// TRAITEMENT DU FORMULAIRE APRES POSTAGE
+// DEBUT -------------------------------------------------------------------------------------
 
-if($_POST) 
+if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
 {
 
 	// début traitement fichier
 	// composition du nom
 	// ---------------------------------------
-	
+
 	// on recupere les noms des 2 1er champs (idem aux variables)
 	$rqkc  = $db->query("SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE NM_TABLE='PERSONNES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE LIMIT 2");
 	$nmchp = $db->fetch_array($rqkc);
@@ -83,7 +85,7 @@ if($_POST)
 	
 	$sql=$db->query("SELECT `NM_CHAMP` from `DESC_TABLES` WHERE NM_TABLE='PERSONNES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE");
 	$PYAoMAJ=new PYAobj();
-	$PYAoMAJ->NmBase='annuaire_externe';
+	$PYAoMAJ->NmBase=$DBName;
 	$PYAoMAJ->NmTable='PERSONNES';
 	$PYAoMAJ->TypEdit='';
 
@@ -118,82 +120,79 @@ if($_POST)
 
 	} // fin boucle sur les champs
 
-	$set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
+        $set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
+        $db->query("UPDATE `PERSONNES` SET ".tbset2set($tbset)." WHERE `PER_ID`='".$_GET['per_id']."'");				
 
-	if($_GET['action'] == 'ajout') {
-		$db->query("INSERT INTO `PERSONNES` SET ".tbset2set($tbset));
-	} elseif($_GET['action'] == 'edition') {
-		$db->query("UPDATE `PERSONNES` SET ".tbset2set($tbset)." WHERE `PERS_ID`='".(int)$_GET['id']."'");		
-	}
+
+        // traitement des champs spécifique
+        // ----------------------------------------
+
+        $aep_fonction = addslashes($_POST['AEP_FONCTION']);
+        $aep_tel = addslashes($_POST['AEP_TEL']);
+        $aep_fax = addslashes($_POST['AEP_FAX']);
+        $aep_mobile = addslashes($_POST['AEP_MOBILE']);
+        $aep_abrege = addslashes($_POST['AEP_ABREGE']);
+        $aep_email = addslashes($_POST['AEP_EMAIL']);
+        $aep_privatecomment = addslashes($_POST['AEP_PRIVATECOMMENT']);
+        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'"';
+
+
+        $db->query('UPDATE `AFFECTE_ENTITEES_PERSONNES` SET '.$set.' WHERE `PERSONNES_PER_ID`="'.$_GET['per_id'].'" AND `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" ');
+
 
 	// ferme la fenetre & rafraichie la fenetre parent
 	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
+
 }
-
-
-// Ajout de l'entitée
-// -----------------------------------------------------------------------------------------
-// -----------------------------------------------------------------------------------------
-if($_GET['action'] == 'ajout') 
+else // AFFICHAGE -------------------------
 {
+        echo '<h2>Informations communes<h2>';
+        echo '<form action="popup_pers.php?per_id='.$_GET['per_id'].'&ent_id='.$_GET['ent_id'].'" method="post" name="theform" ENCTYPE="multipart/form-data">';
 
-	$sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" ORDER BY `ORDAFF`';
-    	$rep=$db->query($sql);
-	        
-	while($data=$db->fetch_array())
-	{
-	    	$NM_CHAMP=$data['NM_CHAMP'];
-	    	$CIL[$NM_CHAMP] = new PYAobj();
-      		$CIL[$NM_CHAMP]->NmBase='annuaire_externe';
-        	$CIL[$NM_CHAMP]->NmTable='PERSONNES';
-		$CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
-		$CIL[$NM_CHAMP]->TypEdit='';
-		$CIL[$NM_CHAMP]->InitPO();
-	}
+        #-- En premiere les champs commun
 
+        $sql='SELECT * FROM `PERSONNES` WHERE `PER_ID`="'.$_GET['per_id'].'"';
+        $CIL=InitPOReq($sql,$DBName);
+        $rep=$db->query($sql);
+        $data=$db->fetch_array();
 
-	echo '<form action="popup_personne.php?action=ajout" method="post" name="theform" ENCTYPE="multipart/form-data">';
-    	echo '<table width="100%">';
-    	foreach ($CIL as $pobj) {
+    	echo '<table>';
+        foreach ($CIL as $pobj) {
+                $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+                if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
         	EchoLig($pobj->NmChamp);
-    	}
+        }
+        echo '</table>';
 
-	echo '</table>';
-	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
+        echo '<h2>Informations spécifiques à cette entitée<h2>';
+        unset($CIL,$NM_CHAMP);
+
+        // Ensuite les champs spécifiques
+        $sql = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
+
+        $CIL=InitPOReq($sql,$DBName);
+        $rep=$db->query($sql);
+        $data=$db->fetch_array();
+
+    	echo '<table>';
+        foreach ($CIL as $pobj) {
+                $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+                if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
+        	EchoLig($pobj->NmChamp);
+        }
+        echo '</table>';
+
+        if( $_GET['action'] != 'consultation' ) {
+	       echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
+        } else {
+                echo '<center><br><hr width="400"><br><br><a href="#" onclick="window.print();"><img src="templates/images/imprimante.gif" border="0"></a></center>'."\n";
+        }
+
 	echo '</form>';
-
-} 
-// Edition d'une entité
-// -------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------
-elseif($_GET['action'] == 'edition')
-{
-
-	$sql='SELECT * FROM `PERSONNES` WHERE PER_ID="'.$_GET['id'].'"';
-	$CIL=InitPOReq($sql,'annuaire_externe');
-	$rep=$db->query($sql);
-	$data=$db->fetch_array();
-	
-	echo '<form action="popup_ent.php?action=edition&id='.(int)$_GET['id'].'" method="post" name="theform" ENCTYPE="multipart/form-data">';
-	echo '<table width="100%">';
-	foreach ($CIL as $pobj) {
-		$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-		EchoLig($pobj->NmChamp);
-	}
-	echo "</table>";
-	echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
-	echo '</form>';
-}
-else
-{
-	// pas d'action
-	echo '<script language="javascript">window.close();</script>';
+        
 }
 
-
-echo '</body></html>';
-
-// ###############################################:#######################
+// ######################################################################
 
 include('FOOTER.php');
 ?>

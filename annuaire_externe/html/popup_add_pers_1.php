@@ -26,13 +26,13 @@ if($_POST)
         <?php
 
         $db->query('SELECT `PER_ID`, `PER_NOM`, `PER_PRENOM`, `PER_VILLE` FROM `PERSONNES` WHERE `PER_NOM` LIKE "%'.$_POST['nom'].'%" ORDER BY `PER_NOM` ASC');
-        if($db->num_rows)
+        if($db->num_rows())
         {
                 echo '<ul>';
                 while( $data = $db->fetch_array() )
                 {
                         $nom = stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']).' - '.stripslashes($data['PER_VILLE']);
-                        echo "<li><a href=\"popup_add_pers_2.php?id=".$data['PER_ID']."\">$nom</a></li>\n";
+                        echo "<li><a href=\"popup_add_pers_2.php?per_id=".$data['PER_ID']."\">$nom</a></li>\n";
                 }
                 echo '</ul>';
         } 
@@ -44,7 +44,7 @@ if($_POST)
 }
 else
 {
-        $_SESSION['ent_id'] = (int)$_GET['ent_id'];
+        $_SESSION['ent_id'] = $_GET['ent_id'];
         ?>
 
         <SCRIPT LANGUAGE="JavaScript">parent.window.resizeTo('400','200');</SCRIPT>

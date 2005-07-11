@@ -213,23 +213,32 @@ function affstruct_ent($cat,$pere,$espace)
 // - Fonction - Listage des personnes d'une entitée 
 // -------------------------------------------------
 
-function aff_personnes($id)
+function aff_personnes($ent_id)
 {
 	global $tpl,$db;
 
-	$db->query('SELECT * FROM `PERSONNES`,`AFFECTE_ENTITEES_PERSONNES` WHERE AFFECTE_ENTITEES_PERSONNES.ENTITEES_ENT_ID="'.$id.'" AND AFFECTE_ENTITEES_PERSONNES.PERSONNES_PER_ID=PERSONNES.PER_ID');
+	$db->query('SELECT * FROM `PERSONNES`,`AFFECTE_ENTITEES_PERSONNES` WHERE AFFECTE_ENTITEES_PERSONNES.ENTITEES_ENT_ID="'.$ent_id.'" AND AFFECTE_ENTITEES_PERSONNES.PERSONNES_PER_ID=PERSONNES.PER_ID');
 	$tpl->set_block('FileRef', 'personnes', 'personnes_block');
 
 	while( $data = $db->fetch_array($req) )
 	{
+                $per_id = $data['PER_ID'];
+                $menu = '';
+                $menu = "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_pers.php?per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
+                - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_pers.php?per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Supprimer</a><br>";
+                $menu = str_replace("\"", "&quot;", $menu);
+                $menu = str_replace("\t", "", $menu);
+                $menu = str_replace("\n", "", $menu);
+
 		$tpl->set_var('u_id', $data['PER_ID'] );
 		$nom = $data['PER_TITRE'].' '.stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']);
-		$nom = '<a href="#" onclick="window.open(\'popup_personne.php?id='.$id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=400, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
+		$nom = '<a href="#" onclick="window.open(\'popup_pers.php?action=consultation&per_id='.$per_id.'&ent_id='.$ent_id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=400, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
 		$tpl->set_var('p_nom',  $nom);
-		$tpl->set_var('p_mail', $data['PER_MAIL'] );
-		$tpl->set_var('p_tel', $data['PER_TEL'] );
-		$tpl->set_var('p_mobile', $data['PER_MOBILE']);
-		$tpl->set_var('p_fonction', $data['PER_FONCTION']);
+		$tpl->set_var('p_menu',  $menu);
+                $tpl->set_var('p_mail', $data['AEP_EMAIL'] );
+		$tpl->set_var('p_tel', $data['AEP_TEL'] );
+		$tpl->set_var('p_mobile', $data['AEP_MOBILE']);
+		$tpl->set_var('p_fonction', $data['AEP_FONCTION']);
 
 		$tpl->parse('personnes_block', 'personnes', true);
 	}
