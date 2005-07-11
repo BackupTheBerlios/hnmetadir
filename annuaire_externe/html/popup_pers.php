@@ -43,7 +43,17 @@ function EchoLig($NmChamp,$FTE=""){
 
 // DEBUT -------------------------------------------------------------------------------------
 
-if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
+
+if( $_GET['action'] == 'supprimer' ) 
+{
+	$db->query('DELETE FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" '); 
+	// ferme la fenetre & rafraichie la fenetre parent
+	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
+
+
+
+}
+elseif( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
 {
 
 	// début traitement fichier

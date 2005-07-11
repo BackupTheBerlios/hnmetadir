@@ -213,7 +213,7 @@ function affstruct_ent($cat,$pere,$espace)
 // - Fonction - Listage des personnes d'une entitée 
 // -------------------------------------------------
 
-function aff_personnes($ent_id)
+function aff_personnes($ent_id,$droit_w,$droit_a)
 {
 	global $tpl,$db;
 
@@ -223,9 +223,15 @@ function aff_personnes($ent_id)
 	while( $data = $db->fetch_array($req) )
 	{
                 $per_id = $data['PER_ID'];
-                $menu = '';
-                $menu = "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_pers.php?per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
-                - <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_pers.php?per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Supprimer</a><br>";
+		if($droit_a == 'true' || $droit_w == 'true')
+		{
+                	$menu = '';
+                	$menu = "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_pers.php?per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
+                	- <a href=\"javascript:void(0);\" onclick=\"choix=confirm(\'Etes vous sur de vouloir supprimer cette entitée ?\nToutes les sous-entitées qui y sont reliées seront supprimées !\'); if(choix==true) { window.open(\'popup_pers.php?action=supprimer&per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');}\">Supprimer</a><br>";
+		} else {
+			$menu = 'Aucun droit';
+		}
+
                 $menu = str_replace("\"", "&quot;", $menu);
                 $menu = str_replace("\t", "", $menu);
                 $menu = str_replace("\n", "", $menu);
@@ -288,12 +294,21 @@ function aff_personnes($ent_id)
 	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
 	elseif($_GET['ent'])
 	{
+
+                $sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
+                $rep=$db->query($sql);
+                $data=$db->fetch_array();
+
+	
 		// on récupere les ids des entitées parentes
 		$tabent = chemin_entitee($_GET['ent']);
 		// on affiche le calque des personnes
 		$tpl->set_var('div_pdisp', 'display');
+		
 		// hop on affiche la liste des personnes
-		aff_personnes((int)$_GET['ent']);
+                $droit_w = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'W');
+		$droit_a = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'A');
+		aff_personnes((int)$_GET['ent'], $droit_w, $droit_a);
 
 
 		// on envoie le menu
@@ -305,10 +320,7 @@ function aff_personnes($ent_id)
 		
 
 		// on affiche les infos sur l'entitée
-		$sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
 		$CIL=InitPOReq($sql,'annuaire_externe');
-		$rep=$db->query($sql);
-		$data=$db->fetch_array();
 		$tmp = '<table>';
 		
                 // l'user a t'il accès en lecture pour les champs spéciaux
