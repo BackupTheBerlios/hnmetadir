@@ -325,30 +325,23 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 		
                 // l'user a t'il accès en lecture pour les champs spéciaux
                 $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'R');
-
-		//$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$_GET['ent']);
-		$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",205);
+		// récupère le nom (éventuel) de la table virtuelle décrivant les champs spéciaux
+		$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$data['CATEGORIES_CAT_ID']);
 		
 		foreach ($CIL as $pobj) 
 		{
 			$NmChamp = $pobj->NmChamp;
 						
-/*			if ($vtb_name && strstr($NmChamp,"PROPRIETE")) 
+			if ($vtb_name && strstr($NmChamp,"PROPRIETE")) 
                         {
-                                //$CIL[$NmChamp]->NmTable=$_vtb_name;
-                                $pobj->NmTable=$vtb_name;
-                                //$pobj->NmBase="annuaire_externe";
-                                //$pobj->NmChamp=$NmChamp;
-					
-                                $pobj->InitPO();
-				echo 'botte ';
+				$CIL[$NmChamp]->NmTable=$vtb_name;
+				$CIL[$NmChamp]->InitPO();
 			}
-*/			
 			
 			$CIL[$NmChamp]->ValChp=$data[$NmChamp];
 			$CIL[$NmChamp]->TypEdit = 'C';
 
-                        // on affiche aps les champs caché
+                        // on affiche pas les champs cachés
 			if ($CIL[$NmChamp]->Typaff_l!='' && $CIL[$NmChamp]->TypeAff!="HID" && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 			{
 				// on vire les champs qui ne doivent pas etre affiché (droit ou inutiles)

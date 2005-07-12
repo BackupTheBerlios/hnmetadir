@@ -16,34 +16,38 @@ include('HEADER.php');
 
 function EchoLig($NmChamp,$FTE="")
 {
-	global $CIL,$pobj, $access;
+	global $CIL, $access;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
 	
-	if( $CIL[$NmChamp]->Typaff_l!='' && ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	if( $CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="" )  
 	{
-			// on vire la ligne categorie parent et entitee parent
-                        $display = true;
-			if($NmChamp == 'CATEGORIES_CAT_ID' || $NmChamp == 'ENT_PARENTID') $display = false;
-                        if($FTE == 'C' && ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
-			
-                        if($display == true) 
-                        {
-				// ne pas afficher les libelle des champs cachÃ©s
-				if($CIL[$NmChamp]->TypeAff!="HID") 
-				{
-					echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
-					if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-						echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-					}
+		// on vire la ligne categorie parent et entitee parent
+		$display = true;
+		if($NmChamp == 'CATEGORIES_CAT_ID' || $NmChamp == 'ENT_PARENTID') $display = false;
+		if($FTE == 'C' && ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
+		
+		if($display == true) 
+		{
+			// ne pas afficher les libelle des champs cachÃ©s
+			if($CIL[$NmChamp]->TypeAff!="HID") 
+			{
+				echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
 				}
 				echo "</td>\n";
 				echo "<td>";
-				// traitement valeurs avant MAJ
+			// traitement valeurs avant MAJ
+			$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+			$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+			echo "</td></tr>\n";
+			} // fin si chp pas caché
+			else { // champs cachés
 				$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-				$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-				echo "</td></tr>\n";
+				$CIL[$NmChamp]->EchoEditAll();
 			}
+		}
 	}
 }
 
@@ -141,34 +145,47 @@ if($_POST)
 
 }
 
+// initialisation de ts les objets PYA de la table
+$sqlpo = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="ENTITEES" AND `NM_CHAMP`!="TABLE0COMM" ORDER BY `ORDAFF`';
+$rep=$db->query($sqlpo);
+	
+while($data=$db->fetch_array())
+{
+	$NM_CHAMP=$data['NM_CHAMP'];
+	$CIL[$NM_CHAMP] = new PYAobj();
+	$CIL[$NM_CHAMP]->NmBase=$DBName;
+	$CIL[$NM_CHAMP]->NmTable='ENTITEES';
+	$CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+//	$CIL[$NM_CHAMP]->TypEdit='';
+	$CIL[$NM_CHAMP]->InitPO();
+}
+
 
 // Ajout de l'entitÃ©e
 // -----------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------
+
 if($_GET['action'] == 'ajout') 
 {
 
-	$sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="ENTITEES" AND `NM_CHAMP`!="TABLE0COMM" ORDER BY `ORDAFF`';
-    	$rep=$db->query($sql);
-	        
-	while($data=$db->fetch_array())
-	{
-	    	$NM_CHAMP=$data['NM_CHAMP'];
-	    	$CIL[$NM_CHAMP] = new PYAobj();
-      		$CIL[$NM_CHAMP]->NmBase=$DBName;
-        	$CIL[$NM_CHAMP]->NmTable='ENTITEES';
-		$CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
-		$CIL[$NM_CHAMP]->TypEdit='';
-		$CIL[$NM_CHAMP]->InitPO();
-	}
-
-	$CIL['CATEGORIES_CAT_ID']->ValChp=$_GET['cat_parent'];
+	$CIL['CATEGORIES_CAT_ID']->ValChp=$_GET['cat_parentid'];
 
 	echo '<form action="popup_ent.php?action=ajout" method="post" name="theform" ENCTYPE="multipart/form-data">';
     	echo '<table width="100%">';
-    	foreach ($CIL as $pobj) {
-        	EchoLig($pobj->NmChamp);
-    	}
+	$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$_GET['cat_parentid']);
+    	
+	foreach ($CIL as $pobj) 
+        {
+		$NmChamp=$pobj->NmChamp;
+		if ($vtb_name && strstr($NmChamp,"PROPRIETE")) 
+		{
+			$CIL[$NmChamp]->NmTable=$vtb_name;
+			$CIL[$NmChamp]->InitPO();
+		}
+		
+                
+	      EchoLig($NmChamp);
+	}
 
 	echo '</table>';
 
@@ -187,7 +204,7 @@ elseif($_GET['action'] == 'edition' || $_GET['action'] == 'consultation')
 {
 
 	$sql='SELECT * FROM `ENTITEES` WHERE ENT_ID="'.$_GET['id'].'"';
-	$CIL=InitPOReq($sql,'annuaire_externe');
+//	$CIL=InitPOReq($sql,'annuaire_externe');
 	$rep=$db->query($sql);
 	$data=$db->fetch_array();
 	
@@ -195,16 +212,21 @@ elseif($_GET['action'] == 'edition' || $_GET['action'] == 'consultation')
 	echo '<table width="100%">';
 
         $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'R');
-        
+	// récupère le nom (éventuel) de la table virtuelle décrivant les champs spéciaux
+	$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$data['CATEGORIES_CAT_ID']);
+	
 	foreach ($CIL as $pobj) 
         {
-		$CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+		$NmChamp=$pobj->NmChamp;
+		if ($vtb_name && strstr($NmChamp,"PROPRIETE")) 
+		{
+			$CIL[$NmChamp]->NmTable=$vtb_name;
+			$CIL[$NmChamp]->InitPO();
+		}
+		
+		$CIL[$NmChamp]->ValChp=$data[$NmChamp];
                 
-                if( $_GET['action'] == 'consultation' ) {
-		      EchoLig($pobj->NmChamp, 'C');
-                } else {
-		      EchoLig($pobj->NmChamp);                        
-                }
+	      EchoLig($NmChamp, ( $_GET['action'] == 'consultation'  ? 'C' : "1"));
 	}
 	echo "</table>";
 
