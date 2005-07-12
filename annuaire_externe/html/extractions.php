@@ -183,9 +183,9 @@ elseif( $_GET['type'] == 'personnes' )
         $filename = strtolower( $row['ENT_RAISONSOCIAL'].'_'.$row['ENT_NOMINATION'] );
         $filename = str_replace(' ', '_', $filename);
 
-        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
-        header("Content-Type: application/force-download");
-        header("Content-Transfer-Encoding: binary");
+#        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
+#        header("Content-Type: application/force-download");
+#        header("Content-Transfer-Encoding: binary");
 
 
         // fin de la generation du nom
@@ -216,6 +216,24 @@ elseif( $_GET['type'] == 'personnes' )
                         $i++;
                 }
         }
+
+        // on affiche les nom des champs spécifique
+	$NM_TABLE = 'AFFECTE_ENTITEES_PERSONNES';
+	$db->query('SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="AFFECTE_ENTITEES_PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`');
+        while ( $CcChp = $db->fetch_array() )  {
+                $NM_CHAMP=$CcChp[0];    
+                $ECT[$NM_CHAMP]=new PYAobj();
+                $ECT[$NM_CHAMP]->NmBase=$DBName; 
+                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;                                                                            $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+                $ECT[$NM_CHAMP]->TypEdit='C';   
+                $ECT[$NM_CHAMP]->InitPO();
+        }
+
+	foreach ($ECT as $PYAObj) {
+		if ($PYAObj->TypeAff == "AUT") echo '"'.$PYAObj->Libelle.'"';
+	}
+
+
         echo ";\r\n";
         // fin de l'affichage de la premiere ligne
 

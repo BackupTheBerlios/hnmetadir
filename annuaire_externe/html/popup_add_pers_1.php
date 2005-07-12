@@ -21,7 +21,7 @@ if($_POST)
         ?>
         <SCRIPT LANGUAGE="JavaScript">parent.window.resizeTo('400','400');</SCRIPT>
         <h2>Résultats</h2>
-        <img src="templates/images/info.jpeg"> Cliquez sur un des résultats pour ajouter une casquette à une personne, sinon <a href="popup_add_pers_2.php">Cliquez ici</a> pour créer une nouvelle personne.</b><br>
+        <img src="templates/images/info.jpeg"> Cliquez sur un des résultats pour ajouter une casquette à une personne, sinon <a href="popup_add_pers_2.php?action=ajout">Cliquez ici</a> pour créer une nouvelle personne.</b><br>
         <br>
         <?php
 
@@ -32,7 +32,7 @@ if($_POST)
                 while( $data = $db->fetch_array() )
                 {
                         $nom = stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']).' - '.stripslashes($data['PER_VILLE']);
-                        echo "<li><a href=\"popup_add_pers_2.php?per_id=".$data['PER_ID']."\">$nom</a></li>\n";
+                        echo "<li><a href=\"popup_add_pers_2.php?action=ajout&per_id=".$data['PER_ID']."\">$nom</a></li>\n";
                 }
                 echo '</ul>';
         } 
@@ -49,7 +49,7 @@ else
 
         <SCRIPT LANGUAGE="JavaScript">parent.window.resizeTo('400','200');</SCRIPT>
         <h2>Recherche</h2>
-        Cette étape va vous permettre de savoir si le contact existe déjà dans l'annuaire.<br><br>
+        Cette étape va vous permettre de savoir si le contact existe déjà dans l'annuaire. Cependant, vous pouvez ajouter directement une <a href="popup_add_pers_2.php?action=ajout">nouvelle personne</a>.<br><br>
         <form method="POST">
           <center><b>Nom :</b> <input type="text" name="nom"> <input type="image" src="templates/images/valide.gif"></center>
         </form>

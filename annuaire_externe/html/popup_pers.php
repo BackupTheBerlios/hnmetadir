@@ -25,7 +25,7 @@ function EchoLig($NmChamp,$FTE=""){
 	if( $CIL[$NmChamp]->Typaff_l!='' &&  ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
 	{
 		// ne pas afficher les libelle des champs cachés
-		if($CIL[$NmChamp]->TypeAff!="HID") {
+		if($CIL[$NmChamp]->TypeAff!="HID" ) {
 		  	echo "<tr><td><b>".$CIL[$NmChamp]->Libelle;
 			if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
 				echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
@@ -55,39 +55,10 @@ if( $_GET['action'] == 'supprimer' )
 }
 elseif( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
 {
-
 	// début traitement fichier
 	// composition du nom
 	// ---------------------------------------
-
-	// on recupere les noms des 2 1er champs (idem aux variables)
-	$rqkc  = $db->query("SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE NM_TABLE='PERSONNES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE LIMIT 2");
-	$nmchp = $db->fetch_array($rqkc);
-	$chp   = $nmchp[0];
-	$mff   = mysqff ($chp, 'PERSONNES');
-	// dans mff on a les caract. de cle primaire, auto_increment, etc ... du 1er champ
-	if (stristr($mff,"primary_key")) { // si 1er champ est une clé primaire
-		// on regarde si c'est un auto incrément
-		if (stristr($mff,"auto_increment") && $_GET['action'] == 'ajout')
-		{ // si auto increment et nouvel enregistrement ou copie
-			$rp1 = $db->query("SELECT $chp from `PERSONNES` order by $chp DESC LIMIT 1");
-			$rp2 = $db->fetch_array($rp1);
-			$keycopy = $rp2[0]+1;
-			$keycopy = $keycopy."_";
-		}
-		else
-		{ 
-			// si pas auto increment ou modif, on recup la valeur
-			$keycopy=$$nmchp[0]."_"; // VALEUR du premier champ  
-		}
-
-	}
-	else // si 1er champ pas cle primaire, elle est forcement constituee des 2 autres
-	{
-		$keycopy = $$nmchp[0]; // VALEUR du premier champ
-		$nmchp   = $db->fetch_array($rqkc);
-		$keycopy = $keycopy."_".$$nmchp[0]."_";// VALEUR du deuxieme champ
-	}
+	$keycopy=$_POST['PER_ID']."_"; // VALEUR du premier champ  
 
 
 	// fin traitement fichier
@@ -126,13 +97,11 @@ elseif( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
         			$PYAoMAJ->Fname=$rwncs[0];
         		}
      		}
-  		$tbset=array_merge($tbset,$PYAoMAJ->RetSet($keycopy,true));
-
+  		$tbset = array_merge($tbset,$PYAoMAJ->RetSet($keycopy,true));
+		
 	} // fin boucle sur les champs
-
-        $set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
+	
         $db->query("UPDATE `PERSONNES` SET ".tbset2set($tbset)." WHERE `PER_ID`='".$_GET['per_id']."'");				
-
 
         // traitement des champs spécifique
         // ----------------------------------------
@@ -172,26 +141,40 @@ else // AFFICHAGE -------------------------
                 if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
         	EchoLig($pobj->NmChamp);
         }
-        echo '</table>';
+	echo '<input type="hidden" name="PER_ID" value="'.$_GET['per_id'].'"'."\n";
+        echo '</table>'."\n";
 
-        echo '<h2>Informations spécifiques à cette entitée<h2>';
-        unset($CIL,$NM_CHAMP);
+        echo '<h2>Informations spécifiques à cette entitée</h2>';
+	
+	// on vérifie que l'utilisateur est bien les droits de lecture
+	$db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$_GET['ent_id'].'" ');
+	$tmp = $db->fetch_array();
 
-        // Ensuite les champs spécifiques
-        $sql = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
+	if( $user->HaveAccess($tmp[0], 'R') == 'true' )
+	{
+	
+        unset($CIL,$NM_CHAMP,$tmp);
 
-        $CIL=InitPOReq($sql,$DBName);
-        $rep=$db->query($sql);
-        $data=$db->fetch_array();
+	        // Ensuite les champs spécifiques
+        	$sql = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
 
-    	echo '<table>';
-        foreach ($CIL as $pobj) {
-                $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-                if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
-        	EchoLig($pobj->NmChamp);
-        }
-        echo '</table>';
+	        $CIL=InitPOReq($sql,$DBName);
+        	$rep=$db->query($sql);
+	        $data=$db->fetch_array();
 
+	    	echo '<table>';
+	        foreach ($CIL as $pobj) {
+        	        $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+                	if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
+	        	EchoLig($pobj->NmChamp);
+        	}
+	        echo '</table>';
+	}
+	else
+	{
+		echo '<i>Vous n\'avez pas accès à ces informations.</i>'."\n";
+	}
+	
         if( $_GET['action'] != 'consultation' ) {
 	       echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";
         } else {

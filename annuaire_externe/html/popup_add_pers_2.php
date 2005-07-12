@@ -49,49 +49,23 @@ if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
 	// début traitement fichier
 	// composition du nom
 	// ---------------------------------------
-	
-        if( $_SESSION['per_id'] )
+        if( !$_SESSION['per_id'] )
         {
 
-                // on recupere les noms des 2 1er champs (idem aux variables)
-                $rqkc  = $db->query("SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE NM_TABLE='PERSONNES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE LIMIT 2");
-                $nmchp = $db->fetch_array($rqkc);
-                $chp   = $nmchp[0];
-                $mff   = mysqff ($chp, 'PERSONNES');
-                // dans mff on a les caract. de cle primaire, auto_increment, etc ... du 1er champ
-                if (stristr($mff,"primary_key")) { // si 1er champ est une clé primaire
-                        // on regarde si c'est un auto incrément
-                        if (stristr($mff,"auto_increment") && $_GET['action'] == 'ajout')
-                        { // si auto increment et nouvel enregistrement ou copie
-                                $rp1 = $db->query("SELECT $chp from `PERSONNES` order by $chp DESC LIMIT 1");
-                                $rp2 = $db->fetch_array($rp1);
-                                $keycopy = $rp2[0]+1;
-                                $keycopy = $keycopy."_";
-                        }
-                        else
-                        { 
-                                // si pas auto increment ou modif, on recup la valeur
-                                $keycopy=$$nmchp[0]."_"; // VALEUR du premier champ  
-                        }
-
-                }
-                else // si 1er champ pas cle primaire, elle est forcement constituee des 2 autres
-                {
-                        $keycopy = $$nmchp[0]; // VALEUR du premier champ
-                        $nmchp   = $db->fetch_array($rqkc);
-                        $keycopy = $keycopy."_".$$nmchp[0]."_";// VALEUR du deuxieme champ
-                }
-
+		$db->query("SELECT `PER_ID` from `PERSONNES` order by `PER_ID` DESC LIMIT 1");
+                $rp2 = $db->fetch_array($rp1);
+                $keycopy = $rp2[0]+1;
+                $keycopy = $keycopy."_";
 
                 // fin traitement fichier
                 // -----------------------
 	
-                $sql=$db->query("SELECT `NM_CHAMP` from `DESC_TABLES` WHERE NM_TABLE='PERSONNES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE");
-                $PYAoMAJ=new PYAobj();
+                $sql = $db->query("SELECT `NM_CHAMP` from `DESC_TABLES` WHERE NM_TABLE='PERSONNES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE");
+                $PYAoMAJ = new PYAobj();
                 $PYAoMAJ->NmBase=$DBName;
                 $PYAoMAJ->NmTable='PERSONNES';
                 $PYAoMAJ->TypEdit='';
-
+		
                 while ($data = $db->fetch_array())
                 {
                         $NOMC=$data['NM_CHAMP']; // nom variable=nom du champ
@@ -123,8 +97,7 @@ if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
 
                 } // fin boucle sur les champs
 
-                $set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
-                $db->query("INSERT INTO `PERSONNES` SET ".tbset2set($tbset));	
+                $db->query('INSERT INTO `PERSONNES` SET '.tbset2set($tbset));	
                 $_SESSION['per_id'] = mysql_insert_id();			
 	}
 
@@ -137,26 +110,21 @@ if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
         $aep_abrege = addslashes($_POST['AEP_ABREGE']);
         $aep_email = addslashes($_POST['AEP_EMAIL']);
         $aep_privatecomment = addslashes($_POST['AEP_PRIVATECOMMENT']);
-        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'"';
 
-
-	if($_GET['action'] == 'edition') {
-                $db->query('UPDATE `AFFECTE_ENTITEES_PERSONNES` SET '.$set.' WHERE `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'" AND `ENTITEES_ENT_ID`="'.$_SESSION['ent_id'].'" ');
-	} else {
-                $set .= ', `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'", `ENTITEES_ENT_ID`="'.$_SESSION['ent_id'].'"';
-		$db->query('INSERT INTO `AFFECTE_ENTITEES_PERSONNES` SET '.$set);				
-	}
+        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'" , `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'", `ENTITEES_ENT_ID`="'.$_SESSION['ent_id'].'", `AEP_DTCREA`="CURDATE()", `AEP_COOPE`="'.$_SESSION['auth_id'].'" ';
+	$db->query('INSERT INTO `AFFECTE_ENTITEES_PERSONNES` SET '.$set);
 
         $_SESSION['per_id'] = '';
         $_SESSION['ent_id'] = '';
+	
 	// ferme la fenetre & rafraichie la fenetre parent
 	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
 
 }
 else // AFFICHAGE -------------------------
 {
-        echo '<h2>Informations communes<h2>';
-        echo '<form action="popup_add_pers_2.php?action=ajout" method="post" name="theform" ENCTYPE="multipart/form-data">';
+        echo '<h2>Informations communes<h2>'."\n";
+        echo '<form action="popup_add_pers_2.php?action=ajout" method="post" name="theform" ENCTYPE="multipart/form-data">'."\n";
 
         #-- En premiere les champs commun
         // on crée un nouveau ou on part sur un existant ?
