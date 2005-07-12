@@ -82,7 +82,7 @@ while( $data = $db->fetch_array() )
 // ---------------------------------------------------------
 
 $tpl->set_block('FileRef', 'entitees', 'entitees_block');
-$db->query('SELECT `ENT_ID` FROM `ENTITEES` WHERE ENT_RAISONSOCIAL LIKE "%'.$_POST['entree'].'%" || ENT_NOMINATION LIKE "%'.$_POST['entree'].'%" || ENT_SIRET LIKE "%'.$_POST['entree'].'%" || ENT_CONAF LIKE "%'.$_POST['entree'].'%" || ENT_ADRESSE LIKE "%'.$_POST['entree'].'%" || ENT_ADRESSE_COMP LIKE "%'.$_POST['entree'].'%" || ENT_VILLE LIKE "%'.$_POST['entree'].'%" || ENT_CODEPOSTAL LIKE "%'.$_POST['entree'].'%" || ENT_SITEWEB LIKE "%'.$_POST['entree'].'%" || ENT_MOTCLES LIKE "%'.$_POST['entree'].'%" || ENT_TYPE_DEPENDANCE LIKE "%'.$_POST['entree'].'%" ORDER BY `ENT_ID` ASC');
+$db->query('SELECT `ENT_ID` FROM `ENTITEES` WHERE ENT_RAISONSOCIAL LIKE "%'.$_POST['entree'].'%" || ENT_NOMINATION LIKE "%'.$_POST['entree'].'%" || ENT_SIRET LIKE "%'.$_POST['entree'].'%" || ENT_CONAF LIKE "%'.$_POST['entree'].'%" || ENT_ADRESSE LIKE "%'.$_POST['entree'].'%" || ENT_ADRESSE_COMP LIKE "%'.$_POST['entree'].'%" || ENT_VILLE LIKE "%'.$_POST['entree'].'%" || ENT_CODEPOSTAL LIKE "%'.$_POST['entree'].'%" || ENT_SITEWEB LIKE "%'.$_POST['entree'].'%" || ENT_MOTCLES LIKE "%'.$_POST['entree'].'%" ORDER BY `ENT_ID` ASC');
 
 // nb de résultats
 $tpl->set_var('e_resultats', $db->num_rows() );

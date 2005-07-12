@@ -1,4 +1,10 @@
 <?PHP
+	  header('Content-disposition: filename=extractPYA.tsv');
+      //header("Content-disposition: attachment; filename=extraction-personnes-$filename.csv");
+	header('Content-type: application/octetstream');
+	header('Content-type: application/ms-excel');
+	header('Pragma: no-cache');
+	header('Expires: 0');
 
 $popup = true;
 include('HEADER.php');
@@ -23,9 +29,8 @@ if( $_GET['type'] == 'categories' )
 	$filename = strtolower( $row['CAT_NOM'] );
 	$filename = str_replace(' ', '_', $filename);
 
-        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
-        header("Content-Type: application/force-download");
-        header("Content-Transfer-Encoding: binary");
+//        header("Content-Type: application/force-download");
+//        header("Content-Transfer-Encoding: binary");
 	
 	// on récupere les ids des sous cat en dessous
         function GetCatsForCSV($pere, $position)
