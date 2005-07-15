@@ -37,13 +37,14 @@ function EchoLig($NmChamp,$FTE="")
 					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
 				}
 				echo "</td>\n";
-				echo "<td>";
-			// traitement valeurs avant MAJ
-			$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-			$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-			echo "</td></tr>\n";
+                                echo "<td>";
+                                // traitement valeurs avant MAJ
+                                $CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+                                $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+                                echo "</td></tr>\n";
 			} // fin si chp pas caché
-			else { // champs cachés
+			else 
+                        { // champs cachés
 				$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
 				$CIL[$NmChamp]->EchoEditAll();
 			}

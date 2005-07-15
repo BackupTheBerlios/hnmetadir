@@ -20,6 +20,10 @@ color: #c03000;
 text-decoration: none; 
 }
 
+body {
+margin-top:0px;
+}
+
 body,table {
 color: #000000;
 font-family:  Arial, Helvetica, Geneva, Swiss, SunSans-Regular;
@@ -123,13 +127,13 @@ background-repeat:no-repeat;
 
 DIV#menugris {
 position:absolute;
-top:8px;
+top:3px;
 left:120px;
 }
 
 DIV#menu {
 position:absolute;
-top:55px;
+top:48px;
 left:500px;
 }
 

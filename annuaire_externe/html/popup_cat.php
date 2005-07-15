@@ -22,7 +22,13 @@ if($_GET['action'] == 'ajout')
 		$nom = addslashes($_POST['nom']);
 		$description = $_POST['description'];
 		$cat_parentid = $_POST['cat_parentid'];
-		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_PARENTID,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$cat_parentid.'",CURDATE(), "'.$_SESSION['auth_id'].'");');
+
+                // on récupère le vtbname
+                $db->query('SELECT `CAT_VTBNAME` FROM `CATEGORIES` WHERE `CAT_ID`="'.$cat_parentid.'" ');
+                $row = $db->fetch_array();
+                $vtbname = $row[0];
+
+		$db->query('INSERT INTO `CATEGORIES` (CAT_NOM,CAT_DESCRIPTION,CAT_PARENTID,CAT_VTBNAME,CAT_DTCREA,CAT_COOPE) VALUES ("'.$nom.'","'.$description.'","'.$cat_parentid.'","'.$vtbname.'",CURDATE(), "'.$_SESSION['auth_id'].'");');
 		echo '<script language="javascript">
 			window.opener.location.reload();
 			window.close();

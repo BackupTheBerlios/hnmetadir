@@ -49,12 +49,12 @@ function chemin($type,$id,$chemin)
 			
 		if( $parentid == 0 )
 		{
-			$chemin = '<img src="templates/images/branche.png" alt=""> <a href="consulter.php?id='.$id.'">'.$nom.'</a> '.$chemin;
+			$chemin = '<img src="templates/images/branche.png" alt=""> <a href="consulter.php?cat='.$id.'">'.$nom.'</a> '.$chemin;
 
 		} 
 		else 
 		{
-			$chemin = '<b>></b> <img src="templates/images/folder.png" alt=""> <a href="consulter.php?id='.$id.'">'.$nom.'</a> '.$chemin;
+			$chemin = '<b>></b> <img src="templates/images/folder.png" alt=""> <a href="consulter.php?cat='.$id.'">'.$nom.'</a> '.$chemin;
 			chemin('categorie', $parentid, $chemin);
 		}
 	}

@@ -1,10 +1,4 @@
 <?PHP
-	  header('Content-disposition: filename=extractPYA.tsv');
-      //header("Content-disposition: attachment; filename=extraction-personnes-$filename.csv");
-	header('Content-type: application/octetstream');
-	header('Content-type: application/ms-excel');
-	header('Pragma: no-cache');
-	header('Expires: 0');
 
 $popup = true;
 include('HEADER.php');
@@ -29,8 +23,9 @@ if( $_GET['type'] == 'categories' )
 	$filename = strtolower( $row['CAT_NOM'] );
 	$filename = str_replace(' ', '_', $filename);
 
-//        header("Content-Type: application/force-download");
-//        header("Content-Transfer-Encoding: binary");
+        header("Content-disposition: attachment; filename=extraction-personnes-$filename.csv");
+        header("Content-Type: application/force-download");
+        header("Content-Transfer-Encoding: binary");
 	
 	// on récupere les ids des sous cat en dessous
         function GetCatsForCSV($pere, $position)
@@ -82,6 +77,7 @@ elseif( $_GET['type'] == 'entitees' )
         // on affiche la premiere ligne avec les noms des champs
         $NM_TABLE = 'ENTITEES';
         $db->query("SELECT `NM_CHAMP` from $TBDname where NM_TABLE='$NM_TABLE' AND NM_CHAMP!='$NmChDT' ORDER BY ORDAFF, LIBELLE");
+        $vtb_name = RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$cat_id);
 
         while ( $CcChp = $db->fetch_array() )  {
                 $NM_CHAMP=$CcChp[0];
@@ -94,21 +90,29 @@ elseif( $_GET['type'] == 'entitees' )
         }
 
         $i = 0;
-        foreach ($ECT as $PYAObj) {
-                if ($PYAObj->TypeAff == "AUT" && $PYAObj->NmChamp != 'ENT_PROPRIETE1' && $PYAObj->NmChamp != 'ENT_PROPRIETE2' && $PYAObj->NmChamp != 'ENT_PROPRIETE3' && $PYAObj->NmChamp != 'ENT_PROPRIETE4' && $PYAObj->NmChamp != 'ENT_PROPRIETE5' ) {
-                        if( $i == 0 ) {
-                                echo '"'.$PYAObj->Libelle.'"';
-                        } else {
-                                echo ',"'.$PYAObj->Libelle.'"';
+        foreach ($ECT as $PYAObj) 
+        {
+                if ($PYAObj->TypeAff == "AUT" )
+                {
+                        if( $i != 0 ) echo ',';
+                        if( $PYAObj->NmChamp == 'ENT_PROPRIETE1' || $PYAObj->NmChamp == 'ENT_PROPRIETE2' || $PYAObj->NmChamp == 'ENT_PROPRIETE3' || $PYAObj->NmChamp == 'ENT_PROPRIETE4' || $PYAObj->NmChamp == 'ENT_PROPRIETE5')
+                        {
+			     $ECT[$PYAObj->NmChamp]->NmTable=$vtb_name;
+			     $ECT[$PYAObj->NmChamp]->InitPO();
+			     echo '"'.$ECT[$PYAObj->NmChamp]->Libelle.'"';
                         }
-                        $i++;
+                        else
+                        {
+                                echo '"'.$PYAObj->Libelle.'"';
+                                $i++;
+                        }
                 }
         }
 
         // comme on affiche toute les entitées de toutes les sous catégories qui se trouve en dessous de l'id
         // les libellés des champs spéciaux ne seront pas pareille car il risque d'y avoir des sous catégories debutant
         // sur des champs spéciaux differents
-        echo ',"Champs Spécial 1","Champs Spécial 2","Champs Spécial 3","Champs Spécial 4","Champs Spécial 5";'."\r\n";
+        echo "\r\n";
         // fin de l'affichage de la premiere ligne
 
         // on rempli le tableau
@@ -125,7 +129,11 @@ elseif( $_GET['type'] == 'entitees' )
                 while( $data = $db->fetch_array() )
                 {
                         $j=0;
+
                         $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'R');
+                        if($access == 'false') $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'W');
+                        if($access == 'false') $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'A');
+
         		foreach ($CIL as $pobj) 
         		{
         			$NmChamp = $pobj->NmChamp;
@@ -133,7 +141,7 @@ elseif( $_GET['type'] == 'entitees' )
                                 $CIL[$NmChamp]->TypEdit = 'C';
                                 
                                 // seulement les champs auto
-                                if ($CIL[$NmChamp]->TypeAff == "AUT" && $NmChamp != 'ENT_PROPRIETE1' && $NmChamp != 'ENT_PROPRIETE2' && $NmChamp != 'ENT_PROPRIETE3' && $NmChamp != 'ENT_PROPRIETE4' && $NmChamp != 'ENT_PROPRIETE5' ) 
+                                if ( $CIL[$NmChamp]->TypeAff == "AUT" ) 
                                 {
                                         // traitement champs sécurisé
                                         if( $NmChamp == 'ENT_PRIVATECOMMENT' ) 
@@ -157,23 +165,8 @@ elseif( $_GET['type'] == 'entitees' )
                                         $j++;
                                 } // fin si champs auto
 
-                                // si on est dans les champs spéciaux et que je suis admin ou que j'ai le droit
-                                if( $NmChamp == 'ENT_PROPRIETE1' || $NmChamp == 'ENT_PROPRIETE2' || $NmChamp == 'ENT_PROPRIETE3' || $NmChamp == 'ENT_PROPRIETE4' || $NmChamp == 'ENT_PROPRIETE5' )
-                                {
-                                        if( $_SESSION['auth_login'] == 'admin' || $access == 'true' )
-                                        { 
-                                                 # TODO : TRAITEMENT FICHIER SPECIAUX
-                                                $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
-                                                echo ',"'.$tmp.'"';
-                                        }
-                                        else
-                                        {
-                                                echo ',""';
-                                        }
-                                }// fin du if pour les champs sécurisés
-
                         } // fin du foreach
-                        echo ";\r\n";
+                        echo "\r\n";
                 } // fin du while
         } // fin du mysql_num_rows()
 }
@@ -188,9 +181,9 @@ elseif( $_GET['type'] == 'personnes' )
         $filename = strtolower( $row['ENT_RAISONSOCIAL'].'_'.$row['ENT_NOMINATION'] );
         $filename = str_replace(' ', '_', $filename);
 
-#        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
-#        header("Content-Type: application/force-download");
-#        header("Content-Transfer-Encoding: binary");
+        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
+        header("Content-Type: application/force-download");
+        header("Content-Transfer-Encoding: binary");
 
 
         // fin de la generation du nom
@@ -221,33 +214,40 @@ elseif( $_GET['type'] == 'personnes' )
                         $i++;
                 }
         }
+        unset($ECT);
 
         // on affiche les nom des champs spécifique
 	$NM_TABLE = 'AFFECTE_ENTITEES_PERSONNES';
-	$db->query('SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="AFFECTE_ENTITEES_PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`');
-        while ( $CcChp = $db->fetch_array() )  {
+	$db->query('SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE `NM_TABLE`="'.$NM_TABLE.'" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`');
+
+        while ( $CcChp = $db->fetch_array() )  
+        {
                 $NM_CHAMP=$CcChp[0];    
-                $ECT[$NM_CHAMP]=new PYAobj();
+                $ECT[$NM_CHAMP] = new PYAobj();
                 $ECT[$NM_CHAMP]->NmBase=$DBName; 
-                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;                                                                            $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;                                                                            
+                $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
                 $ECT[$NM_CHAMP]->TypEdit='C';   
                 $ECT[$NM_CHAMP]->InitPO();
         }
 
 	foreach ($ECT as $PYAObj) {
-		if ($PYAObj->TypeAff == "AUT") echo '"'.$PYAObj->Libelle.'"';
+                echo ',"'.$PYAObj->Libelle.'"';
 	}
 
 
-        echo ";\r\n";
+        echo "\r\n";
         // fin de l'affichage de la premiere ligne
 
         // on récupère la catégorie parent avant tout pour connaitre les droits
         $db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
         $row = $db->fetch_array();
-        $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'L');
 
-        $sql = 'SELECT * FROM `PERSONNES`, `AFFECTE_ENTITEES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITEES_ENT_ID`="'.$ent_id.'"';
+        $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'R');
+        if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'W');
+        if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'A');
+
+        $sql = 'SELECT `PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT` FROM `PERSONNES`, `AFFECTE_ENTITEES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITEES_ENT_ID`="'.$ent_id.'"';
 	$CIL=InitPOReq($sql,$DBName);
 	$rep=$db->query($sql);
 
@@ -257,45 +257,32 @@ elseif( $_GET['type'] == 'personnes' )
                 while( $data = $db->fetch_array() )
                 {
                         $j=0;
-                        $listerouge = $data['PER_LISTEROUGE'];
         		foreach ($CIL as $pobj) 
         		{ 
                                 $NmChamp = $pobj->NmChamp;
                                 $CIL[$NmChamp]->ValChp=$data[$NmChamp];
                                 $CIL[$NmChamp]->TypEdit = 'C';
 
-                                // on ne traite que les champs de la fiche personne
-                                if( substr($NmChamp, 0, 4) == 'PER_' )
-                                {
-                                        // seulement les champs auto
-                                        if ($CIL[$NmChamp]->TypeAff == "AUT") 
+                                if( $j != 0 ) echo ',';
+                                if( strstr($NmChamp, 'AEP') ) {
+                                        if( $access == true )
                                         {
-                                                // traitement champs sécurisé
-                                                if( $NmChamp == 'PER_TEL' || $NmChamp == 'PER_FAX' || $NmChamp == 'PER_MOBILE' || $NmChamp == 'PER_ABREGE' ) 
-                                                {
-                                                        if( $listrouge == 'O' && ($_SESSION['auth_login'] == 'admin' || $access == 'true') ) {
-                                                                $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
-                                                                echo ',"'.$tmp.'"';
-                                                        } else {
-                                                                echo ',""';
-                                                        }       
-                                                }
-                                                else
-                                                {
-                                                        $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
-                                                        if( $j == 0 ) {
-                                                                echo '"'.$tmp.'"';
-                                                        } else {
-                                                                echo ',"'.$tmp.'"';
-                                                        }
-                                                } 
-                                                $j++;
-                                        } // fin si champs auto
-                                } // fin si 'PER'
+                                                $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
+                                                echo '"'.$tmp.'"';
+                                        } else {
+                                                echo '""';
+                                        }
+                                } else {
+                                        $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
+                                        echo '"'.$tmp.'"';
+                                }
+                                $j++;
+ 
                         } // fin du foreach
-                        echo ";\r\n";
+                        echo "\r\n";
                 } // fin du while
         } // fin du mysql_num_rows()
+
 }
 
 

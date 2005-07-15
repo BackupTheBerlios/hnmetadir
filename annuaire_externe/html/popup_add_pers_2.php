@@ -18,26 +18,38 @@ include('HEADER.php');
 
 
 
-function EchoLig($NmChamp,$FTE=""){
-	global $CIL,$pobj;
+function EchoLig($NmChamp,$FTE="")
+{
+	global $CIL, $access;
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if( $CIL[$NmChamp]->Typaff_l!='' &&  ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	
+	if( $CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="" )  
 	{
-		// ne pas afficher les libelle des champs cachés
-		if($CIL[$NmChamp]->TypeAff!="HID") {
-		  	echo "<tr><td><b>".$CIL[$NmChamp]->Libelle;
-			if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-				echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
-			}
-		}
+		// on vire la ligne categorie parent et entitee parent
+		$display = true;
+		if($NmChamp == 'CATEGORIES_CAT_ID' || $NmChamp == 'ENT_PARENTID') $display = false;
+		if($FTE == 'C' && ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
 
-		echo "</b></td>\n";
-		echo "<td>: ";
-	  	// traitement valeurs avant MAJ
-	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-		echo "</td></tr>\n";
+			// ne pas afficher les libelle des champs cachÃ©s
+			if($CIL[$NmChamp]->TypeAff!="HID") 
+			{
+				echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+				}
+				echo "</td>\n";
+                                echo "<td>";
+                                // traitement valeurs avant MAJ
+                                $CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+                                $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+                                echo "</td></tr>\n";
+			} // fin si chp pas caché
+			else 
+                        { // champs cachés
+				$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+				$CIL[$NmChamp]->EchoEditAll();
+			}
 	}
 }
 
@@ -111,7 +123,7 @@ if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
         $aep_email = addslashes($_POST['AEP_EMAIL']);
         $aep_privatecomment = addslashes($_POST['AEP_PRIVATECOMMENT']);
 
-        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'" , `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'", `ENTITEES_ENT_ID`="'.$_SESSION['ent_id'].'", `AEP_DTCREA`="CURDATE()", `AEP_COOPE`="'.$_SESSION['auth_id'].'" ';
+        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'" , `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'", `ENTITEES_ENT_ID`="'.$_SESSION['ent_id'].'", `AEP_DTCREA`=CURDATE(), `AEP_COOPE`="'.$_SESSION['auth_id'].'" ';
 	$db->query('INSERT INTO `AFFECTE_ENTITEES_PERSONNES` SET '.$set);
 
         $_SESSION['per_id'] = '';
@@ -167,7 +179,7 @@ else // AFFICHAGE -------------------------
         unset($CIL,$NM_CHAMP);
 
         // Ensuite les champs spécifiques
-        $sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="AFFECTE_ENTITEES_PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`';
+        $sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="AFFECTE_ENTITEES_PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT" OR `NM_CHAMP`="AEP_DTCREA" OR `NM_CHAMP`="AEP_DTMAJ" OR `NM_CHAMP`="AEP_COOPE") ORDER BY `ORDAFF`';
         $db->query($sql);
         
         while( $data = $db->fetch_array() )

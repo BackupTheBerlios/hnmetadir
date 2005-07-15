@@ -102,8 +102,7 @@ function affstruct_cat($pere,$espace)
 
 		if( $droit_a == true )
 		{
-			$menu .= "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>
-			- <a htef=\"#\">Les champs spéciaux</a><br>";
+			$menu .= "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>";
 		}
 			$menu .= "<b>Extraction :</b><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=entitees&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Entitées seulement</a><br>
@@ -227,7 +226,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 		{
                 	$menu = '';
                 	$menu = "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_pers.php?per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Editer</a><br>
-                	- <a href=\"javascript:void(0);\" onclick=\"choix=confirm(\'Etes vous sur de vouloir supprimer cette entitée ?\nToutes les sous-entitées qui y sont reliées seront supprimées !\'); if(choix==true) { window.open(\'popup_pers.php?action=supprimer&per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');}\">Supprimer</a><br>";
+                	- <a href=\"javascript:void(0);\" onclick=\"choix=confirm(\'Etes vous sur de vouloir supprimer cette personne ?\'); if(choix==true) { window.open(\'popup_pers.php?action=supprimer&per_id=".$per_id."&ent_id=".$ent_id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');}\">Supprimer</a><br>";
 		} else {
 			$menu = 'Aucun droit';
 		}
@@ -324,7 +323,11 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 		$tmp = '<table>';
 		
                 // l'user a t'il accès en lecture pour les champs spéciaux
+                //
                 $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'R');
+                if($access == 'false') $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'W');
+                if($access == 'false') $access = $user->HaveAccess($data['CATEGORIES_CAT_ID'], 'A');
+
 		// récupère le nom (éventuel) de la table virtuelle décrivant les champs spéciaux
 		$vtb_name=RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$data['CATEGORIES_CAT_ID']);
 		

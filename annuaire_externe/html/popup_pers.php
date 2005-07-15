@@ -18,26 +18,35 @@ include('HEADER.php');
 
 
 
-function EchoLig($NmChamp,$FTE=""){
-	global $CIL,$pobj;
+function EchoLig($NmChamp,$FTE="")
+{
+	global $CIL, $access;
+
 	// FTE= Force Type Edit
 	if ($FTE!="") $CIL[$NmChamp]->TypEdit=$FTE;
-	if( $CIL[$NmChamp]->Typaff_l!='' &&  ($CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="") ) 
+	
+	if( $CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="" )  
 	{
-		// ne pas afficher les libelle des champs cachés
-		if($CIL[$NmChamp]->TypeAff!="HID" ) {
-		  	echo "<tr><td><b>".$CIL[$NmChamp]->Libelle;
-			if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
-				echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+			// ne pas afficher les libelle des champs cachÃ©s
+			if($CIL[$NmChamp]->TypeAff!="HID") 
+			{
+				echo '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+				if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") {
+					echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
+				}
+				echo "</td>\n";
+                                echo "<td>";
+                                // traitement valeurs avant MAJ
+                                $CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+                                $CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
+                                echo "</td></tr>\n";
+			} // fin si chp pas caché
+			else 
+                        { // champs cachés
+				$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
+				$CIL[$NmChamp]->EchoEditAll();
 			}
-		}
 
-		echo "</b></td>\n";
-		echo "<td>: ";
-	  	// traitement valeurs avant MAJ
-	  	$CIL[$NmChamp]->InitAvMaj($_SESSION['auth_id']);
-		$CIL[$NmChamp]->EchoEditAll(); // pas de champs hidden
-		echo "</td></tr>\n";
 	}
 }
 
@@ -113,7 +122,7 @@ elseif( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
         $aep_abrege = addslashes($_POST['AEP_ABREGE']);
         $aep_email = addslashes($_POST['AEP_EMAIL']);
         $aep_privatecomment = addslashes($_POST['AEP_PRIVATECOMMENT']);
-        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'"';
+        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'", `AEP_DTCREA`=CURDATE(),`AEP_COOPE`="'.$_SESSION['auth_id'].'"';
 
 
         $db->query('UPDATE `AFFECTE_ENTITEES_PERSONNES` SET '.$set.' WHERE `PERSONNES_PER_ID`="'.$_GET['per_id'].'" AND `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" ');
@@ -156,7 +165,7 @@ else // AFFICHAGE -------------------------
         unset($CIL,$NM_CHAMP,$tmp);
 
 	        // Ensuite les champs spécifiques
-        	$sql = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
+        	$sql = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT`, `AEP_DTCREA`, `AEP_DTMAJ`, `AEP_COOPE` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
 
 	        $CIL=InitPOReq($sql,$DBName);
         	$rep=$db->query($sql);
