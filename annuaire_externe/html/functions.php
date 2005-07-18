@@ -126,3 +126,15 @@ function GetSubCats($id, $perm)
 	
 	return $tabcat;
 }
+
+function DIspLigReq() 
+{
+        global $FCobj; // objet
+        $FCobj->InitPO(); // initialise l'objet
+        echo "<tr><td>\n";
+        echo "<b>".$FCobj->Libelle."</b>\n";
+        echo ($FCobj->Comment!="" ? "<br><span class=\"legendes9px\">".$FCobj->Comment."</span>" : "");
+        echo "</td><td>\n";
+        $FCobj->EchoFilt(false); // affiche filtre sans négation 
+        echo "</td></tr>\n";
+}
