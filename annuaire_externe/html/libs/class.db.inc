@@ -4,9 +4,9 @@ class database {
 
 		// ********************************
 		var $HOST = 	"localhost";
-		var $USER = 	"root";
-		var $PASS = 	"";
-		var $BDD  =	"annuaire_externe";
+		var $USER = 	"haras";
+		var $PASS = 	"azert12";
+		var $BDD  =	"haras_annuaire_externe";
 		// ********************************
 
 		var $id_connect;

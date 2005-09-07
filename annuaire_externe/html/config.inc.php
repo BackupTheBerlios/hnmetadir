@@ -7,7 +7,7 @@ $servldap_url = 'http://xinf-testlinux1/ldapsweb/';
 $TBDname = 'DESC_TABLES';
 
 // nom de la base de donnée
-$DBName = 'annuaire_externe';
+$DBName = 'haras_annuaire_externe';
 
 // je sais pas :)
 $NmChDT = 'TABLE0COMM';

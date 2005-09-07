@@ -237,7 +237,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 
 		$tpl->set_var('u_id', $data['PER_ID'] );
 		$nom = $data['PER_TITRE'].' '.stripslashes($data['PER_NOM']).' '.stripslashes($data['PER_PRENOM']);
-		$nom = '<a href="#" onclick="window.open(\'popup_pers.php?action=consultation&per_id='.$per_id.'&ent_id='.$ent_id.'\', \'Fiche de '.addslashes($nom).'\', config=\'height=400, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
+		$nom = '<a href="#" onclick="window.open(\'popup_pers.php?action=consultation&per_id='.$per_id.'&ent_id='.$ent_id.'\', \'\', config=\'height=400, width=600, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');">'.$nom.'</a>';
 		$tpl->set_var('p_nom',  $nom);
 		$tpl->set_var('p_menu',  $menu);
                 $tpl->set_var('p_mail', $data['AEP_EMAIL'] );

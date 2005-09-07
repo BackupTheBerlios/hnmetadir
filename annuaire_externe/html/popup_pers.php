@@ -139,9 +139,9 @@ else // AFFICHAGE -------------------------
 
         #-- En premiere les champs commun
 
-        $sql='SELECT * FROM `PERSONNES` WHERE `PER_ID`="'.$_GET['per_id'].'"';
-        $CIL=InitPOReq($sql,$DBName);
-        $rep=$db->query($sql);
+        $sql1='SELECT * FROM `PERSONNES` WHERE `PER_ID`="'.$_GET['per_id'].'"';
+        $CIL=InitPOReq($sql1,$DBName);
+        $rep=$db->query($sql1);
         $data=$db->fetch_array();
 
     	echo '<table>';
@@ -150,7 +150,7 @@ else // AFFICHAGE -------------------------
                 if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
         	EchoLig($pobj->NmChamp);
         }
-	echo '<input type="hidden" name="PER_ID" value="'.$_GET['per_id'].'"'."\n";
+	echo '<input type="hidden" name="PER_ID" value="'.$_GET['per_id'].'">'."\n";
         echo '</table>'."\n";
 
         echo '<h2>Informations spécifiques à cette entitée</h2>';
@@ -165,10 +165,10 @@ else // AFFICHAGE -------------------------
         unset($CIL,$NM_CHAMP,$tmp);
 
 	        // Ensuite les champs spécifiques
-        	$sql = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT`, `AEP_DTCREA`, `AEP_DTMAJ`, `AEP_COOPE` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
+        	$sql2 = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT`, `AEP_DTCREA`, `AEP_DTMAJ`, `AEP_COOPE` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
 
-	        $CIL=InitPOReq($sql,$DBName);
-        	$rep=$db->query($sql);
+	        $CIL=InitPOReq($sql2,$DBName);
+        	$rep=$db->query($sql2);
 	        $data=$db->fetch_array();
 
 	    	echo '<table>';
