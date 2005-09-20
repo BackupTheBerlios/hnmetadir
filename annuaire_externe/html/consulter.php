@@ -319,7 +319,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 		
 
 		// on affiche les infos sur l'entité
-		$CIL=InitPOReq($sql,'annuaire_externe');
+		$CIL=InitPOReq($sql,$DBName);
 		$tmp = '<table>';
 		
                 // l'user a t'il accès en lecture pour les champs spéciaux
@@ -355,7 +355,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
                                         
                                 if( $display == true ) 
                                 {
-                                        $tmp .= '<tr><td><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+                                        $tmp .= '<tr><td valign="top"><b>'.$CIL[$NmChamp]->Libelle.'</b>';
                                         if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
                                         {
                                                 $tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
@@ -374,6 +374,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 
 		$tmp .= '</table>';
 
+		$tmp = str_replace('&lt;br&gt;', '<br>', $tmp);
 		$tpl->set_var('contenu', $tmp);
 		
 	}
