@@ -55,7 +55,7 @@ function EchoLig($NmChamp,$FTE="")
 
 if( $_GET['action'] == 'supprimer' ) 
 {
-	$db->query('DELETE FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" '); 
+	$db->query('DELETE FROM `AFFECTE_ENTITES_PERSONNES` WHERE `ENTITES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" '); 
 	// ferme la fenetre & rafraichie la fenetre parent
 	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
 
@@ -125,7 +125,7 @@ elseif( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
         $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'", `AEP_DTCREA`=CURDATE(),`AEP_COOPE`="'.$_SESSION['auth_id'].'"';
 
 
-        $db->query('UPDATE `AFFECTE_ENTITEES_PERSONNES` SET '.$set.' WHERE `PERSONNES_PER_ID`="'.$_GET['per_id'].'" AND `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" ');
+        $db->query('UPDATE `AFFECTE_ENTITES_PERSONNES` SET '.$set.' WHERE `PERSONNES_PER_ID`="'.$_GET['per_id'].'" AND `ENTITES_ENT_ID`="'.$_GET['ent_id'].'" ');
 
 
 	// ferme la fenetre & rafraichie la fenetre parent
@@ -153,36 +153,46 @@ else // AFFICHAGE -------------------------
 	echo '<input type="hidden" name="PER_ID" value="'.$_GET['per_id'].'">'."\n";
         echo '</table>'."\n";
 
-        echo '<h2>Informations spécifiques à cette entitée</h2>';
-	
-	// on vérifie que l'utilisateur est bien les droits de lecture
-	$db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$_GET['ent_id'].'" ');
-	$tmp = $db->fetch_array();
+        echo '<h2>Informations spécifiques à cet entité</h2>';
 
-	if( $user->HaveAccess($tmp[0], 'R') == 'true' )
-	{
-	
         unset($CIL,$NM_CHAMP,$tmp);
 
-	        // Ensuite les champs spécifiques
-        	$sql2 = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_PRIVATECOMMENT`, `AEP_DTCREA`, `AEP_DTMAJ`, `AEP_COOPE` FROM `AFFECTE_ENTITEES_PERSONNES` WHERE `ENTITEES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
+        // Ensuite les champs spécifiques
+        $sql2 = 'SELECT `AEP_FONCTION`, `AEP_TEL`, `AEP_FAX`, `AEP_MOBILE`, `AEP_ABREGE`, `AEP_EMAIL`, `AEP_DTCREA`, `AEP_DTMAJ`, `AEP_COOPE` FROM `AFFECTE_ENTITES_PERSONNES` WHERE `ENTITES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
 
-	        $CIL=InitPOReq($sql2,$DBName);
-        	$rep=$db->query($sql2);
-	        $data=$db->fetch_array();
+        $CIL=InitPOReq($sql2,$DBName);
+        $rep=$db->query($sql2);
+        $data=$db->fetch_array();
 
-	    	echo '<table>';
-	        foreach ($CIL as $pobj) {
-        	        $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
-                	if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
-	        	EchoLig($pobj->NmChamp);
-        	}
-	        echo '</table>';
+        echo '<table>';
+        foreach ($CIL as $pobj) {
+                $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+                if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
+                EchoLig($pobj->NmChamp);
+        }
+	        
+
+    	// on vérifie que l'utilisateur est bien les droits de lecture
+        $db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITES` WHERE `ENT_ID`="'.$_GET['ent_id'].'" ');
+        $tmp = $db->fetch_array();
+    
+        if( $user->HaveAccess($tmp[0], 'R') == true )
+        {
+            unset($CIL,$NM_CHAMP,$tmp);
+            $sql3 = 'SELECT `AEP_PRIVATECOMMENT` FROM `AFFECTE_ENTITES_PERSONNES` WHERE `ENTITES_ENT_ID`="'.$_GET['ent_id'].'" AND `PERSONNES_PER_ID`="'.$_GET['per_id'].'" ';
+	
+            $CIL=InitPOReq($sql3,$DBName);
+            $rep=$db->query($sql3);
+            $data=$db->fetch_array();
+
+            foreach ($CIL as $pobj) {
+                $CIL[$pobj->NmChamp]->ValChp=$data[$pobj->NmChamp];
+                if( $_GET['action'] == 'consultation' ) $CIL[$pobj->NmChamp]->TypEdit='C';
+                EchoLig($pobj->NmChamp);
+            }
 	}
-	else
-	{
-		echo '<i>Vous n\'avez pas accès à ces informations.</i>'."\n";
-	}
+
+        echo '</table>';
 	
         if( $_GET['action'] != 'consultation' ) {
 	       echo '<center><input type="image" src="templates/images/valide.gif"> <a href="#" onclick="window.close();"><img src="templates/images/del.gif" border="0"></center></center>'."\n";

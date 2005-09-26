@@ -7,8 +7,8 @@ include('HEADER.php');
 
 # DIVISé EN 3 SOUS PARTIES !
 # 1) Extration des catégories seulement
-# 2) Extrations des entitées 
-# 3) Extrations des personnes d'une entitée
+# 2) Extrations des entités 
+# 3) Extrations des personnes d'une entité
 
 
 # PARTIE 1 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -58,7 +58,7 @@ if( $_GET['type'] == 'categories' )
 }
 # PARTIE 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-elseif( $_GET['type'] == 'entitees' )
+elseif( $_GET['type'] == 'entites' )
 {
 
         // on genere le nom
@@ -75,7 +75,7 @@ elseif( $_GET['type'] == 'entitees' )
         // fin de la generation du nom
 
         // on affiche la premiere ligne avec les noms des champs
-        $NM_TABLE = 'ENTITEES';
+        $NM_TABLE = 'ENTITES';
         $db->query("SELECT `NM_CHAMP` from $TBDname where NM_TABLE='$NM_TABLE' AND NM_CHAMP!='$NmChDT' ORDER BY ORDAFF, LIBELLE");
         $vtb_name = RecupLib("CATEGORIES","CAT_ID","CAT_VTBNAME",$cat_id);
 
@@ -109,7 +109,7 @@ elseif( $_GET['type'] == 'entitees' )
                 }
         }
 
-        // comme on affiche toute les entitées de toutes les sous catégories qui se trouve en dessous de l'id
+        // comme on affiche toute les entités de toutes les sous catégories qui se trouve en dessous de l'id
         // les libellés des champs spéciaux ne seront pas pareille car il risque d'y avoir des sous catégories debutant
         // sur des champs spéciaux differents
         echo "\r\n";
@@ -119,7 +119,7 @@ elseif( $_GET['type'] == 'entitees' )
         $tabcat = array();
 	$where = get_subcats($cat_id);
 
-        $sql = 'SELECT * FROM `ENTITEES` WHERE `CATEGORIES_CAT_ID` IN '.$where;
+        $sql = 'SELECT * FROM `ENTITES` WHERE `CATEGORIES_CAT_ID` IN '.$where;
 	$CIL=InitPOReq($sql,$DBName);
 	$rep=$db->query($sql);
 
@@ -175,7 +175,7 @@ elseif( $_GET['type'] == 'personnes' )
 {
         // on genere le nom
         $ent_id = (int)$_GET['ent_id'];
-        $db->query('SELECT `ENT_NOMINATION`, `ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
+        $db->query('SELECT `ENT_NOMINATION`, `ENT_RAISONSOCIAL` FROM `ENTITES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
         $row = $db->fetch_array();
 
         $filename = strtolower( $row['ENT_RAISONSOCIAL'].'_'.$row['ENT_NOMINATION'] );
@@ -217,7 +217,7 @@ elseif( $_GET['type'] == 'personnes' )
         unset($ECT);
 
         // on affiche les nom des champs spécifique
-	$NM_TABLE = 'AFFECTE_ENTITEES_PERSONNES';
+	$NM_TABLE = 'AFFECTE_ENTITES_PERSONNES';
 	$db->query('SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE `NM_TABLE`="'.$NM_TABLE.'" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`');
 
         while ( $CcChp = $db->fetch_array() )  
@@ -240,14 +240,14 @@ elseif( $_GET['type'] == 'personnes' )
         // fin de l'affichage de la premiere ligne
 
         // on récupère la catégorie parent avant tout pour connaitre les droits
-        $db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
+        $db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
         $row = $db->fetch_array();
 
         $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'R');
         if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'W');
         if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'A');
 
-        $sql = 'SELECT `PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT` FROM `PERSONNES`, `AFFECTE_ENTITEES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITEES_ENT_ID`="'.$ent_id.'"';
+        $sql = 'SELECT `PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT` FROM `PERSONNES`, `AFFECTE_ENTITES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITES_ENT_ID`="'.$ent_id.'"';
 	$CIL=InitPOReq($sql,$DBName);
 	$rep=$db->query($sql);
 

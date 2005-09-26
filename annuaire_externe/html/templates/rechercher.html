@@ -2,18 +2,18 @@
 <div id="onglets_rech">
   
   <ul id="tabnav">
-    <li id="li_entitee" class="active"><a href="#" onclick="javascript:ShowTab('entitee');">Entit&eacute;e</a></li>
+    <li id="li_entite" class="active"><a href="#" onclick="javascript:ShowTab('entite');">Entit&eacute;s</a></li>
     <li id="li_personnes" class=""><a href="#" onclick="javascript:ShowTab('personnes');">Personnes</a></li>
   </ul><br>
 
-<div id="c_entitee" style="">
-  <form action="resultats.php?type=avancee&recherche=entitees" method="POST">
+<div id="c_entite" style="">
+  <form action="resultats.php?type=avancee&recherche=entites" method="POST">
   <table>
     <thead>
-      <TH width="30%">Champ</TH>
-      <TH width="50%">Crit&egrave;re</TH>
+      <TH width="30%">Champs</TH>
+      <TH width="50%">Crit&egrave;res</TH>
     </thead>
-    {formulaire_entitees}
+    {formulaire_entites}
   </table>
   <input type="image" src="templates/images/valide.gif">
   </form>
@@ -23,8 +23,8 @@
   <form action="resultats.php?type=avancee&recherche=personnes" method="POST">
   <table>
     <thead>
-      <TH width="30%">Champ</TH>
-      <TH width="50%">Crit&egrave;re</TH>
+      <TH width="30%">Champs</TH>
+      <TH width="50%">Crit&egrave;res</TH>
     </thead>
     {formulaire_personnes}
   </table>

@@ -26,7 +26,7 @@ function EchoLig($NmChamp,$FTE="")
 	
 	if( $CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="" )  
 	{
-		// on vire la ligne categorie parent et entitee parent
+		// on vire la ligne categorie parent et entite parent
 		$display = true;
 		if($NmChamp == 'CATEGORIES_CAT_ID' || $NmChamp == 'ENT_PARENTID') $display = false;
 		if($FTE == 'C' && ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
@@ -123,8 +123,8 @@ if( $_POST ) // GESTION DE L'AJOUT ---------------------------------------
         $aep_email = addslashes($_POST['AEP_EMAIL']);
         $aep_privatecomment = addslashes($_POST['AEP_PRIVATECOMMENT']);
 
-        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'" , `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'", `ENTITEES_ENT_ID`="'.$_SESSION['ent_id'].'", `AEP_DTCREA`=CURDATE(), `AEP_COOPE`="'.$_SESSION['auth_id'].'" ';
-	$db->query('INSERT INTO `AFFECTE_ENTITEES_PERSONNES` SET '.$set);
+        $set = '`AEP_FONCTION`="'.$aep_fonction.'",`AEP_TEL`="'.$aep_tel.'",`AEP_FAX`="'.$aep_fax.'",`AEP_MOBILE`="'.$aep_mobile.'",`AEP_ABREGE`="'.$aep_abrege.'",`AEP_EMAIL`="'.$aep_email.'",`AEP_PRIVATECOMMENT`="'.$aep_privatecomment.'" , `PERSONNES_PER_ID`="'.$_SESSION['per_id'].'", `ENTITES_ENT_ID`="'.$_SESSION['ent_id'].'", `AEP_DTCREA`=CURDATE(), `AEP_COOPE`="'.$_SESSION['auth_id'].'" ';
+	$db->query('INSERT INTO `AFFECTE_ENTITES_PERSONNES` SET '.$set);
 
         $_SESSION['per_id'] = '';
         $_SESSION['ent_id'] = '';
@@ -175,11 +175,11 @@ else // AFFICHAGE -------------------------
         }
         echo '</table>';
 
-        echo '<h2>Informations spécifiques à cette entitée<h2>';
+        echo '<h2>Informations spécifiques à cette entité<h2>';
         unset($CIL,$NM_CHAMP);
 
         // Ensuite les champs spécifiques
-        $sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="AFFECTE_ENTITEES_PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT" OR `NM_CHAMP`="AEP_DTCREA" OR `NM_CHAMP`="AEP_DTMAJ" OR `NM_CHAMP`="AEP_COOPE") ORDER BY `ORDAFF`';
+        $sql = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="AFFECTE_ENTITES_PERSONNES" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT" OR `NM_CHAMP`="AEP_DTCREA" OR `NM_CHAMP`="AEP_DTMAJ" OR `NM_CHAMP`="AEP_COOPE") ORDER BY `ORDAFF`';
         $db->query($sql);
         
         while( $data = $db->fetch_array() )
@@ -187,7 +187,7 @@ else // AFFICHAGE -------------------------
                 $NM_CHAMP=$data['NM_CHAMP'];
                 $CIL[$NM_CHAMP] = new PYAobj();
                 $CIL[$NM_CHAMP]->NmBase=$DBName;
-                $CIL[$NM_CHAMP]->NmTable='AFFECTE_ENTITEES_PERSONNES';
+                $CIL[$NM_CHAMP]->NmTable='AFFECTE_ENTITES_PERSONNES';
                 $CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
                 $CIL[$NM_CHAMP]->TypEdit='';
                 $CIL[$NM_CHAMP]->InitPO();

@@ -6,19 +6,19 @@
     <script language="javascript">
         function ShowTab (string) 
 	{
-                if(string == "entitee") 
+                if(string == "entite") 
 		{
-                        document.getElementById("c_entitee").style.display="block";
+                        document.getElementById("c_entite").style.display="block";
                         document.getElementById("c_personnes").style.display="none";
-                        document.getElementById("li_entitee").className="active";
+                        document.getElementById("li_entite").className="active";
                         document.getElementById("li_personnes").className="";
                 } 
 
 		if(string == "personnes") 
 		{
-                        document.getElementById("c_entitee").style.display="none";
+                        document.getElementById("c_entite").style.display="none";
                         document.getElementById("c_personnes").style.display="block";
-			document.getElementById("li_entitee").className="";
+			document.getElementById("li_entite").className="";
                         document.getElementById("li_personnes").className="active";
                 } 
         }

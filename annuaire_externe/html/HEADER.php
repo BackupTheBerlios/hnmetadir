@@ -16,6 +16,11 @@ $db->connect();
 
 session_start();
 
+// debug
+echo '<!-- ';
+print_r($_SESSION);
+echo ' -->';
+
 // Untilisateur ou anonyme ?
 if($_SESSION['auth'] != true && $REQUEST_URI != '/login.php') 
 {

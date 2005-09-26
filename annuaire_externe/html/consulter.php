@@ -105,7 +105,7 @@ function affstruct_cat($pere,$espace)
 			$menu .= "- <a href=\"javascript:void(0);\" onclick=\"window.open(\'popup_droits.php?id=".$id."\', \'\', config=\'height=600, width=660, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Les droits</a><br>";
 		}
 			$menu .= "<b>Extraction :</b><br>
-			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=entitees&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Entités seulement</a><br>
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=entites&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Entités seulement</a><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=categories&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Toutes les Catégories</a><br>";
 
 		$menu = str_replace("\"", "&quot;", $menu);
@@ -145,14 +145,14 @@ function affstruct_cat($pere,$espace)
 
 
 
-// - Fonction - Listage des entitee d'une catégorie
+// - Fonction - Listage des entite d'une catégorie
 // -------------------------------------------------
 
 function affstruct_ent($cat,$pere,$espace)
 {
         global $db,$tpl,$tabent,$user;
 
-        $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
+        $query='SELECT `ENT_ID`,`ENT_NOMINATION`,`ENT_RAISONSOCIAL` FROM `ENTITES` WHERE `ENT_PARENTID`="'.$pere.'" AND `CATEGORIES_CAT_ID`="'.$cat.'" ORDER BY `ENT_NOMINATION` ASC';
         $result = $db->query($query) or die(mysql_error());
         $n = $db->num_rows($result);
         $espace .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|';
@@ -164,7 +164,7 @@ function affstruct_ent($cat,$pere,$espace)
 
                	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a>' );
 		$tpl->set_var('espace', $espace.'&nbsp;--&nbsp;' );
-                $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entitee">' );
+                $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entite">' );
                 $tpl->set_var('id', $id );
 
 		// menu
@@ -216,7 +216,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 {
 	global $tpl,$db;
 
-	$db->query('SELECT * FROM `PERSONNES`,`AFFECTE_ENTITEES_PERSONNES` WHERE AFFECTE_ENTITEES_PERSONNES.ENTITEES_ENT_ID="'.$ent_id.'" AND AFFECTE_ENTITEES_PERSONNES.PERSONNES_PER_ID=PERSONNES.PER_ID');
+	$db->query('SELECT * FROM `PERSONNES`,`AFFECTE_ENTITES_PERSONNES` WHERE AFFECTE_ENTITES_PERSONNES.ENTITES_ENT_ID="'.$ent_id.'" AND AFFECTE_ENTITES_PERSONNES.PERSONNES_PER_ID=PERSONNES.PER_ID');
 	$tpl->set_block('FileRef', 'personnes', 'personnes_block');
 
 	while( $data = $db->fetch_array($req) )
@@ -265,7 +265,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
                 {
                        $tabent=array();
 	               $where = get_subents($_GET['ent_id']);
-	               $db->query('DELETE FROM `ENTITEES` WHERE `ENT_ID` IN '.$where);
+	               $db->query('DELETE FROM `ENTITES` WHERE `ENT_ID` IN '.$where);
                 }	
 	}
 	// -------------------------------------------
@@ -290,17 +290,17 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 		$contenu  .= stripslashes($data['CAT_DESCRIPTION']);
 		$tpl->set_var('contenu', $contenu);
 	} 
-	// ON AFFICHE UNE ENTITEE ET SES SOUS ENTITEE
+	// ON AFFICHE UNE ENTITE ET SES SOUS ENTITE
 	elseif($_GET['ent'])
 	{
 
-                $sql='SELECT * FROM ENTITEES WHERE ENT_ID="'.$_GET['ent'].'"';
+                $sql='SELECT * FROM ENTITES WHERE ENT_ID="'.$_GET['ent'].'"';
                 $rep=$db->query($sql);
                 $data=$db->fetch_array();
 
 	
 		// on récupere les ids des entités parentes
-		$tabent = chemin_entitee($_GET['ent']);
+		$tabent = chemin_entite($_GET['ent']);
 		// on affiche le calque des personnes
 		$tpl->set_var('div_pdisp', 'display');
 		
@@ -312,7 +312,7 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
 
 		// on envoie le menu
 		$onglets   = '<ul id="tabnav">';
-    		$onglets  .= '<li id="li_entitee" class="active"><a href="#" onclick="javascript:ShowTab(\'entitee\');">Entité</a></li>';
+    		$onglets  .= '<li id="li_entite" class="active"><a href="#" onclick="javascript:ShowTab(\'entite\');">Entité</a></li>';
         	$onglets  .= '<li id="li_personnes" class=""><a href="#" onclick="javascript:ShowTab(\'personnes\');">Personnes</a></li>';
 		$onglets  .= '</ul><br>';
 		$tpl->set_var('onglets', $onglets);
@@ -355,14 +355,14 @@ function aff_personnes($ent_id,$droit_w,$droit_a)
                                         
                                 if( $display == true ) 
                                 {
-                                        $tmp .= '<tr><td valign="top"><b>'.$CIL[$NmChamp]->Libelle.'</b>';
+                                        $tmp .= '<tr><td style="vertical-align:top;"><b>'.$CIL[$NmChamp]->Libelle.'</b>';
                                         if ($CIL[$NmChamp]->TypEdit!="C" && $CIL[$NmChamp]->Comment!="") 
                                         {
                                                 $tmp .= echspan("legendes9px","<BR>".$CIL[$NmChamp]->Comment);
                                         } 
 
                                         $tmp .= '</td>'."\n";
-                                        $tmp .= '<td><b>:</b> ';
+                                        $tmp .= '<td valign="top"><b>:</b> ';
                                         
                                         // traitement valeurs avant MAJ
                                         $CIL[$NmChamp]->DirEcho = false;

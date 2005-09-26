@@ -22,7 +22,7 @@ function EchoLig($NmChamp,$FTE="")
 	
 	if( $CIL[$NmChamp]->TypEdit!="C" || $CIL[$NmChamp]->ValChp!="" )  
 	{
-		// on vire la ligne categorie parent et entitee parent
+		// on vire la ligne categorie parent et entite parent
 		$display = true;
 		if($NmChamp == 'CATEGORIES_CAT_ID' || $NmChamp == 'ENT_PARENTID') $display = false;
 		if($FTE == 'C' && ereg('PROPRIETE', $NmChamp) && !$access) $display = false;
@@ -62,16 +62,16 @@ if($_POST)
 	// ---------------------------------------
 	
 	// on recupere les noms des 2 1er champs (idem aux variables)
-	$rqkc  = $db->query("SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE NM_TABLE='ENTITEES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE LIMIT 2");
+	$rqkc  = $db->query("SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE NM_TABLE='ENTITES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE LIMIT 2");
 	$nmchp = $db->fetch_array($rqkc);
 	$chp   = $nmchp[0];
-	$mff   = mysqff ($chp, 'ENTITEES');
+	$mff   = mysqff ($chp, 'ENTITES');
 	// dans mff on a les caract. de cle primaire, auto_increment, etc ... du 1er champ
 	if (stristr($mff,"primary_key")) { // si 1er champ est une clé primaire
 		// on regarde si c'est un auto incrément
 		if (stristr($mff,"auto_increment") && $_GET['action'] == 'ajout')
 		{ // si auto increment et nouvel enregistrement ou copie
-			$rp1 = $db->query("SELECT $chp from `ENTITEES` order by $chp DESC LIMIT 1");
+			$rp1 = $db->query("SELECT $chp from `ENTITES` order by $chp DESC LIMIT 1");
 			$rp2 = $db->fetch_array($rp1);
 			$keycopy = $rp2[0]+1;
 			$keycopy = $keycopy."_";
@@ -95,10 +95,10 @@ if($_POST)
 	// fin traitement fichier
 	// -----------------------
 	
-	$sql=$db->query("SELECT `NM_CHAMP` from `DESC_TABLES` WHERE NM_TABLE='ENTITEES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE");
+	$sql=$db->query("SELECT `NM_CHAMP` from `DESC_TABLES` WHERE NM_TABLE='ENTITES' AND NM_CHAMP!='TABLE0COMM' ORDER BY ORDAFF, LIBELLE");
 	$PYAoMAJ=new PYAobj();
 	$PYAoMAJ->NmBase='annuaire_externe';
-	$PYAoMAJ->NmTable='ENTITEES';
+	$PYAoMAJ->NmTable='ENTITES';
 	$PYAoMAJ->TypEdit='';
 
 	while ($data = $db->fetch_array())
@@ -108,7 +108,7 @@ if($_POST)
   		$PYAoMAJ->InitPO();
 		$PYAoMAJ->ValChp=$_POST[$NOMC]; // issu du formulaire
 
-		if ($PYAoMAJ->TypeAff=="FICFOT") 
+                if ($PYAoMAJ->TypeAff=="FICFOT" && $_POST[$NOMC]) 
 		{
      			if ($_FILES[$NOMC][name]!="" && $_FILES[$NOMC][error]!="0") die ("error: impossible de joindre le fichier ".$_FILES[$NOMC][name]."; sa taille est peut-etre trop importante");
      			$VarFok="Fok".$NOMC;
@@ -129,25 +129,23 @@ if($_POST)
         		}
      		}
   		$tbset=array_merge($tbset,$PYAoMAJ->RetSet($keycopy,true));
-
 	} // fin boucle sur les champs
 
-	$set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
-	
-	
+        $set= substr($set,0,-2); // enlève la dernière virgule et esp en trop à la fin
+    	
 	if($_GET['action'] == 'ajout') {
-		$db->query("INSERT INTO `ENTITEES` SET ".tbset2set($tbset));
+		$db->query("INSERT INTO `ENTITES` SET ".tbset2set($tbset));
 	} elseif($_GET['action'] == 'edition') {
-		$db->query("UPDATE `ENTITEES` SET ".tbset2set($tbset)." WHERE `ENT_ID`='".(int)$_GET['id']."'");		
+		$db->query("UPDATE `ENTITES` SET ".tbset2set($tbset)." WHERE `ENT_ID`='".(int)$_GET['id']."'");		
 	}
-
+    
 	// ferme la fenetre & rafraichie la fenetre parent
 	echo '<script language="javascript">window.opener.location.reload();window.close();</script>';
 
 }
 
 // initialisation de ts les objets PYA de la table
-$sqlpo = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="ENTITEES" AND `NM_CHAMP`!="TABLE0COMM" ORDER BY `ORDAFF`';
+$sqlpo = 'SELECT * FROM `DESC_TABLES` WHERE `NM_TABLE`="ENTITES" AND `NM_CHAMP`!="TABLE0COMM" ORDER BY `ORDAFF`';
 $rep=$db->query($sqlpo);
 	
 while($data=$db->fetch_array())
@@ -155,7 +153,7 @@ while($data=$db->fetch_array())
 	$NM_CHAMP=$data['NM_CHAMP'];
 	$CIL[$NM_CHAMP] = new PYAobj();
 	$CIL[$NM_CHAMP]->NmBase=$DBName;
-	$CIL[$NM_CHAMP]->NmTable='ENTITEES';
+	$CIL[$NM_CHAMP]->NmTable='ENTITES';
 	$CIL[$NM_CHAMP]->NmChamp=$NM_CHAMP;
 //	$CIL[$NM_CHAMP]->TypEdit='';
 	$CIL[$NM_CHAMP]->InitPO();
@@ -204,7 +202,7 @@ if($_GET['action'] == 'ajout')
 elseif($_GET['action'] == 'edition' || $_GET['action'] == 'consultation')
 {
 
-	$sql='SELECT * FROM `ENTITEES` WHERE ENT_ID="'.$_GET['id'].'"';
+	$sql='SELECT * FROM `ENTITES` WHERE ENT_ID="'.$_GET['id'].'"';
 //	$CIL=InitPOReq($sql,'annuaire_externe');
 	$rep=$db->query($sql);
 	$data=$db->fetch_array();

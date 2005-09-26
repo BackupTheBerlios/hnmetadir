@@ -1,5 +1,7 @@
 <?PHP
 
+if(session_id()) { session_destroy(); }
+
 session_start();
 
 include('libs/class.db.inc');
@@ -19,7 +21,7 @@ $tpl->set_file('FileRef','login.html');
 
 if( $_GET['erreur'] == true )
 {
-	$tpl->set_var('erreur', 'Authentification Ã©chouÃ©e !<br>');
+	$tpl->set_var('erreur', 'Authentification échouée !<br>');
 }
 
 

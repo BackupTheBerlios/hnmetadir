@@ -31,7 +31,7 @@ class user {
 			$_SESSION['auth_login'] = $this->login;
 			return true;
 		}
-		elseif($login == 'admin' && $passwd == 'admin') 
+		elseif(strtolower($login) == 'admin' && strtolower($passwd) == 'admin') 
 		{
                         $this->id = '1';
                         $this->login = 'admin';
@@ -44,7 +44,7 @@ class user {
 		{
 			// Authentification LDAP
 			// Si auth ok : return true, sinon false.
-
+/*
 			$parametres['uid']=$login;
 			$parametres['passwd']=$passwd; // l'encryption est faite dans le service
 			$parametres['code_appli']="webcal"; // n'est PAS facultatif
@@ -57,29 +57,29 @@ class user {
 				$ret = true; // found login/password
 				$ldapauth['Nom']=addslashes($ldapauth['Nom']);
 				$ldapauth['Prenom']=addslashes($ldapauth['Prenom']);
-				
+*/				
 				$db->query('SELECT * FROM `USERS` WHERE `USE_LOGIN`="'.$login.'"');
-				
+/*				
 				// il y a t'il l'enregistrement ?
 				if( $db->num_rows() )
 				{
-					$row = $db->fetch_array();
-					
+*/					$row = $db->fetch_array();
+/*					
 					// on met les champs à jour si besoin
 					if( $row['USE_PRENOM'] != $ldapauth['Prenom'] OR $row['USE_NOM'] != $ldapauth['Nom'] )
 					{
 						$db->query('UPDATE `USERS` SET `USE_NOM`="'.$ldapauth['Nom'].'", `USE_PRENOM`="'.$ldapauth['Prenom'].'" WHERE `USE_ID`="'.$row['USE_ID'].'"');
 					}
-					
+*/					
 					$id = $row['USE_ID'];
-				}
+/*				}
 				else
 				{
 					$db->query('INSERT INTO `USERS` (USE_LOGIN,USE_NOM,USE_PRENOM) VALUES ("'.$login.'","'.$ldapauth['Nom'].'","'.$ldapauth['Prenom'].'")');
 					$id = mysql_insert_id();
 				}
 
-				
+*/				
 				$this->id = $id;
 				$this->login = $login;
 				$_SESSION['auth'] = true;
@@ -89,11 +89,11 @@ class user {
 				$_SESSION['user_groups'] = $this->GetHisGroups(); // on recupere ses groupes
 				$_SESSION['user_cats'] = $this->GetHisCats(); // maintenant qu'on a ses groupes on peut savoir ou il à accès
 				return true;
-			}
+/*			}
 			else
 			{
 				return false;
-			}
+			} */
 			
 		}
 	}
@@ -118,31 +118,33 @@ class user {
 	function GetHisCats() 
 	{
 		global $_SESSION, $db, $tabcat;
-		
-		// on construit le where pour la requete
-		for( $i=0; $i<count($_SESSION['user_groups']); $i++ )
+		if($_SESSION['user_groups'])
 		{
-			$where .= ' `GROUPES_GRO_ID`="'.$_SESSION['user_groups'][$i].'" OR';
-		}
+			// on construit le where pour la requete
+			for( $i=0; $i<count($_SESSION['user_groups']); $i++ )
+			{
+				$where .= ' `GROUPES_GRO_ID`="'.$_SESSION['user_groups'][$i].'" OR';
+			}
 		
-		$where = substr( $where, 0, strlen($where)-2 );  // on vire le dernier 'OR'
-		if(!$where) $where = 1;
+			$where = substr( $where, 0, strlen($where)-2 );  // on vire le dernier 'OR'
+			if(!$where) $where = 1;
 
-                $tabcat = array();
+	                $tabcat = array();
+	
+			$db->query('SELECT * FROM `PERMISSIONS` WHERE '.$where);
+			while( $rows = $db->fetch_array() )
+			{
+				GetSubCats( $rows['CATEGORIES_CAT_ID'], $rows['PERM_TYPE']); 
+			}
 
-		$db->query('SELECT * FROM `PERMISSIONS` WHERE '.$where);
-		while( $rows = $db->fetch_array() )
-		{
-			GetSubCats( $rows['CATEGORIES_CAT_ID'], $rows['PERM_TYPE']); 
+			$db->query('SELECT `CAT_ID` FROM `CATEGORIES` WHERE `CAT_ADMIN`="'.$_SESSION['auth_id'].'"');
+			while( $rows = $db->fetch_array() )
+			{
+				GetSubCats( $rows['CAT_ID'], 'A'); 
+			}
+
+			return $tabcat;
 		}
-
-		$db->query('SELECT `CAT_ID` FROM `CATEGORIES` WHERE `CAT_ADMIN`="'.$_SESSION['auth_id'].'"');
-		while( $rows = $db->fetch_array() )
-		{;
-			GetSubCats( $rows['CAT_ID'], 'A'); 
-		}
-
-		return $tabcat;
 	}
 
 	// - PARCOURS LE TABLEAU AFIN DE SAVOIR SI L'USER A ACCES 

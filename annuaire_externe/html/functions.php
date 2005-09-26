@@ -4,13 +4,13 @@
 // -- Arguments :
 // --- id     : l'id de l'objet en court
 
-function chemin_entitee($id)
+function chemin_entite($id)
 {
 	global $tabent;
 
 	array_push($tabent, $id);
 
-	$query='SELECT `ENT_ID`,`ENT_RAISONSOCIAL`,`ENT_NOMINATION`,`ENT_PARENTID`,`CATEGORIES_CAT_ID` FROM `ENTITEES` WHERE `ENT_ID`="'.$id.'"';
+	$query='SELECT `ENT_ID`,`ENT_RAISONSOCIAL`,`ENT_NOMINATION`,`ENT_PARENTID`,`CATEGORIES_CAT_ID` FROM `ENTITES` WHERE `ENT_ID`="'.$id.'"';
 	$result = mysql_query($query) or die(mysql_error());
        	$row = mysql_fetch_array($result);
 
@@ -23,7 +23,7 @@ function chemin_entitee($id)
 	} 
 	else 
 	{
-		chemin_entitee($parentid);
+		chemin_entite($parentid);
 	}
 	return $tabent;
 }
@@ -84,7 +84,7 @@ function get_subents($id)
 	global $tabent;
 	array_push($tabent, $id);
 
-	$query='SELECT `ENT_ID`,`ENT_PARENTID` FROM `ENTITEES` WHERE `ENT_PARENTID`="'.$id.'"';
+	$query='SELECT `ENT_ID`,`ENT_PARENTID` FROM `ENTITES` WHERE `ENT_PARENTID`="'.$id.'"';
 	$result = mysql_query($query) or die(mysql_error());
 	$n = mysql_num_rows($result);
 

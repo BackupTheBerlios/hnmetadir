@@ -160,7 +160,6 @@ DIV#g_arbo {
 float:left;
 width:30%;
 overflow:scroll;
-border-right:1px solid black;
 padding:5px;
 height:80%;
 }
@@ -171,7 +170,7 @@ width: 68%;
 right:2%;
 }
 
-DIV#c_entitee {
+DIV#c_entite {
 display:block;
 }
 
@@ -193,7 +192,6 @@ margin: 0;
 ul#tabnav li {
 float: left;
 height: 21px;
-background-color: #ebdd62;
 margin: 2px 2px 0 2px;
 border: 1px solid #900000;
 }
