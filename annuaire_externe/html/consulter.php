@@ -116,10 +116,10 @@ function affstruct_cat($pere,$espace)
 		// -----------------------------------
 
 		if($pere == 0) {
-			$tpl->set_var('icone', '<img src="templates/images/branche.png" alt="folder">' );
+			$tpl->set_var('icone', '<img src="templates/images/branche.png" alt="Cliquez ici pour faire apparaitre le menu">' );
 			$tpl->set_var('menu', $menu);
 		} else {
-			$tpl->set_var('icone', '<img src="templates/images/folder.png" alt="folder">' );
+			$tpl->set_var('icone', '<img src="templates/images/folder.png" alt="Cliquez ici pour faire apparaitre le menu">' );
 			$tpl->set_var('menu', $menu);
 		}
 
@@ -164,7 +164,7 @@ function affstruct_ent($cat,$pere,$espace)
 
                	$tpl->set_var('nom', '<a href="consulter.php?ent='.$id.'">'.$nom.'</a>' );
 		$tpl->set_var('espace', $espace.'&nbsp;--&nbsp;' );
-                $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="entite">' );
+                $tpl->set_var('icone', '<img src="templates/images/entity.png" alt="Cliquez ici pour faire apparaitre le menu">' );
                 $tpl->set_var('id', $id );
 
 		// menu

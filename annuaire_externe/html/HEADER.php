@@ -1,4 +1,5 @@
 <?
+session_start();
 
 include('libs/class.template.inc');
 include('libs/class.db.inc');
@@ -14,12 +15,11 @@ $tpl = new Template('templates/');
 $db  = new database;
 $db->connect();
 
-session_start();
 
-// debug
-echo '<!-- ';
-print_r($_SESSION);
-echo ' -->';
+// DEBUG
+//echo '<!-- ';
+//print_r($_SESSION);
+//echo ' -->';
 
 // Untilisateur ou anonyme ?
 if($_SESSION['auth'] != true && $REQUEST_URI != '/login.php') 

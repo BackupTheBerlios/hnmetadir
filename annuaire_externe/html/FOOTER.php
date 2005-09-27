@@ -8,6 +8,13 @@ $tpl->set_file('HeaderRef','header.html');
 	$tpl->set_var('login', $_SESSION['auth_login']);
 
 
+        if($_SESSION['auth'] == true && $_SESSION['auth_login'] == 'admin') {
+            $tpl->set_var('menu_admin', '<a href="admin.php">Admin</a>');
+        } else {
+            $tpl->set_var('menu_admin', 'Admin');
+        }
+
+
 	// connexion ou déconnexion dans le sous meun
 	if( $_SESSION['auth'] == true || $_SESSION['auth_login'] != 'anonyme')
 	{

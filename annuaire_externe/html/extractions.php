@@ -190,7 +190,7 @@ elseif( $_GET['type'] == 'personnes' )
 
         // on affiche la premiere ligne avec les noms des champs
         $NM_TABLE = 'PERSONNES';
-        $db->query("SELECT `NM_CHAMP` from $TBDname where NM_TABLE='$NM_TABLE' AND NM_CHAMP!='$NmChDT' ORDER BY ORDAFF, LIBELLE");
+        $db->query('SELECT `NM_CHAMP` from '.$TBDname.' where NM_TABLE="'.$NM_TABLE.'" AND NM_CHAMP!="'.$NmChDT.'" AND ( `NM_CHAMP`="PER_IDLDAP" OR `NM_CHAMP`="PER_TITRE" OR `NM_CHAMP`="PER_NOM" OR `NM_CHAMP`="PER_PRENOM" OR `NM_CHAMP`="PER_ADRESSE" OR `NM_CHAMP`="PER_ADRESSE2" OR `NM_CHAMP`="PER_CODEPOSTALE" OR `NM_CHAMP`="PER_VILLE" OR `NM_CHAMP`="PER_PAYS" OR `NM_CHAMP`="PER_REGION" OR `NM_CHAMP`="PER_DATENAISS" OR `NM_CHAMP`="PER_SITEPERSO" ) ORDER BY ORDAFF, LIBELLE');
 
         while ( $CcChp = $db->fetch_array() )  {
                 $NM_CHAMP=$CcChp[0];
@@ -204,15 +204,12 @@ elseif( $_GET['type'] == 'personnes' )
 
         $i = 0;
         foreach ($ECT as $PYAObj) {
-                if ($PYAObj->TypeAff == "AUT") 
-                {
-                        if( $i == 0 ) {
-                                echo '"'.$PYAObj->Libelle.'"';
-                        } else {
-                                echo ',"'.$PYAObj->Libelle.'"';
-                        }
-                        $i++;
+                if( $i == 0 ) {
+                    echo '"'.$PYAObj->Libelle.'"';
+                } else {
+                    echo ',"'.$PYAObj->Libelle.'"';
                 }
+                $i++;
         }
         unset($ECT);
 
@@ -225,7 +222,7 @@ elseif( $_GET['type'] == 'personnes' )
                 $NM_CHAMP=$CcChp[0];    
                 $ECT[$NM_CHAMP] = new PYAobj();
                 $ECT[$NM_CHAMP]->NmBase=$DBName; 
-                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;                                                                            
+                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;
                 $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
                 $ECT[$NM_CHAMP]->TypEdit='C';   
                 $ECT[$NM_CHAMP]->InitPO();
@@ -247,7 +244,7 @@ elseif( $_GET['type'] == 'personnes' )
         if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'W');
         if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'A');
 
-        $sql = 'SELECT `PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT` FROM `PERSONNES`, `AFFECTE_ENTITES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITES_ENT_ID`="'.$ent_id.'"';
+        $sql = 'SELECT `PER_IDLDAP`,`PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT` FROM `PERSONNES`, `AFFECTE_ENTITES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITES_ENT_ID`="'.$ent_id.'"';
 	$CIL=InitPOReq($sql,$DBName);
 	$rep=$db->query($sql);
 
@@ -264,7 +261,7 @@ elseif( $_GET['type'] == 'personnes' )
                                 $CIL[$NmChamp]->TypEdit = 'C';
 
                                 if( $j != 0 ) echo ',';
-                                if( strstr($NmChamp, 'AEP') ) {
+                                if( $NmChamp == 'AEP_PRIVATECOMMENT' ) {
                                         if( $access == true )
                                         {
                                                 $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
