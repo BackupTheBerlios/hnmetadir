@@ -69,7 +69,7 @@ elseif( $_GET['type'] == 'entites' )
         $filename = strtolower( $row['CAT_NOM'] );
         $filename = str_replace(' ', '_', $filename);
 
-        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
+        header("Content-disposition: attachment; filename=\"extraction-entites-$filename.csv\"");
         header("Content-Type: application/force-download");
         header("Content-Transfer-Encoding: binary");
         // fin de la generation du nom
