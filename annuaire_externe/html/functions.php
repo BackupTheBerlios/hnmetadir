@@ -138,3 +138,22 @@ function DIspLigReq()
         $FCobj->EchoFilt(false); // affiche filtre sans n√©gation 
         echo "</td></tr>\n";
 }
+
+// permet de rÈcupÈrer tout les ids des entitÈs a partir d'une cat
+function get_ent_from_cat($cat_id) 
+{
+	// on rÈcupËre d'abord tous les ids des entitÈs qui sont dans la catÈgorie (et sous catÈgorie)
+	$tabcat = array();
+	$where = get_subcats($cat_id);
+	$db->query('SELECT `ENT_ID` FROM `ENTITES` WHERE `CATEGORIES_CAT_ID` IN '.$where);
+	
+	// on constitue le where avec les ids des entitÈs
+	while($data = $db->fetch_array())
+	{
+		$where2 .= ','.$data['ENT_ID'];
+	}
+	$where2 = substr($where2, 1);
+	$where2 = '('.$where2.')';
+
+	return $where2;
+}

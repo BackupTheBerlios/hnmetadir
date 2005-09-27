@@ -5,14 +5,109 @@ include('HEADER.php');
 
 // ##################################################################
 
-# DIVISé EN 3 SOUS PARTIES !
-# 1) Extration des catégories seulement
-# 2) Extrations des entités 
-# 3) Extrations des personnes d'une entité
+function traitement_personne($requete) {
+
+	// on affiche la premiere ligne avec les noms des champs
+	$NM_TABLE = 'PERSONNES';
+	$db->query('SELECT `NM_CHAMP` from '.$TBDname.' where NM_TABLE="'.$NM_TABLE.'" AND NM_CHAMP!="'.$NmChDT.'" AND ( `NM_CHAMP`="PER_IDLDAP" OR `NM_CHAMP`="PER_TITRE" OR `NM_CHAMP`="PER_NOM" OR `NM_CHAMP`="PER_PRENOM" OR `NM_CHAMP`="PER_ADRESSE" OR `NM_CHAMP`="PER_ADRESSE2" OR `NM_CHAMP`="PER_CODEPOSTALE" OR `NM_CHAMP`="PER_VILLE" OR `NM_CHAMP`="PER_PAYS" OR `NM_CHAMP`="PER_REGION" OR `NM_CHAMP`="PER_DATENAISS" OR `NM_CHAMP`="PER_SITEPERSO" ) ORDER BY ORDAFF, LIBELLE');
+
+	while ( $CcChp = $db->fetch_array() )  {
+		$NM_CHAMP=$CcChp[0];
+		$ECT[$NM_CHAMP]=new PYAobj();
+		$ECT[$NM_CHAMP]->NmBase=$DBName;
+		$ECT[$NM_CHAMP]->NmTable=$NM_TABLE;
+		$ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+		$ECT[$NM_CHAMP]->TypEdit='C';
+		$ECT[$NM_CHAMP]->InitPO();
+	}
+
+	$i = 0;
+	foreach ($ECT as $PYAObj) {
+		if( $i == 0 ) {
+		echo '"'.$PYAObj->Libelle.'"';
+		} else {
+		echo ',"'.$PYAObj->Libelle.'"';
+		}
+		$i++;
+	}
+	unset($ECT);
+
+	// on affiche les nom des champs spécifique
+	$NM_TABLE = 'AFFECTE_ENTITES_PERSONNES';
+	$db->query('SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE `NM_TABLE`="'.$NM_TABLE.'" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`');
+
+	while ( $CcChp = $db->fetch_array() )  
+	{
+		$NM_CHAMP=$CcChp[0];    
+		$ECT[$NM_CHAMP] = new PYAobj();
+		$ECT[$NM_CHAMP]->NmBase=$DBName; 
+		$ECT[$NM_CHAMP]->NmTable=$NM_TABLE;
+		$ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
+		$ECT[$NM_CHAMP]->TypEdit='C';   
+		$ECT[$NM_CHAMP]->InitPO();
+	}
+
+	foreach ($ECT as $PYAObj) {
+		echo ',"'.$PYAObj->Libelle.'"';
+	}
+
+	echo ',"Raison Social","Société"'."\r\n";
+	// fin de l'affichage de la premiere ligne
+
+	// on récupère la catégorie parent avant tout pour connaitre les droits
+	$db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
+	$row = $db->fetch_array();
+
+	$access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'R');
+	if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'W');
+	if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'A');
+
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!! LA REQUETE ICI !!!!!!!!!!!!!!!!!!!!!!!!!
+	$sql = 'SELECT `PER_IDLDAP`,`PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT`, ENTITES.ENT_RAISONSOCIAL, ENTITES.ENT_NOMINATION FROM `PERSONNES`, `AFFECTE_ENTITES_PERSONNES`, `ENTITES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITES_ENT_ID`="'.$ent_id.'" AND ENTITES.ENT_ID="'.$ent_id.'"';
+
+	$CIL=InitPOReq($sql,$DBName);
+	$rep=$db->query($sql);
 
 
-# PARTIE 1 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if( $db->num_rows() )
+	{
+		while( $data = $db->fetch_array() )
+		{
+			$j=0;
+			foreach ($CIL as $pobj) 
+			{ 
+				$NmChamp = $pobj->NmChamp;
+				$CIL[$NmChamp]->ValChp=$data[$NmChamp];
+				$CIL[$NmChamp]->TypEdit = 'C';
+
+				if( $j != 0 ) echo ',';
+				if( $NmChamp == 'AEP_PRIVATECOMMENT' ) {
+					if( $access == true )
+					{
+						$tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
+						echo '"'.$tmp.'"';
+					} else {
+						echo '""';
+					}
+				} else {
+					$tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
+					echo '"'.$tmp.'"';
+				}
+				$j++;
+
+			} // fin du foreach
+			echo "\r\n";
+		} // fin du while
+	} // fin du mysql_num_rows()
+
+}
+
+
+/******************************************************************
+*
+* EXTRACTIONS DE TOUTES LES CATEGORIES  
+*
+*******************************************************************/
 
 if( $_GET['type'] == 'categories' )
 {
@@ -56,8 +151,12 @@ if( $_GET['type'] == 'categories' )
         GetCatsForCSV($cat_id, $position);
 
 }
-# PARTIE 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/******************************************************************
+*
+* EXTRACTIONS DE TOUTES LES ENTITES D'UNE CATEGORIE 
+*
+*******************************************************************/
+
 elseif( $_GET['type'] == 'entites' )
 {
 
@@ -146,12 +245,12 @@ elseif( $_GET['type'] == 'entites' )
                                         // traitement champs sécurisé
                                         if( $NmChamp == 'ENT_PRIVATECOMMENT' ) 
                                         {
-                                                if( $_SESSION['auth_login'] == 'admin' || $CIL['ENT_PRIVATECOMMENT']->ValChp == $_SESSION['auth_id']) {
+                                                if( $access == true) {
                                                         $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
                                                         echo ',"'.$tmp.'"';
                                                 } else {
                                                         echo ',""';
-                                                }                                                
+                                                }   
                                         }
                                         else
                                         {
@@ -173,113 +272,58 @@ elseif( $_GET['type'] == 'entites' )
 # PARTIE 3 !!!!!!!!!!!!!!!!!!!!!
 elseif( $_GET['type'] == 'personnes' )
 {
-        // on genere le nom
-        $ent_id = (int)$_GET['ent_id'];
-        $db->query('SELECT `ENT_NOMINATION`, `ENT_RAISONSOCIAL` FROM `ENTITES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
-        $row = $db->fetch_array();
 
-        $filename = strtolower( $row['ENT_RAISONSOCIAL'].'_'.$row['ENT_NOMINATION'] );
-        $filename = str_replace(' ', '_', $filename);
+	/*******************************************************
+	*
+	* EXTRACTIONS DES PERSONNES D'UNE SEULE ENTITE !
+	*
+	********************************************************/
 
-        header("Content-disposition: attachment; filename=\"extraction-personnes-$filename.csv\"");
-        header("Content-Type: application/force-download");
-        header("Content-Transfer-Encoding: binary");
+	if($_GET['ent_id']) 
+	{
+		// on genere le nom
+		$ent_id = (int)$_GET['ent_id'];
+		$db->query('SELECT `ENT_NOMINATION`, `ENT_RAISONSOCIAL` FROM `ENTITES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
+		$row = $db->fetch_array();
+	
+		$filename = strtolower( $row['ENT_RAISONSOCIAL'].'_'.$row['ENT_NOMINATION'] );
+		$filename = str_replace(' ', '_', $filename);
+	
+		header("Content-disposition: attachment; filename=\"extraction-personnes-entite-$filename.csv\"");
+		header("Content-Type: application/force-download");
+		header("Content-Transfer-Encoding: binary");
+		// fin de la generation du nom
+	
+	
+
+	/******************************************************************
+	*
+	* EXTRACTIONS DES PERSONNES DE TOUTES LES ENTITES DUNE CATEGORIE
+	*
+	*******************************************************************/
+	} else {
+
+		// on genere le nom
+		$cat_id = (int)$_GET['cat_id'];
+		$db->query('SELECT `CAT_NOM` FROM `CATEGORIES` WHERE `CAT_ID`="'.$cat_id.'" LIMIT 1');
+		$row = $db->fetch_array();
+	
+		$filename = strtolower( $row['CAT_NOM'] );
+		$filename = str_replace(' ', '_', $filename);
+	
+		#header("Content-disposition: attachment; filename=\"extraction-personnes-categories-$filename.csv\"");
+		#header("Content-Type: application/force-download");
+		#header("Content-Transfer-Encoding: binary");
+		// fin de la generation du nom
 
 
-        // fin de la generation du nom
+		$where = get_ent_from_cat($cat_id);
+		$db->query
 
-        // on affiche la premiere ligne avec les noms des champs
-        $NM_TABLE = 'PERSONNES';
-        $db->query('SELECT `NM_CHAMP` from '.$TBDname.' where NM_TABLE="'.$NM_TABLE.'" AND NM_CHAMP!="'.$NmChDT.'" AND ( `NM_CHAMP`="PER_IDLDAP" OR `NM_CHAMP`="PER_TITRE" OR `NM_CHAMP`="PER_NOM" OR `NM_CHAMP`="PER_PRENOM" OR `NM_CHAMP`="PER_ADRESSE" OR `NM_CHAMP`="PER_ADRESSE2" OR `NM_CHAMP`="PER_CODEPOSTALE" OR `NM_CHAMP`="PER_VILLE" OR `NM_CHAMP`="PER_PAYS" OR `NM_CHAMP`="PER_REGION" OR `NM_CHAMP`="PER_DATENAISS" OR `NM_CHAMP`="PER_SITEPERSO" ) ORDER BY ORDAFF, LIBELLE');
 
-        while ( $CcChp = $db->fetch_array() )  {
-                $NM_CHAMP=$CcChp[0];
-                $ECT[$NM_CHAMP]=new PYAobj();
-                $ECT[$NM_CHAMP]->NmBase=$DBName;
-                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;
-                $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
-                $ECT[$NM_CHAMP]->TypEdit='C';
-                $ECT[$NM_CHAMP]->InitPO();
-        }
 
-        $i = 0;
-        foreach ($ECT as $PYAObj) {
-                if( $i == 0 ) {
-                    echo '"'.$PYAObj->Libelle.'"';
-                } else {
-                    echo ',"'.$PYAObj->Libelle.'"';
-                }
-                $i++;
-        }
-        unset($ECT);
-
-        // on affiche les nom des champs spécifique
-	$NM_TABLE = 'AFFECTE_ENTITES_PERSONNES';
-	$db->query('SELECT `NM_CHAMP` FROM `DESC_TABLES` WHERE `NM_TABLE`="'.$NM_TABLE.'" AND `NM_CHAMP`!="TABLE0COMM" AND (`NM_CHAMP`="AEP_FONCTION" OR `NM_CHAMP`="AEP_TEL" OR `NM_CHAMP`="AEP_FAX" OR `NM_CHAMP`="AEP_MOBILE" OR `NM_CHAMP`="AEP_ABREGE" OR `NM_CHAMP`="AEP_EMAIL" OR `NM_CHAMP`="AEP_PRIVATECOMMENT") ORDER BY `ORDAFF`');
-
-        while ( $CcChp = $db->fetch_array() )  
-        {
-                $NM_CHAMP=$CcChp[0];    
-                $ECT[$NM_CHAMP] = new PYAobj();
-                $ECT[$NM_CHAMP]->NmBase=$DBName; 
-                $ECT[$NM_CHAMP]->NmTable=$NM_TABLE;
-                $ECT[$NM_CHAMP]->NmChamp=$NM_CHAMP;
-                $ECT[$NM_CHAMP]->TypEdit='C';   
-                $ECT[$NM_CHAMP]->InitPO();
-        }
-
-	foreach ($ECT as $PYAObj) {
-                echo ',"'.$PYAObj->Libelle.'"';
 	}
-
-
-        echo "\r\n";
-        // fin de l'affichage de la premiere ligne
-
-        // on récupère la catégorie parent avant tout pour connaitre les droits
-        $db->query('SELECT `CATEGORIES_CAT_ID` FROM `ENTITES` WHERE `ENT_ID`="'.$ent_id.'" LIMIT 1');
-        $row = $db->fetch_array();
-
-        $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'R');
-        if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'W');
-        if($access == 'false') $access = $user->HaveAccess($row['CATEGORIES_CAT_ID'], 'A');
-
-        $sql = 'SELECT `PER_IDLDAP`,`PER_TITRE`,`PER_NOM`,`PER_PRENOM`,`PER_ADRESSE`,`PER_ADRESSE2`,`PER_CODEPOSTALE`,`PER_VILLE`, `PER_PAYS`,`PER_REGION`,`PER_DATENAISS`,`PER_SITEPERSO`,`AEP_FONCTION`, `AEP_TEL`, `AEP_ABREGE`,`AEP_FAX`,`AEP_MOBILE`,`AEP_EMAIL`,`AEP_PRIVATECOMMENT` FROM `PERSONNES`, `AFFECTE_ENTITES_PERSONNES` WHERE `PERSONNES_PER_ID`=`PER_ID` AND `ENTITES_ENT_ID`="'.$ent_id.'"';
-	$CIL=InitPOReq($sql,$DBName);
-	$rep=$db->query($sql);
-
-
-        if( $db->num_rows() )
-        {
-                while( $data = $db->fetch_array() )
-                {
-                        $j=0;
-        		foreach ($CIL as $pobj) 
-        		{ 
-                                $NmChamp = $pobj->NmChamp;
-                                $CIL[$NmChamp]->ValChp=$data[$NmChamp];
-                                $CIL[$NmChamp]->TypEdit = 'C';
-
-                                if( $j != 0 ) echo ',';
-                                if( $NmChamp == 'AEP_PRIVATECOMMENT' ) {
-                                        if( $access == true )
-                                        {
-                                                $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
-                                                echo '"'.$tmp.'"';
-                                        } else {
-                                                echo '""';
-                                        }
-                                } else {
-                                        $tmp = str_replace('"', '\"', stripslashes($CIL[$NmChamp]->ValChp) );
-                                        echo '"'.$tmp.'"';
-                                }
-                                $j++;
- 
-                        } // fin du foreach
-                        echo "\r\n";
-                } // fin du while
-        } // fin du mysql_num_rows()
-
+	
 }
 
 

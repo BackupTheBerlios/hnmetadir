@@ -106,6 +106,7 @@ function affstruct_cat($pere,$espace)
 		}
 			$menu .= "<b>Extraction :</b><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=entites&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Toutes les Entités</a><br>
+			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=personnes&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Toutes les Personnes</a><br>
 			- <a href=\"javascript:void(0);\" onclick=\"window.open(\'extractions.php?type=categories&cat_id=".$id."\', \'\', config=\'height=100, width=100, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no\');\">Toutes les Catégories</a><br>";
 
 		$menu = str_replace("\"", "&quot;", $menu);
